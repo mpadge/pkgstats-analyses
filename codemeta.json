@@ -10,7 +10,7 @@
   "codeRepository": "https://github.com/mpadge/pkgstats-analyses",
   "issueTracker": "https://github.com/mpadge/pkgstats-analyses/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.0.0.308",
+  "version": "0.0.0.309",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -149,5 +149,5 @@
       "sameAs": "https://CRAN.R-project.org/package=rvest"
     }
   ],
-  "fileSize": "40525.732KB"
+  "fileSize": "40525.871KB"
 }

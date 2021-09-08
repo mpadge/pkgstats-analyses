@@ -17,15 +17,10 @@ load_pkgstats_data <- function (datafile = "pkgstats-results.Rds",
 
     x <- m_load_pkgstats_data (datafile)
 
-    is_r <- "package" %in% names (x)
-
     if (!raw) {
 
-        tab <- table (x$month)
-        x <- data.frame (language = ifelse (is_r, "R", "python"),
-                         count = as.integer (tab),
-                         n = as.numeric (tab / sum (tab)),
-                         date = lubridate::ymd (names (tab)))
+        x <- m_convert_data (x)
+
     }
 
     return (x)
@@ -59,3 +54,16 @@ load_pkgstats_data_internal <- function (datafile) {
 }
 
 m_load_pkgstats_data <- memoise::memoise (load_pkgstats_data_internal)
+
+convert_data <- function (x) {
+
+    is_r <- "package" %in% names (x)
+
+    tab <- table (x$month)
+    data.frame (language = ifelse (is_r, "R", "python"),
+                count = as.integer (tab),
+                n = as.numeric (tab / sum (tab)),
+                date = lubridate::ymd (names (tab)))
+}
+
+m_convert_data <- memoise::memoise (convert_data)

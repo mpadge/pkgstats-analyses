@@ -5,12 +5,12 @@
   ],
   "@type": "SoftwareSourceCode",
   "identifier": "pkgstatsAnalyses",
-  "description": "Analyses of 'pkgstats' Results for all CRAN Packages",
+  "description": "Analyses of 'pkgstats' Results for all CRAN Packages.",
   "name": "pkgstatsAnalyses: Analyses of 'pkgstats' Results for all CRAN Packages",
   "codeRepository": "https://github.com/mpadge/pkgstats-analyses",
   "issueTracker": "https://github.com/mpadge/pkgstats-analyses/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.0.0.307",
+  "version": "0.0.0.308",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -149,5 +149,5 @@
       "sameAs": "https://CRAN.R-project.org/package=rvest"
     }
   ],
-  "fileSize": "40525.731KB"
+  "fileSize": "40525.732KB"
 }

@@ -2,3 +2,4 @@
 
 export(all_pypi)
 export(collate_temp_pypi_files)
+export(load_pkgstats_data)

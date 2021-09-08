@@ -10,7 +10,7 @@
   "codeRepository": "https://github.com/mpadge/pkgstats-analyses",
   "issueTracker": "https://github.com/mpadge/pkgstats-analyses/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.0.0.309",
+  "version": "0.0.0.310",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -126,6 +126,18 @@
     },
     {
       "@type": "SoftwareApplication",
+      "identifier": "memoise",
+      "name": "memoise",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=memoise"
+    },
+    {
+      "@type": "SoftwareApplication",
       "identifier": "parallelly",
       "name": "parallelly",
       "provider": {
@@ -149,5 +161,5 @@
       "sameAs": "https://CRAN.R-project.org/package=rvest"
     }
   ],
-  "fileSize": "40525.871KB"
+  "fileSize": "40527.602KB"
 }

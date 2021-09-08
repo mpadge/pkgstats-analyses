@@ -1,6 +1,6 @@
 Package: pkgstatsAnalyses
 Title: Analyses of 'pkgstats' Results for all CRAN Packages
-Version: 0.0.0.313
+Version: 0.0.0.314
 Authors@R: 
     person(given = "Mark",
            family = "Padgham",
@@ -11,13 +11,17 @@ License: GPL-3
 URL: https://github.com/mpadge/pkgstats-analyses
 BugReports: https://github.com/mpadge/pkgstats-analyses/issues
 Imports:
+    dplyr,
     future,
     future.apply,
+    ggplot2,
     hms,
     jsonlite,
+    lubridate,
     memoise,
     parallelly,
-    rvest
+    rvest,
+    tibble
 Suggests: 
     knitr,
     rmarkdown,

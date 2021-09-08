@@ -6,7 +6,7 @@
 \alias{pkgstatsAnalyses-package}
 \title{pkgstatsAnalyses: Analyses of 'pkgstats' Results for all CRAN Packages}
 \description{
-Analyses of 'pkgstats' Results for all CRAN Packages
+Analyses of 'pkgstats' Results for all CRAN Packages.
 }
 \seealso{
 Useful links:

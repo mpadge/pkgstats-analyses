@@ -4,15 +4,31 @@
 #' Load one lot of either R or python data
 #'
 #' @param datafile Name of local file containing data to load
+#' @param raw If `FALSE`, return tabulated counts of packages per month,
+#' otherwise return raw data.
 #' @return The data file, with all dates appropriately converted, and an
 #' additional "month" column added.
 #' @export
-load_pkgstats_data <- function (datafile = "pkgstats-results.Rds") {
+load_pkgstats_data <- function (datafile = "pkgstats-results.Rds",
+                                raw = TRUE) {
 
     if (!file.exists (datafile))
         stop ("datafile [", datafile, "] does not exist")
 
-    m_load_pkgstats_data (datafile)
+    x <- m_load_pkgstats_data (datafile)
+
+    is_r <- "package" %in% names (x)
+
+    if (!raw) {
+
+        tab <- table (x$month)
+        x <- data.frame (language = ifelse (is_r, "R", "python"),
+                         count = as.integer (tab),
+                         n = as.numeric (tab / sum (tab)),
+                         date = lubridate::ymd (names (tab)))
+    }
+
+    return (x)
 }
 
 load_pkgstats_data_internal <- function (datafile) {

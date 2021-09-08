@@ -10,6 +10,13 @@ Description: Analyses of 'pkgstats' Results for all CRAN Packages
 License: GPL-3
 URL: https://github.com/mpadge/pkgstats-analyses
 BugReports: https://github.com/mpadge/pkgstats-analyses/issues
+Imports:
+    hms,
+    jsonlite,
+    future,
+    future.apply,
+    parallelly,
+    rvest
 Suggests: 
     knitr,
     rmarkdown,

@@ -4,7 +4,13 @@
 \alias{plot_r_py}
 \title{Time series plot for R versus python}
 \usage{
-plot_r_py(x_r, x_p, bimonthly = FALSE, start_date = "2018-01-01")
+plot_r_py(
+  x_r,
+  x_p,
+  bimonthly = FALSE,
+  start_date = "2018-01-01",
+  type = "bars"
+)
 }
 \arguments{
 \item{x_r}{CRAN data load with \link{load_pkgstats_data} using \code{raw = FALSE}.}
@@ -16,6 +22,9 @@ plot_r_py(x_r, x_p, bimonthly = FALSE, start_date = "2018-01-01")
 
 \item{start_date}{First date to display, or set to \code{NULL} to display full
 range.}
+
+\item{type}{Either "bars" for a bar (column) graph, or "lines" for a line
+graph.}
 }
 \value{
 A \pkg{ggplot2} object (invisibly)

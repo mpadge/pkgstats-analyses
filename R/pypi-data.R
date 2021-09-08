@@ -53,7 +53,12 @@ one_pypi <- function (pkg) {
 #' are to be saved.
 #' @param data_dir Directory in which temporary results for each chunk are to be
 #' saved prior to final aggregation.
-#' @return Nothing (data are depositoed in 'data_dir`).
+#' @return Nothing (data are deposited in 'data_dir`).
+#'
+#' @note This function may be stopped at any time, and intermediate results
+#' collated with \link{collate_temp_pypi_files}. Passing the name of the file
+#' constructed by that function as `results_file` will then re-start analyses
+#' where they left off.
 #' @export
 all_pypi <- function (chunk_size = 1001,
                       results_file = "pypi.Rds",
@@ -111,4 +116,35 @@ all_pypi <- function (chunk_size = 1001,
     }
 
     future::plan (old_plan)
+}
+
+#' Collate all temporary files produced by the chunked parallel run of
+#' `all_pypi`.
+#'
+#' @inheritParams all_pypi
+#' @return Collated results, which are also (re-)saved to specified file
+#' @export
+collate_temp_pypi_files <- function (results_file = "pypi.Rds",
+                                     data_dir = "./data-temp") {
+
+    flist <- list.files (data_dir, full.names = TRUE)
+
+    x <- NULL
+    n <- 0L
+    if (file.exists (results_file)) {
+        x <- readRDS (results_file)
+        n <- nrow (x)
+    }
+
+    x <- rbind (x,
+                do.call (rbind, lapply (flist, readRDS)))
+
+    message (format (n, big.mark = ","), " -> ", format (nrow (x), big.mark = ","))
+
+    message ("New results saved to ", results_file)
+    saveRDS (x, results_file)
+
+    chk <- file.remove (flist)
+
+    return (x)
 }

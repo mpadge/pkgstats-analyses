@@ -21,8 +21,14 @@ are to be saved.}
 saved prior to final aggregation.}
 }
 \value{
-Nothing (data are depositoed in 'data_dir`).
+Nothing (data are deposited in 'data_dir`).
 }
 \description{
 Extract all releases and dates for all pypi packages ever
+}
+\note{
+This function may be stopped at any time, and intermediate results
+collated with \link{collate_temp_pypi_files}. Passing the name of the file
+constructed by that function as \code{results_file} will then re-start analyses
+where they left off.
 }

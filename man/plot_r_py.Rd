@@ -4,7 +4,7 @@
 \alias{plot_r_py}
 \title{Time series plot for R versus python}
 \usage{
-plot_r_py(x_r, x_p, bimonthly = FALSE)
+plot_r_py(x_r, x_p, bimonthly = FALSE, start_date = "2018-01-01")
 }
 \arguments{
 \item{x_r}{CRAN data load with \link{load_pkgstats_data} using \code{raw = FALSE}.}
@@ -13,6 +13,9 @@ plot_r_py(x_r, x_p, bimonthly = FALSE)
 
 \item{bimonthly}{If \code{TRUE}, aggregate data first into bimonthly intervals
 (which generally produces a nicer looking plot).}
+
+\item{start_date}{First date to display, or set to \code{NULL} to display full
+range.}
 }
 \value{
 A \pkg{ggplot2} object (invisibly)

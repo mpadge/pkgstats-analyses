@@ -15,7 +15,7 @@ plot_r_py <- function (x_r, x_p, bimonthly = FALSE,
                        start_date = "2018-01-01",
                        type = "bars") {
 
-    type <- match.arg (tolower (type), c ("bars", "lines")) 
+    type <- match.arg (tolower (type), c ("bars", "lines"))
 
     # suppress no visible binding notes:
     language <- count <- n <- NULL
@@ -75,9 +75,9 @@ plot_new_vs_update <- function (datafile = "pkgstats-results.Rds",
     # suppress no visible binding notes:
     package <- n <- NULL
 
-    type <- match.arg (tolower (type), c ("bars", "lines")) 
+    type <- match.arg (tolower (type), c ("bars", "lines"))
 
-    x <- load_pkgstats_data (datafile, raw = TRUE)
+    x <- pkgstatsAnalyses::load_pkgstats_data (datafile, raw = TRUE)
     is_r <- "package" %in% names (x)
 
     dat <- m_new_vs_update_data (x)
@@ -108,7 +108,7 @@ plot_new_vs_update <- function (datafile = "pkgstats-results.Rds",
                                         y = n,
                                         colour = type,
                                         fill = type))
-    
+
     if (type == "bars")
         g <- g + ggplot2::geom_col (alpha = 0.5,
                                     position = ggplot2::position_dodge ())

@@ -78,29 +78,8 @@ plot_new_vs_update <- function (datafile = "pkgstats-results.Rds",
     type <- match.arg (tolower (type), c ("bars", "lines")) 
 
     x <- load_pkgstats_data (datafile, raw = TRUE)
-    if (!"package" %in% names (x)) # python data
-        names (x) [names (x) == "name"] <- "package"
 
-    # create an "index" column flagging initial submissions:
-    p <- x [, c ("package", "version", "date", "month")]
-    p |>
-        dplyr::group_by (package) |>
-        dplyr::mutate (initial = (date == min (date))) -> p
-
-    tab_new <- table (p$month [which (p$initial)])
-    tab_update <- table (p$month [which (!p$initial)])
-
-    dat_new <- data.frame (type = "new",
-                             count = as.integer (tab_new),
-                             #n = as.numeric (tab_new / sum (tab_new)),
-                             n = as.numeric (tab_new / nrow (p)),
-                             date = lubridate::ymd (names (tab_new)))
-    dat_update <- data.frame (type = "update",
-                                count = as.integer (tab_update),
-                                #n = as.numeric (tab_update / sum (tab_update)),
-                                n = as.numeric (tab_update / nrow (p)),
-                                date = lubridate::ymd (names (tab_update)))
-    dat <- rbind (dat_new, dat_update)
+    dat <- m_new_vs_update_data (x)
 
     if (is.null (start_date))
         start_date <- min (dat$date)
@@ -126,3 +105,33 @@ plot_new_vs_update <- function (datafile = "pkgstats-results.Rds",
                         plot.title = ggplot2::element_text (hjust = 0.5),
                         plot.subtitle = ggplot2::element_text (hjust = 0.5))
 }
+
+new_vs_update_data <- function (x) {
+
+    if (!"package" %in% names (x)) # python data
+        names (x) [names (x) == "name"] <- "package"
+
+    # create an "index" column flagging initial submissions:
+    p <- x [, c ("package", "version", "date", "month")]
+    p |>
+        dplyr::group_by (package) |>
+        dplyr::mutate (initial = (date == min (date))) -> p
+
+    tab_new <- table (p$month [which (p$initial)])
+    tab_update <- table (p$month [which (!p$initial)])
+
+    dat_new <- data.frame (type = "new",
+                             count = as.integer (tab_new),
+                             #n = as.numeric (tab_new / sum (tab_new)),
+                             n = as.numeric (tab_new / nrow (p)),
+                             date = lubridate::ymd (names (tab_new)))
+    dat_update <- data.frame (type = "update",
+                                count = as.integer (tab_update),
+                                #n = as.numeric (tab_update / sum (tab_update)),
+                                n = as.numeric (tab_update / nrow (p)),
+                                date = lubridate::ymd (names (tab_update)))
+
+    rbind (dat_new, dat_update)
+}
+
+m_new_vs_update_data <- memoise::memoise (new_vs_update_data)

@@ -71,3 +71,32 @@ convert_data <- function (x) {
 }
 
 m_convert_data <- memoise::memoise (convert_data)
+
+#' Rescale the main `pkgstats` data for CRAN packages
+#' @param x Result of \link{load_pkgstats_data} with `raw = TRUE`.
+#' @noRd
+rescale_data <- function (x) {
+
+    # add ndepends, nimports, etc. variables
+    vals <- c ("depends", "imports", "suggests", "languages", "linking_to")
+    for (v in vals) {
+
+        x [paste0 ("n", v)] <- vapply (strsplit (x [[v]], ","),
+                                       length,
+                                       integer (1))
+    }
+
+    types <- vapply (x, typeof, character (1), USE.NAMES = FALSE)
+
+    int_vals <- which (types == "integer")
+    dbl_vals <- which (types == "double")
+    ivs <- sort (c (int_vals, dbl_vals))
+
+    nvals <- apply (x [, ivs], 2, function (i) length (table (i, useNA = "no")))
+    ivs <- ivs [which (nvals > 1)]
+    x_ivs <- x [, ivs]
+
+    return (x_ivs)
+}
+
+m_rescale_data <- memoise::memoise (rescale_data)

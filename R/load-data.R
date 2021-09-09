@@ -64,10 +64,10 @@ convert_data <- function (x) {
     is_r <- "package" %in% names (x)
 
     tab <- table (x$month)
-    data.frame (language = ifelse (is_r, "R", "python"),
-                count = as.integer (tab),
-                n = as.numeric (tab / sum (tab)),
-                date = lubridate::ymd (names (tab)))
+    tibble::tibble (language = ifelse (is_r, "R", "python"),
+                    count = as.integer (tab),
+                    n = as.numeric (tab / sum (tab)),
+                    date = lubridate::ymd (names (tab)))
 }
 
 m_convert_data <- memoise::memoise (convert_data)

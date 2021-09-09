@@ -61,3 +61,61 @@ plot_r_py <- function (x_r, x_p, bimonthly = FALSE,
                         plot.title = ggplot2::element_text (hjust = 0.5),
                         plot.subtitle = ggplot2::element_text (hjust = 0.5))
 }
+
+#' Plot time series of rates of new submissions versus updated packages
+#'
+#' @inheritParams plot_r_py
+plot_new_vs_update <- function (datafile = "pkgstats-results.Rds",
+                                bimonthly = FALSE,
+                                start_date = "2018-01-01",
+                                type = "bars") {
+
+    type <- match.arg (tolower (type), c ("bars", "lines")) 
+
+    x <- load_pkgstats_data (datafile, raw = TRUE)
+    if (!"package" %in% names (x)) # python data
+        names (x) [names (x) == "name"] <- "package"
+
+    # create an "index" column flagging initial submissions:
+    p <- x [, c ("package", "version", "date", "month")]
+    p %>% dplyr::group_by (package) %>%
+        dplyr::mutate (initial = (date == min (date))) -> p
+
+    tab_new <- table (p$month [which (p$initial)])
+    tab_update <- table (p$month [which (!p$initial)])
+
+    dat_new <- data.frame (type = "new",
+                             count = as.integer (tab_new),
+                             #n = as.numeric (tab_new / sum (tab_new)),
+                             n = as.numeric (tab_new / nrow (p)),
+                             date = lubridate::ymd (names (tab_new)))
+    dat_update <- data.frame (type = "update",
+                                count = as.integer (tab_update),
+                                #n = as.numeric (tab_update / sum (tab_update)),
+                                n = as.numeric (tab_update / nrow (p)),
+                                date = lubridate::ymd (names (tab_update)))
+    dat <- rbind (dat_new, dat_update)
+
+    if (is.null (start_date))
+        start_date <- min (dat$date)
+    else
+        start_date <- lubridate::ymd (start_date)
+
+    g <- ggplot2::ggplot (dat,
+                          ggplot2::aes (x = date,
+                                        y = n,
+                                        colour = type,
+                                        fill = type))
+    
+    if (type == "bars")
+        g <- g + geom_col (alpha = 0.5, position = position_dodge ())
+    else
+        g <- g + ggplot2::geom_line (lwd = 2)
+
+    g +
+        ggplot2::xlim (c (start_date, max (dat$date))) +
+        ggplot2::ggtitle ("Rates of submission to pypi and CRAN") +
+        ggplot2::theme (legend.position = c (0.9, 0.9),
+                        plot.title = ggplot2::element_text (hjust = 0.5),
+                        plot.subtitle = ggplot2::element_text (hjust = 0.5))
+}

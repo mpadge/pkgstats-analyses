@@ -81,6 +81,22 @@ plot_new_vs_update <- function (datafile = "pkgstats-results.Rds",
 
     dat <- m_new_vs_update_data (x)
 
+    if (bimonthly) {
+
+        index <- which (lubridate::month (dat$date) %% 2 == 0L)
+        dat$date [index] <- dat$date [index] - months (1)
+
+        dat |>
+            dplyr::group_by (type, date) |>
+            dplyr::summarise (count = sum (count), .groups = "keep") -> dat
+
+        dat |>
+            dplyr::group_by (type) |>
+            dplyr::summarise (date = date,
+                              count = count,
+                              n = count / sum (count),
+                              .groups = "keep") -> dat
+    }
     if (is.null (start_date))
         start_date <- min (dat$date)
     else

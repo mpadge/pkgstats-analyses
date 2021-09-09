@@ -94,7 +94,7 @@ rescale_data <- function (x) {
     classes <- vapply (x, class, character (1), USE.NAMES = FALSE)
 
     int_vals <- which (classes == "integer")
-    dbl_vals <- which (classes == "numeric")
+    dbl_vals <- which (classes == "numeric" & !names (x) == "date_wt")
     ivs <- sort (c (int_vals, dbl_vals))
 
     nvals <- apply (x [, ivs], 2, function (i) length (table (i, useNA = "no")))

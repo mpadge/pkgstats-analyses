@@ -86,17 +86,19 @@ rescale_data <- function (x) {
                                        integer (1))
     }
 
-    types <- vapply (x, typeof, character (1), USE.NAMES = FALSE)
+    classes <- vapply (x, class, character (1), USE.NAMES = FALSE)
 
-    int_vals <- which (types == "integer")
-    dbl_vals <- which (types == "double")
+    int_vals <- which (classes == "integer")
+    dbl_vals <- which (classes == "numeric")
     ivs <- sort (c (int_vals, dbl_vals))
 
     nvals <- apply (x [, ivs], 2, function (i) length (table (i, useNA = "no")))
     ivs <- ivs [which (nvals > 1)]
     x_ivs <- x [, ivs]
 
-    return (x_ivs)
+    x_ivs <- scale (x_ivs)
+
+    return (tibble::tibble (x_ivs))
 }
 
 m_rescale_data <- memoise::memoise (rescale_data)

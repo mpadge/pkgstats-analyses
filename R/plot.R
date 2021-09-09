@@ -64,11 +64,16 @@ plot_r_py <- function (x_r, x_p, bimonthly = FALSE,
 
 #' Plot time series of rates of new submissions versus updated packages
 #'
+#' @param datafile Name of local file containing data to load
 #' @inheritParams plot_r_py
+#' @export
 plot_new_vs_update <- function (datafile = "pkgstats-results.Rds",
                                 bimonthly = FALSE,
                                 start_date = "2018-01-01",
                                 type = "bars") {
+
+    # suppress no visible binding notes:
+    package <- n <- NULL
 
     type <- match.arg (tolower (type), c ("bars", "lines")) 
 
@@ -78,7 +83,8 @@ plot_new_vs_update <- function (datafile = "pkgstats-results.Rds",
 
     # create an "index" column flagging initial submissions:
     p <- x [, c ("package", "version", "date", "month")]
-    p %>% dplyr::group_by (package) %>%
+    p |>
+        dplyr::group_by (package) |>
         dplyr::mutate (initial = (date == min (date))) -> p
 
     tab_new <- table (p$month [which (p$initial)])
@@ -108,7 +114,8 @@ plot_new_vs_update <- function (datafile = "pkgstats-results.Rds",
                                         fill = type))
     
     if (type == "bars")
-        g <- g + geom_col (alpha = 0.5, position = position_dodge ())
+        g <- g + ggplot2::geom_col (alpha = 0.5,
+                                    position = ggplot2::position_dodge ())
     else
         g <- g + ggplot2::geom_line (lwd = 2)
 

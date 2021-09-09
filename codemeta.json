@@ -10,7 +10,7 @@
   "codeRepository": "https://github.com/mpadge/pkgstats-analyses",
   "issueTracker": "https://github.com/mpadge/pkgstats-analyses/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.0.0.322",
+  "version": "0.0.0.323",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",

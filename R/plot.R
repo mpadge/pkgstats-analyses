@@ -78,6 +78,7 @@ plot_new_vs_update <- function (datafile = "pkgstats-results.Rds",
     type <- match.arg (tolower (type), c ("bars", "lines")) 
 
     x <- load_pkgstats_data (datafile, raw = TRUE)
+    is_r <- "package" %in% names (x)
 
     dat <- m_new_vs_update_data (x)
 
@@ -114,9 +115,12 @@ plot_new_vs_update <- function (datafile = "pkgstats-results.Rds",
     else
         g <- g + ggplot2::geom_line (lwd = 2)
 
+    where <- ifelse (is_r, "CRAN", "pypi")
+    titl <- paste0 ("Rates of new submissions and updates to ", where)
+
     g +
         ggplot2::xlim (c (start_date, max (dat$date))) +
-        ggplot2::ggtitle ("Rates of submission to pypi and CRAN") +
+        ggplot2::ggtitle (titl) +
         ggplot2::theme (legend.position = c (0.9, 0.9),
                         plot.title = ggplot2::element_text (hjust = 0.5),
                         plot.subtitle = ggplot2::element_text (hjust = 0.5))

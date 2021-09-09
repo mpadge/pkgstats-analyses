@@ -35,12 +35,12 @@ load_pkgstats_data_internal <- function (datafile) {
     if (is_r) {
 
         index <- which (!(is.na (x$package) |
-                          grepl ("^Error\\s", x$package))) # only 2 pkgs
+                          grepl ("^Error\\s", x$package)))
         x <- x [index, ]
 
-        # There are lots of BDR experiments from 2003-2005 that also need to be
-        # removed
-        x <- x [which (!grepl ("ripley", x$package)), ]
+        # There are lots of experiments from 2003-2005 that also need to be
+        # removed, all identifiable by names with spaces and dates
+        x <- x [which (!grepl ("\\s", x$package)), ]
     } else {
 
         x <- data.frame (readRDS (datafile))

@@ -73,7 +73,7 @@ plot_new_vs_update <- function (datafile = "pkgstats-results.Rds",
                                 type = "lines") {
 
     # suppress no visible binding notes:
-    package <- n <- NULL
+    package <- n <- count <- NULL
 
     type <- match.arg (tolower (type), c ("bars", "lines"))
 
@@ -127,6 +127,9 @@ plot_new_vs_update <- function (datafile = "pkgstats-results.Rds",
 }
 
 new_vs_update_data <- function (x) {
+
+    # suppress no visible binding notes:
+    package <- count <- NULL
 
     if (!"package" %in% names (x)) # python data
         names (x) [names (x) == "name"] <- "package"

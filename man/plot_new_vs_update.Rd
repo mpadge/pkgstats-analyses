@@ -8,7 +8,7 @@ plot_new_vs_update(
   datafile = "pkgstats-results.Rds",
   bimonthly = FALSE,
   start_date = "2018-01-01",
-  type = "bars"
+  type = "lines"
 )
 }
 \arguments{

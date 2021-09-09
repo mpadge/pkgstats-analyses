@@ -70,7 +70,7 @@ plot_r_py <- function (x_r, x_p, bimonthly = FALSE,
 plot_new_vs_update <- function (datafile = "pkgstats-results.Rds",
                                 bimonthly = FALSE,
                                 start_date = "2018-01-01",
-                                type = "bars") {
+                                type = "lines") {
 
     # suppress no visible binding notes:
     package <- n <- NULL

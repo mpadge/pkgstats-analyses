@@ -2,6 +2,7 @@
 
 export(all_pypi)
 export(collate_temp_pypi_files)
+export(cran_archiving)
 export(load_pkgstats_data)
 export(plot_new_vs_update)
 export(plot_r_py)

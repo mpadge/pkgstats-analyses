@@ -1,6 +1,6 @@
 Package: pkgstatsAnalyses
 Title: Analyses of 'pkgstats' Results for all CRAN Packages
-Version: 0.0.0.329
+Version: 0.0.0.330
 Authors@R: 
     person(given = "Mark",
            family = "Padgham",
@@ -23,6 +23,7 @@ Imports:
     memoise,
     parallelly,
     rvest,
+    stringi,
     tibble
 Suggests: 
     knitr,

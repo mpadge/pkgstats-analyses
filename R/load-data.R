@@ -54,6 +54,11 @@ load_pkgstats_data_internal <- function (datafile) {
     if (!is_r) # remove lastest month of python data
         x <- x [x$month < max (x$month), ]
 
+    # Add a date_wt column to weight monthly contributions
+    dw <- table (x$month)
+    w <- as.numeric (unname (dw [match (as.character (x$month), names (dw))]))
+    x$date_wt <- w / max (w)
+
     return (x)
 }
 

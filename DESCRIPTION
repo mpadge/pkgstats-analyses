@@ -1,6 +1,6 @@
 Package: pkgstatsAnalyses
 Title: Analyses of 'pkgstats' Results for all CRAN Packages
-Version: 0.0.0.325
+Version: 0.0.0.326
 Authors@R: 
     person(given = "Mark",
            family = "Padgham",

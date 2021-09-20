@@ -20,19 +20,6 @@ pkgstats_analyse_packages <- function (x) {
     m_pkgstats_analyse_all_pkgs (x_ivs, iv_nms)
 }
 
-fixef1 <- function (x, nm) {
-
-    form <- paste0 (nm, " ~ date + (date | package)")
-
-    mod <- lme4::lmer (as.formula (form),
-                       weights = date_wt,
-                       data = x)
-
-    effect_fixed <- lme4::fixef (mod) [2] # [2] for "date"
-
-    return (effect_fixed)
-}
-
 pkgstats_analyse_all_pkgs <- function (x, iv_nms) {
 
     old_plan <- future::plan (future::multisession (workers =

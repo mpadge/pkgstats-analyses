@@ -17,7 +17,7 @@ pkgstats_analyse_packages <- function (x) {
     x_ivs$month <- x$month
     x_ivs$date_wt <- x$date_wt
 
-    m_pkgstats_analyse_all_pkgs (x_ivs, nms)
+    m_pkgstats_analyse_all_pkgs (x_ivs, iv_nms)
 }
 
 fixef1 <- function (x, nm) {

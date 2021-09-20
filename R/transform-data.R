@@ -83,15 +83,6 @@ transform_relative_vals <- function (x) {
 #' @noRd
 rescale_data <- function (x) {
 
-    # add ndepends, nimports, etc. variables
-    vals <- c ("depends", "imports", "suggests", "languages", "linking_to")
-    for (v in vals) {
-
-        x [paste0 ("n", v)] <- vapply (strsplit (x [[v]], ","),
-                                       length,
-                                       integer (1))
-    }
-
     classes <- vapply (x, class, character (1), USE.NAMES = FALSE)
 
     int_vals <- which (classes == "integer")

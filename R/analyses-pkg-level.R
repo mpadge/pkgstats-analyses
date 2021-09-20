@@ -42,8 +42,11 @@ pkgstats_analyse_all_pkgs <- function (x, iv_nms) {
 
     on.exit (future::plan (old_plan))
 
-    res <- data.frame (var = nms, effect = unlist (res))
+    res <- data.frame (var = iv_nms,
+                       effect = unlist (res))
+
     res <- res [order (abs (res$effect), decreasing = TRUE), ]
+
     res$effect <- res$effect * 100 # %/year
 
     return (res)

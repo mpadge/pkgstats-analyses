@@ -9,14 +9,15 @@
 pkgstats_analyse_packages <- function (x) {
 
     x_ivs <- data.frame (m_rescale_data (x)$x_ivs)
-    nms <- names (x_ivs)
+    iv_nms <- names (x_ivs)
+
     x_ivs$package <- x$package
     # Scale effect estimates to annual change:
     x_ivs$date <- (x$date - min (x$date)) / 365
     x_ivs$month <- x$month
     x_ivs$date_wt <- x$date_wt
 
-    m_pkgstats_analyse_all_pkgs (x_ivs)
+    m_pkgstats_analyse_all_pkgs (x_ivs, nms)
 }
 
 fixef1 <- function (x, nm) {
@@ -34,14 +35,12 @@ fixef1 <- function (x, nm) {
     return (effect_fixed)
 }
 
-pkgstats_analyse_all_pkgs <- function (x) {
-
-    nms <- names (x)
+pkgstats_analyse_all_pkgs <- function (x, iv_nms) {
 
     old_plan <- future::plan (future::multisession (workers =
                         ceiling (parallelly::availableCores () - 1)))
 
-    res <- future.apply::future_lapply (nms, function (i)
+    res <- future.apply::future_lapply (iv_nms, function (i)
                                         suppressWarnings (fixef1 (x, i)))
 
     on.exit (future::plan (old_plan))

@@ -6,18 +6,25 @@
 #' @param datafile Name of local file containing data to load
 #' @param raw If `FALSE`, return tabulated counts of packages per month,
 #' otherwise return raw data.
+#' @param latest If `TRUE`, return data only on latest CRAN version of each
+#' package, otherwise return data on all releases of all packages.
 #' @return The data file, with all dates appropriately converted, and an
 #' additional "month" column added.
 #' @export
 load_pkgstats_data <- function (datafile = "pkgstats-results.Rds",
-                                raw = TRUE) {
+                                raw = TRUE,
+                                latest = TRUE) {
 
     if (!file.exists (datafile))
         stop ("datafile [", datafile, "] does not exist")
 
     x <- m_load_pkgstats_data (datafile)
 
-    if (!raw) {
+    if (latest) {
+
+        x <- m_latests_data (x)
+
+    } else if (!raw) {
 
         x <- m_convert_data (x)
 
@@ -76,6 +83,15 @@ convert_data <- function (x) {
 }
 
 m_convert_data <- memoise::memoise (convert_data)
+
+latest_data <- function (x) {
+
+    x |>
+        dplyr::group_by (package) |>
+        dplyr::slice_max (date)
+
+}
+m_latests_data <- memoise::memoise (latest_data)
 
 #' Rescale the main `pkgstats` data for CRAN packages
 #' @param x Result of \link{load_pkgstats_data} with `raw = TRUE`.

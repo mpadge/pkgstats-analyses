@@ -4,13 +4,20 @@
 \alias{load_pkgstats_data}
 \title{Load one lot of either R or python data}
 \usage{
-load_pkgstats_data(datafile = "pkgstats-results.Rds", raw = TRUE)
+load_pkgstats_data(
+  datafile = "pkgstats-results.Rds",
+  raw = TRUE,
+  latest = TRUE
+)
 }
 \arguments{
 \item{datafile}{Name of local file containing data to load}
 
 \item{raw}{If \code{FALSE}, return tabulated counts of packages per month,
 otherwise return raw data.}
+
+\item{latest}{If \code{TRUE}, return data only on latest CRAN version of each
+package, otherwise return data on all releases of all packages.}
 }
 \value{
 The data file, with all dates appropriately converted, and an

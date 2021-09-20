@@ -28,8 +28,6 @@ fixef1 <- function (x, nm) {
                        weights = date_wt,
                        data = x)
 
-    #effect_rand <- lme4::VarCorr (mod)
-    #ranefs <- lme4::ranef (mod)$package
     effect_fixed <- lme4::fixef (mod) [2] # [2] for "date"
 
     return (effect_fixed)
@@ -40,8 +38,20 @@ pkgstats_analyse_all_pkgs <- function (x, iv_nms) {
     old_plan <- future::plan (future::multisession (workers =
                         ceiling (parallelly::availableCores () - 1)))
 
-    res <- future.apply::future_lapply (iv_nms, function (i)
-                                        suppressWarnings (fixef1 (x, i)))
+    # Random effects:
+    #effect_rand <- lme4::VarCorr (mod)
+    #ranefs <- lme4::ranef (mod)$package
+
+    res <- future.apply::future_lapply (iv_nms, function (i) {
+                suppressWarnings ({
+                    form <- paste0 (i, " ~ date + (date | package)")
+
+                    mod <- lme4::lmer (as.formula (form),
+                                       weights = date_wt,
+                                       data = x)
+                    return (lme4::fixef (mod) [2]) # "date"
+                })
+            })
 
     on.exit (future::plan (old_plan))
 

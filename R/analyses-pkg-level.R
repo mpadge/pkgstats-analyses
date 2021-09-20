@@ -25,7 +25,7 @@ fixef1 <- function (x, nm) {
 
     mod <- lme4::lmer (as.formula (form),
                        weights = date_wt,
-                       data = x_ivs)
+                       data = x)
 
     #effect_rand <- lme4::VarCorr (mod)
     #ranefs <- lme4::ranef (mod)$package

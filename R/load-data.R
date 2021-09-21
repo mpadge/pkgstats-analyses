@@ -86,9 +86,16 @@ m_convert_data <- memoise::memoise (convert_data)
 
 latest_data <- function (x) {
 
-    x |>
+    x <- x |>
         dplyr::group_by (package) |>
         dplyr::slice_max (date)
+    # multiple versions on same date:
+    x <- x |>
+        dplyr::group_by (package) |>
+        dplyr::slice_max (version)
+    # And a few repeated versions
+    x <- x [-which (duplicated (x [, c ("package", "version", "date")])), ]
 
+    return (x)
 }
 m_latests_data <- memoise::memoise (latest_data)

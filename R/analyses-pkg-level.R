@@ -118,12 +118,11 @@ group_by_var_type <- function (x) {
     x$group [grep ("lines\\_|^loc\\_[^per\\_]", x$var)] <- "lines"
     x$group [grep ("^npars", x$var)] <- "params"
     x$group [grep ("^loc\\_per\\_|per\\_fn\\_", x$var)] <- "lines_per_fn"
-    x$group [grep ("rel\\_space", x$var)] <- "space"
+    x$group [grep ("rel\\_space|^indentation", x$var)] <- "space"
     x$group [grep ("^doc", x$var)] <- "doclines_per_fn"
     x$group [grep ("^nexpr", x$var)] <- "nexpr"
     x$group [grep ("data\\_", x$var)] <- "data"
     x$group [grep ("demos|num\\_vignettes", x$var)] <- "demos_vignettes"
-    x$group [grep ("^indentation$", x$var)] <- "indentation"
     x$group [grep ("centrality\\_|clusters|node|edges", x$var)] <- "network"
 
     return (x)

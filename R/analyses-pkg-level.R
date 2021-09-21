@@ -31,7 +31,8 @@ pkgstats_analyse_packages <- function (datafile) {
     res <- res [order (abs (res$effect_date), decreasing = TRUE), ]
     rownames (res) <- NULL
 
-    split (group_by_var_type (res), f = factor (res$group))
+    res <- group_by_var_type (res)
+    split (res, f = factor (res$group))
 }
 
 pkgstats_analyse_all_pkgs <- function (x, iv_nms) {

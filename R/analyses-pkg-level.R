@@ -1,12 +1,13 @@
 
 #' Analyse individual package trajectories
 #'
-#' @param x Result of \link{load_pkgstats_data} and
-#' \link{transform_pkgstats_data}.
 #' @return A `data.frame` of annual percentage changes in each variable followed
 #' by each package.
 #' @export
-pkgstats_analyse_packages <- function (x) {
+pkgstats_analyse_packages <- function () {
+
+    x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
+        transform_pkgstats_data ()
 
     x_ivs <- data.frame (m_rescale_data (x)$x_ivs)
     iv_nms <- names (x_ivs)
@@ -17,7 +18,19 @@ pkgstats_analyse_packages <- function (x) {
     x_ivs$month <- x$month
     x_ivs$date_wt <- x$date_wt
 
-    m_pkgstats_analyse_all_pkgs (x_ivs, iv_nms)
+    res <- m_pkgstats_analyse_all_pkgs (x_ivs, iv_nms)
+
+    # Then temporal trajectories from latest versions only:
+    x <- load_pkgstats_data (datafile, raw = TRUE, latest = TRUE) |>
+        transform_pkgstats_data ()
+    z <- pkgstats_analyse_time_only (x)
+    index <- match (res$var, z$var)
+    res$effect_date <- z$effect_date [index]
+
+    res <- res [order (abs (res$effect_date), decreasing = TRUE), ]
+    rownames (res) <- NULL
+
+    split (group_by_var_type (res), f = factor (res$group))
 }
 
 pkgstats_analyse_all_pkgs <- function (x, iv_nms) {
@@ -93,4 +106,25 @@ pkgstats_analyse_time_only <- function (x) {
     rownames (res) <- NULL
 
     return (res)
+}
+
+group_by_var_type <- function (x) {
+
+    x$group <- NA
+    d <- "desc\\_|nimports|nsuggests|nlanguages|nlinking"
+    x$group [grep (d, x$var)] <- "description"
+    x$group [grep ("files\\_", x$var)] <- "files"
+    x$group [grep ("^n\\_fns", x$var)] <- "functions"
+    x$group [grep ("lines\\_|^loc\\_[^per\\_]", x$var)] <- "lines"
+    x$group [grep ("^npars", x$var)] <- "params"
+    x$group [grep ("^loc\\_per\\_|per\\_fn\\_", x$var)] <- "lines_per_fn"
+    x$group [grep ("rel\\_space", x$var)] <- "space"
+    x$group [grep ("^doc", x$var)] <- "doclines_per_fn"
+    x$group [grep ("^nexpr", x$var)] <- "nexpr"
+    x$group [grep ("data\\_", x$var)] <- "data"
+    x$group [grep ("demos|num\\_vignettes", x$var)] <- "demos_vignettes"
+    x$group [grep ("^indentation$", x$var)] <- "indentation"
+    x$group [grep ("centrality\\_|clusters|node|edges", x$var)] <- "network"
+
+    return (x)
 }

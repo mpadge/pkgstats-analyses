@@ -52,3 +52,31 @@ pkgstats_analyse_all_pkgs <- function (x, iv_nms) {
     return (res)
 }
 m_pkgstats_analyse_all_pkgs <- memoise::memoise (pkgstats_analyse_all_pkgs)
+
+pkgstats_analyse_time_only <- function (x) {
+
+    if (any (duplicated (x$package)))
+        stop ("'x' must be result of 'load_pkgstats_data' ",
+              "with 'latest = TRUE'")
+
+    x_ivs <- data.frame (m_rescale_data (x)$x_ivs)
+    iv_nms <- names (x_ivs)
+
+    x_ivs$package <- x$package
+    # Scale effect estimates to annual change:
+    x_ivs$date <- (x$date - min (x$date)) / 365
+    x_ivs$month <- x$month
+    x_ivs$date_wt <- x$date_wt
+
+    one_effect <- function (x, nm) {
+
+        form <- as.formula (paste0 (nm, " ~ date"))
+        mod <- lm (form,
+                   weights = date_wt,
+                   data = x)
+        mod$coefficients [2]
+    }
+
+    vapply (iv_nms, function (i) one_effect (x, i),
+            numeric (1))
+}

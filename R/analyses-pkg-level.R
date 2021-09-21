@@ -49,6 +49,8 @@ pkgstats_analyse_all_pkgs <- function (x, iv_nms) {
 
     res$effect <- res$effect * 100 # %/year
 
+    rownames (res) <- NULL
+
     return (res)
 }
 m_pkgstats_analyse_all_pkgs <- memoise::memoise (pkgstats_analyse_all_pkgs)

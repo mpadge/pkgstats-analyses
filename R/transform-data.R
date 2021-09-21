@@ -34,6 +34,11 @@ transform_new_vals <- function (x) {
     x$tab_indent <- x$indentation == -1L
     x$indentation [x$indentation == -1L] <- NA
 
+    # Translations -> count
+    #x$translations [x$translations == "NA"] <- NA_character_
+    # Translations not yet right, so remove for now
+    x <- x [-match ("translations", names (x))]
+
     return (x)
 }
 

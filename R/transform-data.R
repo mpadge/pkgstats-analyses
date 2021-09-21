@@ -28,6 +28,8 @@ transform_new_vals <- function (x) {
     x [f] [is.na (x [f])] <- 0L # All 0 anyway
     x$files_total <- rowSums (x [f])
 
+    x <- x [, -match (vals, names (x))]
+
     return (x)
 }
 

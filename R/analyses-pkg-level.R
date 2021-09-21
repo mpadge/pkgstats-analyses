@@ -43,11 +43,11 @@ pkgstats_analyse_all_pkgs <- function (x, iv_nms) {
     on.exit (future::plan (old_plan))
 
     res <- data.frame (var = iv_nms,
-                       effect = unlist (res))
+                       effect_pkg = unlist (res))
 
-    res <- res [order (abs (res$effect), decreasing = TRUE), ]
+    res <- res [order (abs (res$effect_pkg), decreasing = TRUE), ]
 
-    res$effect <- res$effect * 100 # %/year
+    res$effect_pkg <- res$effect_pkg * 100 # %/year
 
     rownames (res) <- NULL
 
@@ -79,6 +79,18 @@ pkgstats_analyse_time_only <- function (x) {
         mod$coefficients [2]
     }
 
-    vapply (iv_nms, function (i) one_effect (x, i),
-            numeric (1))
+    res <- vapply (iv_nms, function (i)
+                   one_effect (x, i),
+                   numeric (1))
+
+    res <- data.frame (var = iv_nms,
+                       effect_date = unlist (res))
+
+    res <- res [order (abs (res$effect_date), decreasing = TRUE), ]
+
+    res$effect_date <- res$effect_date * 100 # %/year
+
+    rownames (res) <- NULL
+
+    return (res)
 }

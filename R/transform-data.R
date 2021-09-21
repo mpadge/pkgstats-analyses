@@ -30,6 +30,10 @@ transform_new_vals <- function (x) {
 
     x <- x [, -match (vals, names (x))]
 
+    # Split indentation into binary "tab" column:
+    x$tab_indent <- x$indentation == -1L
+    x$indentation [x$indentation == -1L] <- NA
+
     return (x)
 }
 

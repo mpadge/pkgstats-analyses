@@ -4,11 +4,10 @@
 \alias{pkgstats_analyse_packages}
 \title{Analyse individual package trajectories}
 \usage{
-pkgstats_analyse_packages(x)
+pkgstats_analyse_packages(datafile)
 }
 \arguments{
-\item{x}{Result of \link{load_pkgstats_data} and
-\link{transform_pkgstats_data}.}
+\item{datafile}{Path to local \code{pkgstats} data}
 }
 \value{
 A \code{data.frame} of annual percentage changes in each variable followed

@@ -1,10 +1,11 @@
 
 #' Analyse individual package trajectories
 #'
+#' @param datafile Path to local `pkgstats` data
 #' @return A `data.frame` of annual percentage changes in each variable followed
 #' by each package.
 #' @export
-pkgstats_analyse_packages <- function () {
+pkgstats_analyse_packages <- function (datafile) {
 
     x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
         transform_pkgstats_data ()

@@ -13,7 +13,7 @@ pkgstats_analyse_packages <- function (x) {
 
     x_ivs$package <- x$package
     # Scale effect estimates to annual change:
-    x_ivs$date <- (x$date - min (x$date)) / 365
+    x_ivs$date <- (x$date - min (x$date)) / 365.25
     x_ivs$month <- x$month
     x_ivs$date_wt <- x$date_wt
 
@@ -66,7 +66,7 @@ pkgstats_analyse_time_only <- function (x) {
 
     x_ivs$package <- x$package
     # Scale effect estimates to annual change:
-    x_ivs$date <- (x$date - min (x$date)) / 365
+    x_ivs$date <- (x$date - min (x$date)) / 365.25
     x_ivs$month <- x$month
     x_ivs$date_wt <- x$date_wt
 

@@ -77,6 +77,9 @@ transform_relative_vals <- function (x) {
     x$loc_vignettes [x$files_vignettes == 0] <- NA_integer_
     x$loc_tests [x$files_tests == 0] <- NA_integer_
 
+    # Then remove the original absolute counts of blank & comment lines:
+    x <- x [, -match (c (i1, i3), names (x))]
+
     return (x)
 }
 

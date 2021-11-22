@@ -50,7 +50,7 @@ load_pkgstats_data_internal <- function (datafile) {
         x <- x [which (!grepl ("\\s", x$package)), ]
     } else {
 
-        x <- data.frame (readRDS (datafile))
+        x <- data.frame (x)
     }
 
     x <- tibble::tibble (x)
@@ -58,8 +58,12 @@ load_pkgstats_data_internal <- function (datafile) {
     x$date <- lubridate::ymd (strptime (x$date, format = "%Y-%m-%d"))
     x$month <- lubridate::ceiling_date (x$date, unit = "month")
 
-    if (!is_r) # remove lastest month of python data
+    if (!is_r) {
+        # remove lastest month of python data
         x <- x [x$month < max (x$month), ]
+        # and change 'name' to 'package'
+        names (x) [names (x) == "name"] <- "package"
+    }
 
     # Add a date_wt column to weight monthly contributions
     dw <- table (x$month)

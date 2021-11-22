@@ -10,13 +10,13 @@
   "codeRepository": "https://github.com/mpadge/pkgstats-analyses",
   "issueTracker": "https://github.com/mpadge/pkgstats-analyses/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.0.0.362",
+  "version": "0.0.0.363",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.1.1 (2021-08-10)",
+  "runtimePlatform": "R version 4.1.2 (2021-11-01)",
   "author": [
     {
       "@type": "Person",
@@ -239,5 +239,5 @@
       "sameAs": "https://CRAN.R-project.org/package=tibble"
     }
   ],
-  "fileSize": "40532.409KB"
+  "fileSize": "42594.195KB"
 }

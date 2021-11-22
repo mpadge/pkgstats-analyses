@@ -1,11 +1,8 @@
 Package: pkgstatsAnalyses
 Title: Analyses of 'pkgstats' Results for all CRAN Packages
-Version: 0.0.0.362
+Version: 0.0.0.363
 Authors@R: 
-    person(given = "Mark",
-           family = "Padgham",
-           role = c("aut", "cre"),
-           email = "mark.padgham@email.com")
+    person("Mark", "Padgham", , "mark.padgham@email.com", role = c("aut", "cre"))
 Description: Analyses of 'pkgstats' Results for all CRAN Packages.
 License: GPL-3
 URL: https://github.com/mpadge/pkgstats-analyses

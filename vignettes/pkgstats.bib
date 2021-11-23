@@ -1,0 +1,459 @@
+@article{pypi2019,
+    title = {An Empirical Analysis of the Python Package Index (PyPI)}, 
+    author = {Bommarito, Ethan and Bommarito, Michael},
+    year = {2019},
+    journal = {arXiv},
+    volume ={1907.11073},
+    eprint = {1907.11073},
+    archivePrefix = {arXiv},
+    primaryClass = {cs.SE}
+}
+
+@article{seven-pkg-networks-2019,
+    title = {An empirical comparison of dependency network evolution in seven
+        software packaging ecosystems},
+    author = {Decan, Alexandre and Mens, Tom and Grosjean, Philippe},
+    year = {2019},
+    journal = {Empirical Software Engineering},
+    volume = {24},
+    pages = {381--416},
+    doi = {10.1007/s10664-017-9589-y},
+    url = {https://doi.org/10.1007/s10664-017-9589-y}
+}
+
+@article{analytics-so-what-2013,
+    author = {Menzies, Tim and Zimmermann, Thomas},
+    journal = {IEEE Software},
+    title = {Software Analytics: So What?},
+    year = {2013},
+    volume = {30},
+    number = {4}, 
+    pages = {31-37},
+    doi = {10.1109/MS.2013.86}
+}
+
+
+@inproceedings{software-evolution-97,
+    author = {Lehman, M.M. and Ramil, J.F. and Wernick, P.D. and Perry, D.E. and
+        Turski, W.M.},
+    booktitle = {Proceedings Fourth International Software Metrics Symposium},
+    title = {Metrics and laws of software evolution-the nineties view},
+    year = {1997},
+    volume = {},
+    number = {},
+    pages = {20-32},
+    doi = {10.1109/METRIC.1997.637156},
+    note = {It is a preliminary report of a larger project, but one which seeks
+        to determine whether "laws" set out from the early 70s, might still
+        apply in the late 90s. The "laws" are discerned from analyses of
+        "software metrics", and the paper concludes that these laws still do
+        apply
+
+        > software evolution processes are and must be treated as being
+        > feedback-driven and constrained systems [leh74,78].
+
+        The laws are:
+
+        1. Continuing Change
+        2. Increasing Complexity (unless work is done to maintain or reduce)
+        3. Self Regulation (product and process measures are close to normal)
+        4. Conservation of Organisational Stability (invariant work rate)
+        5. Conservation of Familiarity (excessive growth reduces familiarity, so growth
+           is constrained)
+        6. Continuing Growth (in functional content)
+        7. Declining Quality (unless rigorously maintained and adapted)
+        8. Feedback System (systems must be treated as such to achieve significant
+           improvement).
+
+        They apply a simple "inverse square" model, attributed to Turski, to fit
+        observed rates of increase in size, *s*, over time:
+
+        $s_i = s_{i - 1} + \bar{E} / s_{i - 1} ^ 2$,
+
+        where $\bar{E}$ is a model parameter calculated either as 
+
+        $E_i = (s_i - s_{i-1})s_{i-1}^2$, or
+        $E_i = (s_i - s_1) / (\sum_{k=1}^{i-1} 1 / s_k^2)$
+
+        This could be directly fitted to observed data here.}
+}
+
+
+@article {Turski96,
+    author = {W. M. Turski},
+    journal = {IEEE Transactions on Software Engineering},
+    title = {Reference Model for Smooth Growth of Software Systems},
+    year = {1996},
+    volume = {22},
+    number = {08},
+    issn = {1939-3520},
+    pages = {599-600},
+    doi = {10.1109/TSE.1996.10007},
+    publisher = {IEEE Computer Society},
+    address = {Los Alamitos, CA, USA},
+    month = {aug}
+}
+
+@article{Turski02,
+    author = {Turski, W.M.},
+    journal = {IEEE Transactions on Software Engineering},
+    title = {The reference model for smooth growth of software systems revisited},
+    year = {2002},
+    volume = {28},
+    number = {8},
+    pages = {814-815},
+    doi = {10.1109/TSE.2002.1027802},
+    note = {Formalises the 1996 paper through positing *E* as the *incremental
+        effort spent on each release*. The hypothesis is that that remains
+        constant over time. E is itself presumed inversely dependent on
+        *complexity*, which is in turn presumed to scale as ~s^2.}
+}
+
+@Inbook{Mens2008,
+    author = {Mens, Tom},
+    title = {Introduction and Roadmap: History and Challenges of Software
+        Evolution},
+    bookTitle = {Software Evolution},
+    year = {2008},
+    publisher = {Springer Berlin Heidelberg},
+    address = {Berlin, Heidelberg},
+    pages = {1--11},
+    abstract = {The ability to evolve software rapidly and reliably is a major
+        challenge for software engineering. In this introductory chapter we
+        start with a historic overview of the research domain of software
+        evolution. Next, we briefly introduce the important research themes in
+        software evolution, and identify research challenges for the years to
+        come. Finally, we provide a roadmap of the topics treated in this book,
+    and explain how the various chapters are related.},
+    isbn = {978-3-540-76440-3},
+    doi = {10.1007/978-3-540-76440-3_1},
+    url = {https://doi.org/10.1007/978-3-540-76440-3_1},
+    note = {A good reference for the point that most considerations of software
+        development and evolution have focussed on individual pieces of
+            software, and not on collective properties.}
+}
+
+@article{mapping-repos-2021,
+    author = {Sayago-Heredia, Jaime and Pérez-Castillo, Ricardo and Piattini,
+        Mario},
+    title = {A Systematic Mapping Study on Analysis of Code Repositories},
+    journal = {Informatica},
+    year = {2021},
+    doi = {10.15388/21-INFOR454},
+    abstract = {Code repositories contain valuable information, which can be
+        extracted, processed and synthesized into valuable information. It
+            enabled developers to improve maintenance, increase code quality and
+            understand software evolution, among other insights. Certain
+            research has been made during the last years in this field. This
+            paper presents a systematic mapping study to find, evaluate and
+            investigate the mechanisms, methods and techniques used for the
+            analysis of information from code repositories that allow the
+            understanding of the evolution of software. Through this mapping
+            study, we have identified the main information used as input for the
+            analysis of code repositories (commit data and source code), as well
+            as the most common methods and techniques of analysis
+            (empirical/experimental and automatic). We believe the conducted
+            research is useful for developers working on software development
+            projects and seeking to improve maintenance and understand the
+            evolution of software through the use and analysis of code
+            repositories.},
+    volume = {32},
+    number = {3},
+    pages = {619-660},
+    note = {"Systematic Mapping" there just means elucidating the general
+        fields of around 200 papers on mining or analysing code repos. One of
+            their resultant categories is "statistics", which encompasses
+            statistical analyses of code. For that category, they ultimately
+            identify 7 potentially relevant papers.}
+}
+
+@inproceedings{non-code-artifacts-2014, 
+    author = {Bigliardi, Luca and Lanza, Michele and Bacchelli, Alberto and
+        D'Ambros, Marco and Mocci, Andrea}, 
+    booktitle = {14th International Conference on Quality Software},
+    title = {Quantitatively Exploring Non-code Software Artifacts},
+    year = {2014},
+    volume = {},
+    number = {},
+    pages = {286-295},
+    doi = {10.1109/QSIC.2014.31}
+}
+
+@article{macro-evolution-2009,
+    author = {Gonzalez-Barahona, Jesus M. and Robles, Gregorio and Michlmayr,
+        Martin and Amor, Juan José and German, Daniel M.},
+    year = {2009},
+    date = {2009/06/01},
+    title = {Macro-level software evolution: a case study of a large software
+        compilation},
+    journal = {Empirical Software Engineering},
+    pages = {262-285},
+    volume = {14},
+    issue = {3},
+    abstract = {Software evolution studies have traditionally focused on
+        individual products. In this study we scale up the idea of software
+            evolution by considering software compilations composed of a large
+            quantity of independently developed products, engineered to work
+            together. With the success of libre (free, open source) software,
+        these compilations have become common in the form of ‘software
+            distributions’, which group hundreds or thousands of software
+            applications and libraries into an integrated system. We have
+            performed an exploratory case study on one of them, Debian
+            GNU/Linux, finding some significant results. First, Debian has been
+            doubling in size every 2 years, totalling about 300 million lines of
+            code as of 2007. Second, the mean size of packages has remained
+            stable over time. Third, the number of dependencies between packages
+            has been growing quickly. Finally, while C is still by far the most
+            commonly used programming language for applications, use of the C++,
+        Java, and Python languages have all significantly increased. The study
+            helps not only to understand the evolution of Debian, but also
+            yields insights into the evolution of mature libre software systems
+            in general.},
+    url = {https://doi.org/10.1007/s10664-008-9100-x},
+    doi = {10.1007/s10664-008-9100-x},
+    note = {A study of the (entire) Debian/GNU system, with the following
+        "significant results":
+
+        "First, Debian has been doubling in size every 2 years, totalling about
+        300 million lines of code as of 2007. Second, the mean size of
+        packages has remained stable over time. Third, the number of
+        dependencies between packages has been growing quickly."
+
+        They provide a usual distinction of package sizes betwen:
+
+        "very small (less than one thousand lines of code), small (between one
+        and ten thousand lines) and medium-sized (between ten and fifty
+        thousand lines of code"
+
+        "large" packages are then over 100,000 LOC, for which sizes increased
+        over time, a phenomenon they claim reflects Lehman's sixth "law" of
+        software evolution.
+
+        "Perhaps the most significant fact is that the average size of packages
+        is relatively stable, around 30 KSLOC for Debian 4.0 and 23 KSLOC for
+        other releases, see Table 1. Currently, we lack an authoritative
+        explanation for this phenomenon, but we have several hypotheses. One
+        of them is that libre software production tends to grow mainly by
+        creating new, more specialized, smaller packages (that can be
+        developed by a handful of developers), rather than large, complex
+        ones (that require a large software development team).
+        With time, some of the most successful small packages may attract more
+        interest and developers, and start to grow. Perhaps the total mixture
+        in Debian is so rich that while many packages grow in size, smaller
+        ones are included causing the average to stay approximately constant."
+
+        Mean file sizes differ between languages, but tend to stay stable over
+        time within any one language.}
+}
+
+@inproceedings{mining-repos-2013, 
+    author = {Allamanis, Miltiadis and Sutton, Charles},
+    booktitle = {2013 10th Working Conference on Mining Software Repositories},
+    title = {Mining source code repositories at massive scale using language
+        modeling},
+    year = {2013},
+    volume = {},
+    number = {},
+    pages = {207-216},
+    doi = {10.1109/MSR.2013.6624029},
+    note = {"we build the first giga-token probabilistic language model of
+        source code, based on 352 million lines of Java."
+
+        These lines are drawn from 14,807 individual projects from GitHub. More
+        generally,
+
+        "our approach ... [enables] new complexity metrics based on statistical
+        analysis of large corpora. We call these metrics data-driven complexity
+        metrics."
+
+        They find that *original identifiers* increase at roughly 56 per kLOC,
+        and that most of these are variable names. They develop an n-gram model
+        to assess predicability of language tokens. This is used to estimate
+        probabilities of n-grams and so to provide *data-driven complexity
+        metrics*, in particular an *n-gram log probability*, in place of
+        "simpler" metrics such as LOC and cyclocomplexity.
+
+        It's a great project that goes well beyond what I'll be doing with
+        pkgstats!}
+}
+
+@inproceedings{github-populatiry-2016,
+    author = {Borges, Hudson and Hora, Andre and Valente, Marco Tulio},
+    title = {Predicting the Popularity of GitHub Repositories},
+    year = {2016},
+    isbn = {9781450347723},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://doi.org/10.1145/2972958.2972966},
+    doi = {10.1145/2972958.2972966},
+    abstract = {GitHub is the largest source code repository in the world. It
+        provides a git-based source code management platform and also many
+            features inspired by social networks. For example, GitHub users can
+            show appreciation to projects by adding stars to them. Therefore,
+        the number of stars of a repository is a direct measure of its
+            popularity. In this paper, we use multiple linear regressions to
+            predict the number of stars of GitHub repositories. These
+            predictions are useful both to repository owners and clients, who
+            usually want to know how their projects are performing in a
+            competitive open source development market. In a large-scale
+            analysis, we show that the proposed models start to provide accurate
+            predictions after being trained with the number of stars received in
+            the last six months. Furthermore, specific models---generated using
+            data from repositories that share the same growth trends---are
+            recommended for repositories with slow growth and/or for
+            repositories with less stars. Finally, we evaluate the ability to
+            predict not the number of stars of a repository but its rank among
+            the GitHub repositories. We found a very strong correlation between
+            predicted and real rankings (Spearman's rho greater than 0.95).},
+    booktitle = {Proceedings of the The 12th International Conference on
+        Predictive Models and Data Analytics in Software Engineering},
+    articleno = {9},
+    numpages = {10},
+    keywords = {Prediction Models, Open Source Development, Social Coding,
+        GitHub, Popularity},
+    location = {Ciudad Real, Spain},
+    series = {PROMISE 2016},
+    note = {just about predicting future stars from temporal patterns of prior
+        stars, so not relevant at all. (And in fact should never have arisen as
+                a candidate in Sayago & Heredia's original study.)}
+
+}
+
+@inproceedings{gh-snippets-2017,
+    author={Yang, Di and Martins, Pedro and Saini, Vaibhav and Lopes, Cristina},
+    booktitle={2017 IEEE/ACM 14th International Conference on Mining Software
+        Repositories (MSR)},
+    title={Stack Overflow in Github: Any Snippets There?},
+    year={2017},
+    volume={},
+    number={},
+    pages={280-290},
+    doi={10.1109/MSR.2017.13},
+    note = {just to show that code snippets get copied-and-pasted between
+        projects, along with Abdalkareem & others (2017)}
+}
+
+@article{so-snippets-2017,
+    title = {On code reuse from StackOverflow: An exploratory study on Android apps},
+    journal = {Information and Software Technology},
+    volume = {88},
+    pages = {148-158},
+    year = {2017},
+    issn = {0950-5849},
+    doi = {https://doi.org/10.1016/j.infsof.2017.04.005},
+    url = {https://www.sciencedirect.com/science/article/pii/S0950584917303610},
+    author = {Rabe Abdalkareem and Emad Shihab and Juergen Rilling}
+}
+
+@article{code-review-2018,
+    author = {Pascarella, Luca and Spadini, Davide and Palomba, Fabio and
+        Bruntink, Magiel and Bacchelli, Alberto},
+    title = {Information Needs in Contemporary Code Review},
+    year = {2018},
+    issue_date = {November 2018},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    volume = {2},
+    number = {CSCW},
+    url = {https://doi.org/10.1145/3274404},
+    doi = {10.1145/3274404},
+    abstract = {Contemporary code review is a widespread practice used by
+        software engineers to maintain high software quality and share project
+            knowledge. However, conducting proper code review takes time and
+            developers often have limited time for review. In this paper, we aim
+            at investigating the information that reviewers need to conduct a
+            proper code review, to better understand this process and how
+            research and tool support can make developers become more effective
+            and efficient reviewers. Previous work has provided evidence that a
+            successful code review process is one in which reviewers and authors
+            actively participate and collaborate. In these cases, the threads of
+            discussions that are saved by code review tools are a precious
+            source of information that can be later exploited for research and
+            practice. In this paper, we focus on this source of information as a
+            way to gather reliable data on the aforementioned reviewers' needs.
+            We manually analyze 900 code review comments from three large
+            open-source projects and organize them in categories by means of a
+            card sort. Our results highlight the presence of seven high-level
+            information needs, such as knowing the uses of methods and variables
+            declared/modified in the code under review. Based on these results
+            we suggest ways in which future code review tools can better support
+            collaboration and the reviewing task.},
+    journal = {Proc. ACM Hum.-Comput. Interact.},
+    month = {nov},
+    articleno = {135},
+    numpages = {27},
+    keywords = {code review, mining software repositories, information needs},
+    note = {A really detailed study drawn from
+        https://www.gerritcodereview.com/, and interviews with lots of code
+            reviewers.}
+}
+
+@inproceedings{static-analysis-2016,
+    author={Papamichail, Michail and Diamantopoulos, Themistoklis and
+        Symeonidis, Andreas},
+    booktitle={2016 IEEE International Conference on Software Quality,
+        Reliability and Security (QRS)},
+    title={User-Perceived Source Code Quality Estimation Based on Static
+        Analysis Metrics},
+    year={2016},
+    volume={},
+    number={},
+    pages={100-107},
+    doi={10.1109/QRS.2016.22},
+    note={Also in 2 other, slightly modified versions.
+
+        Quality of code is directly related to suitability for reuse - an
+        important point!
+
+        Cites "A metrics suite for object-oriented design" (1994), which is a
+        good reference for complex static metrics that can be used in specific
+        circumstances (such as OOP for that paper). Metrics measure things such
+        as depth and breadth of class inheritance patterns.
+
+        Uses a comprehensive suite of metrics, including the following relevant ones:
+
+        - cyclomatic complexity (not measured here)
+        - #comments / LOC
+        - "Efficient Couplings" = # types inside source file that depend on
+            types defined in other files (not measured here but could easily be)
+        - Other metrics related to "Afferent" and "Efferent" couplings, which
+            are numbers of classes in other packages which depend on classes
+            within target package (as a measure of "responsibility"), and
+            numbers of type dependencies from external packages within target
+            package (Efferent), 
+
+        Nevertheless, no particularly relevant results emerge.}
+}
+
+@inproceedings {metric-evolution-2016,
+    booktitle = {Vision, Modeling & Visualization},
+    editor = {Matthias Hullin and Marc Stamminger and Tino Weinkauf},
+    title = {{Metric Evolution Maps: Multidimensional Attribute-driven
+        Exploration of Software Repositories}},
+    author = {Silva, Renato Rodrigues Oliveira da and Vernier, Eduardo Faccin
+        and Rauber, Paulo Eduardo and Comba, Joao L. D. and Minghim, Rosane and
+            Telea, Alexandru C.},
+    year = {2016},
+    publisher = {The Eurographics Association},
+    ISSN = {-},
+    ISBN = {978-3-03868-025-3},
+    DOI = {10.2312/vmv.20161343},
+    note = {Mostly about a technique to visualise temporal evolution of metrics.
+        Uses a variety of external static analysers.}
+}
+
+@article{fuzzy-metrics-2016,
+    author = {Ulutagay, Gözde and Saini, Munish and Mehmi, Sandeep and Chahal,
+        Kuljit Kaur},
+    year = {2016},
+    date = {2016/09/14},
+    title = {Understanding Open Source Software Evolution Using Fuzzy Data
+        Mining Algorithm for Time Series Data},
+    volume = {2016},
+    url = {https://doi.org/10.1155/2016/1479692},
+    doi = {10.1155/2016/1479692},
+    journal = {Advances in Fuzzy Systems},
+    publisher = {Hindawi Publishing Corporation},
+    note = {Analyses only one piece of software, with no details of what metrics
+        where actually analysed.}
+}

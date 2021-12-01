@@ -17,10 +17,10 @@ analyse_submission_rates <- function (x) {
         dplyr::arrange (date) |>
         dplyr::group_by (package) |>
         dplyr::summarise (n = length (package),
-                          time_med = median (diff (date)),
+                          time_med = stats::median (diff (date)),
                           time_mn = mean (diff (date)),
                           time_rate = ifelse (length (date) <= 2L,
                                               NA,
-            unname (lm (diff (date) ~ seq_along (date) [-1])$coefficients [2])))
+            unname (stats::lm (diff (date) ~ seq_along (date) [-1])$coefficients [2])))
 }
 m_analyse_submission_rates <- memoise::memoise (analyse_submission_rates)

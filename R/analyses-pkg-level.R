@@ -48,7 +48,7 @@ pkgstats_analyse_all_pkgs <- function (x, iv_nms) {
                 suppressWarnings ({
                     form <- paste0 (i, " ~ date + (date | package)")
 
-                    mod <- lme4::lmer (as.formula (form),
+                    mod <- lme4::lmer (stats::as.formula (form),
                                        weights = date_wt,
                                        data = x)
                     return (lme4::fixef (mod) [2]) # "date"
@@ -88,9 +88,9 @@ pkgstats_analyse_time_only <- function (x) {
     one_effect <- function (x, nm) {
 
         form <- as.formula (paste0 (nm, " ~ date"))
-        mod <- lm (form,
-                   weights = date_wt,
-                   data = x)
+        mod <- stats::lm (form,
+                          weights = date_wt,
+                          data = x)
         mod$coefficients [2]
     }
 

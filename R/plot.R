@@ -86,6 +86,8 @@ plot_new_vs_update <- function (datafile = "pkgstats-results.Rds",
     is_r <- min (x$date) < "2005-01-01"
 
     dat <- m_new_vs_update_data (x)
+    # rm latest dat:
+    dat <- dat [-which (dat$date == max (dat$date)), ]
 
     if (bimonthly) {
 

@@ -18,8 +18,8 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r pkg-load, echo = FALSE, message = FALSE}
-library (pkgstats)
+```{r pkg-load, echo = FALSE, eval = FALSE, message = FALSE}
+library (pkgstatsAnalyses)
 ```
 
 # Introduction

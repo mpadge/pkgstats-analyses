@@ -20,6 +20,8 @@ plot_r_py <- function (x_r, x_p, bimonthly = FALSE,
     # suppress no visible binding notes:
     language <- count <- n <- NULL
 
+    x_r <- x_r [-which.max (x_r$date), ]
+
     dat <- rbind (x_r, x_p)
 
     if (bimonthly) {
@@ -57,6 +59,7 @@ plot_r_py <- function (x_r, x_p, bimonthly = FALSE,
     g + ggplot2::xlim (c (start_date, max (dat$date))) +
         ggplot2::ggtitle ("Rates of submission to pypi and CRAN",
                           subtitle  = "Including new submissions and updates") +
+        ggplot2::ylab ("Proprtion of total submissions") +
         ggplot2::theme (legend.position = c (0.1, 0.9),
                         plot.title = ggplot2::element_text (hjust = 0.5),
                         plot.subtitle = ggplot2::element_text (hjust = 0.5))

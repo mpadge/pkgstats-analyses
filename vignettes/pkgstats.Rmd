@@ -13,7 +13,7 @@ header-includes:
     - \usepackage{tikz}
     - \usetikzlibrary{arrows}
 vignette: >
-  %\VignetteIndexEntry{spatialcluster}
+  %\VignetteIndexEntry{pkgstats}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -23,3 +23,120 @@ library (pkgstats)
 ```
 
 # Introduction
+
+A key component of the success of Open Source Software (OSS) is package
+managers [@pkg-mngrs-2018], which effectively serve as curated repositories of
+independently-contributed software. Package managers exist both for specific
+operating systems [@pkg-mngrs-2018] and specific computer languages such as
+python [@new-pypi-2018], LaTeX [@ctan-wiki], JavaScript [@npm-2020], and many
+others. This work analyses all current and historically archived packages in
+the CRAN (Comprehensive R Archive Network) package manager for the R language.
+
+The majority of prior work on the temporal development or evolution of software
+has been based on individual pieces of software, here generically referred to
+as "packages". One notably exception is a recent analysis of the "pypi" (Python
+Package Index) package manager for python [@pypi2019], which analysed and
+presented a number of statistics relevant to the present work, including:
+
+- Compound annual growth rates in numbers of new packages were slightly less
+  (at 43%) than growth in active packages (47%) and in new releases (51%).
+- Compound annual growth rates in numbers of new package authors was lower than
+  these, at 39%.
+- Each package has around 7 +/- 19 new releases per year, at an average
+  inter-release frequency of 65 +/ 144 days.
+- Each author has 2 +/- 17 packages, and 15 +/ 125 releases.
+- Median package sizes are 20-40 KB, while mean values are 2-20 MB.
+- Total numbers of imported packages increases with compound annual growth rate
+  of 62%.
+- The standard python libraries represent around 19% of all package imports.
+
+This analyses represents the most comprehensive analysis to date of a package
+manager for any computer language, drawn almost two million releases of 179,000
+packages. The size of pypi necessarily restricted these analyses to package
+metadata, although single metrics of package size were also included. Moreover,
+the size of pypi meant that analyses of dependency networks were also
+relatively restricted to aggregate statistics only, with no analyses of the
+internal properties of dependency networks.
+
+More detailed considerations of temporal development and evolution of code have
+largely been restricted to individual packages. Analyses of code evolution
+frequently refer to work of @software-evolution-97, who expressed their
+findings as a series of "laws" of software evolution. These "laws" include
+that, over time, software increases both in complexity, and in functional
+content (or numbers of functions). Those laws of growth themselves derive from
+@Turski96, who posited an inverse-square law for software growth, later
+formalised in @Turski02.
+
+These "laws" of software evolution have been frequently used and cited (see
+overview in @Mens2008, and references therein), although overwhelmingly for
+considerations of individual software packages. They have been widely adopted
+in a burgeoning field of what might be referred to as "Software Mining and
+Analytics", albeit very commonly to elucidate useful predictors of software
+quality, rather than on general patterns of evolution. A useful overview of the
+field, in the form of an extensive meta-review of extant literature, was
+provided by @mining-repos-2013, who usefully identified a number of categories,
+including that of "code statistics" examined here.
+
+More detailed considerations of package dependency networks have been developed
+in more restricted, and thus more manageable, contexts, such as the analysis of
+the Debian network of @macro-evolution-2009, which revealed progressive
+increases in package inter-dependencies. Although they observe increases in the
+sizes of packages over time, and claim that this reflects the laws of
+@software-evolution-97, they neither quantify nor model actual rates of change.
+They also observe that the relative sizes of packages, measured in terms of
+lines of code, remains relatively stable across releases.
+
+A more extensive consideration of dependency networks alone was provided by 
+@seven-pkg-networks-2019, who examined networks from seven package management
+systems, including pypi and CRAN, the focus of the present work. They observe
+that both numbers of packages and numbers of dependencies increase more slowly
+for CRAN packages than for any of the other systems they consider, as do
+numbers of package updates. They also observe that the "survival probability"
+(that a package is not updated at some time, $t$) is far greater for CRAN than
+for other package ecosystems (although with differences observed between
+packages which are not required by other packages, and those which are).
+Finally, they observe that the Gini coefficient of inequality between dependent
+packages has also increased over time in all systems.
+
+This work focusses on the CRAN package system which is around one tenth the
+size of pypi for the python language, although still amounting to over 100,000
+releases of around 20,000 packages. This smaller sizes enables far more
+detailed analyses than previous work, not just of package metadata, but also
+extending to detailed analyses of the code itself.
+
+<!--
+# Research Questions
+-->
+
+# Methods
+
+Most of the methodology used in this study derives from [the `pkgstats`
+package](https://docs.ropensci.org/pkgstats/), an R package with
+a primary eponymous function used to collect static metrics from an R package.
+This package also contains [a function,
+`pkgstats_from_archive`](https://docs.ropensci.org/pkgstats/reference/pkgstats_from_archive.html),
+which can be applied to a local mirror of the CRAN archive to collate
+statistics from all packages. Data for these analyses were derived directly
+from this function.
+
+## Inverse-Square Law of Software Evolution
+
+One of our aims was to examine the applicability of the inverse-square law of
+software evolution [@Turski96; @software-evolution-97; @Turski02]. This law
+describes increases in numbers of software "modules" which translate in the
+context of R packages to functions. Increases over time in these numbers, $s$,
+are posited to follow the inverse square law,
+
+\begin{equation}
+    s_i = s_{i - 1} + \bar{E} / s_{i - 1} ^ 2,
+\end{equation}
+where $\bar{E}$ is a model parameter calculated from,
+\begin{equation}
+    E_i = (s_i - s_1) / (\sum_{k=1}^{i-1} 1 / s_k^2).
+\end{equation}
+
+## Network Analyses
+
+# Results
+
+# References

@@ -154,6 +154,9 @@ where $\bar{E}$ is a model parameter calculated from,
 
 ## Network Analyses
 
+- [ ] Describe / quantify effect of GitHub founding in 2008, as many results
+  manifest distinct changes from around 2010 onwards.
+
 # Results
 
 ## Impact of Covid19 Pandemic on Software Evolution
@@ -199,7 +202,9 @@ is reflected in more regulated meta-data able to be extracted from package
 'DESCRIPTION' files. Numbers of both authors and contributors have increased
 over time (Fig. 2A), with contributors having been rarely acknowledged at all
 prior to 2010 (two years after the launch of GitHub), increasing to an average
-of one acknowledged contributor per package in 2021.
+of one acknowledged contributor per package in 2021. Numbers of unique licenses
+manifest an opposite tendency, decreasing notably
+over time (Fig. 2B, resulting in the values shown in Table 1.
 
 ```{r num_aut_ctb, echo = FALSE, warning = FALSE, fig.cap = "**Figure 2.**"}
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
@@ -213,9 +218,7 @@ p1 <- ggplot (x, aes (x = month, y = value, colour = name)) +
     geom_smooth (method = "loess", formula = y ~ x, se = FALSE) +
     ggtitle ("A: Numbers of authors and contributors") +
     theme (legend.position = c (0.2, 0.4),
-           legend.background = element_rect(fill='transparent', colour='transparent'),
-           plot.title = element_text (hjust = 0.5),
-           plot.subtitle = element_text (hjust = 0.5))
+           legend.background = element_rect(fill='transparent', colour='transparent'))
 
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
     mutate (year = lubridate::year (date))
@@ -231,6 +234,18 @@ p2 <- ggplot (nlic, aes (x = year, y = n)) +
     ylab ("Number of distinct licenses") +
     ggtitle ("B: Numbers of licenses")
 
+p1 | p2
+```
+
+```{r licenses, echo = FALSE}
+index <- which (x$year > 2010)
+lic <- sort (table (x$license [index]), decreasing = TRUE)
+lic <- data.frame (license = names (lic),
+                   n = as.integer (lic)) [1:10, ]
+knitr::kable (lic, caption = "**Table 1.**")
+```
+
+```{r tr_urls, echo = FALSE, message = FALSE, fig.cap = "**Figure 3.** (A) Annual frequencies of the top 10 translations. (B) Annual frequencies of the top 10 primary URL domains, with frequencies for GitHub divided by 20."}
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
     mutate (year = lubridate::year (date))
 x$translations [x$translations == "NA"] <- NA_character_
@@ -255,30 +270,92 @@ top10 <- tr_summary$translation [1:10]
 tr_top10 <- tr [which (tr$translation %in% top10), ]
 p3 <- ggplot (tr_top10, aes (x = year, y = n, color = translation)) +
     geom_line () +
-    ggtitle ("C: Top 10 translations")
+    ggtitle ("A: Top 10 translations") +
+    guides (color = guide_legend (ncol = 2))
 
-(p1 | p2) / p3
+x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
+    mutate (year = lubridate::year (date))
+x <- lapply (split (x, f = as.factor (x$year)), function (i) {
+                 urls <- unlist (strsplit (i$urls, ",|;|\\n|\\s"))
+                 urls <- gsub ("^(\\s*?)http(s?)\\:\\/\\/", "", urls [!is.na (urls)])
+                 urls <- table (gsub ("\\/.*$", "", urls))
+                 urls <- sort (urls, decreasing = TRUE)
+                 data.frame (year = rep (i$year [1], length (urls)),
+                             url = names (urls),
+                             n = as.integer (urls))
+                  })
+x <- do.call (rbind, x)
+x <- x [which (!x$url == ""), ]
+rownames (x) <- NULL
+x$year <- lubridate::year (paste0 (x$year, "-01-01"))
+
+top10 <- x |>
+    group_by (url) |>
+    summarise (n = sum (n)) |>
+    arrange (desc (n))
+top10 <- top10 [-grep ("^(cran|www\\.r-project)", top10$url), ]
+
+x_top10 <- x [which (x$url %in% top10$url [1:10]), ]
+x_top10$n [x_top10$url == "github.com"] <-
+    x_top10$n [x_top10$url == "github.com"] / 20
+p4 <- ggplot (x_top10, aes (x = year, y = n, color = url)) +
+    geom_line () +
+    ggtitle ("B: Top 10 URLs") +
+    #theme (legend.position = c (0.2, 0.7),
+    #       legend.background = element_rect(fill='transparent', colour='transparent')) +
+    guides (color = guide_legend (ncol = 2))
+
+p3 / p4
 ```
 
-Numbers of unique licenses manifest an opposite tendency, decreasing notably
-over time (Fig. 2B, resulting in the values shown in Table 1.
 
-```{r licenses, echo = FALSE}
-index <- which (x$year > 2010)
-lic <- sort (table (x$license [index]), decreasing = TRUE)
-lic <- data.frame (license = names (lic),
-                   n = as.integer (lic)) [1:10, ]
-knitr::kable (lic)
-```
 
 Numbers of translations peaked broadly in the 2010's, and have declined notably
 since around 2015, suggesting a pronounced increased acceptance since that time
 of English as a globally standard language, and a concomitant decrease in
-active acknowledgement of other languages (Fig. 2C).
+active acknowledgement of other languages (Fig. 3A). Finally, analyses of URLs
+provided in package 'DESCRIPTION' files clearly reveals an abrupt break after
+around 2010 with the advent of online code repositories. GitHub has always
+dominated, while r-forge has declined progressively since around 2015. The most
+notable increase has been the emergence of rOpenSci as provider of the only URL
+to come close to within 1/20th of the popularity of GitHub over the past few
+years.
 
 
+### Internal Package and File Structure
 
-- Files & Package structure
+The temporal development of numbers of files manifest several notable
+characteristics (Fig. 3). Unsurprisingly, R packages have always been dominated
+by files in the R directory, numbers of which increased considerably up to
+around 2010, after which they are generally stabilised at a mean value of
+around 20 files. The `src` and `data` directories are the only places within an
+R package in which numbers of files have remained relatively constant over the
+preceding 20+ years. Packages generally had very few files in the `inst`
+directory prior to 2010, after which they have notably increased.
+
+The two sub-directories in which numbers of files have increased most
+significantly are `vignettes` and `tests`, clearly indicating that packages
+have become both better documented and better tested, especially since 2010.
+
+
+```{r nfiles-plot, echo = FALSE, message = FALSE, fig.cap = "**Figure 4**"}
+x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
+    mutate (year = lubridate::year (date)) |>
+    group_by (year) |>
+    summarise (R = mean (files_R),
+               src = mean (files_src),
+               inst = mean (files_inst),
+               vignettes = mean (files_vignettes),
+               tests = mean (files_tests),
+               data = mean (num_data_files)) |>
+    pivot_longer (cols = c (R, src, inst, vignettes, tests, data))
+ggplot (x, aes (x = year, y = value, color = name)) +
+    geom_line () +
+    theme (legend.position = c (0.1, 0.8),
+           legend.background = element_rect(fill='transparent', colour='transparent'))
+```
+
+
 
 
 ## Temporal Development #2: Dependency Networks

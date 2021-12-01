@@ -20,4 +20,5 @@
 ^inst/WORDLIST$
 ^ctags$
 ^inst/bin$
+^data-raw$
 ^windows$

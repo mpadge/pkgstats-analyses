@@ -19,3 +19,4 @@ aaa\.Rmd*
 docs
 inst/bin
 windows
+data-raw/

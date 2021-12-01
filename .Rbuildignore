@@ -18,6 +18,7 @@
 ^\.hooks$
 ^inst/precommit$
 ^inst/WORDLIST$
+^vignettes/*.Rds$
 ^ctags$
 ^inst/bin$
 ^data-raw$

@@ -77,7 +77,7 @@ m_load_pkgstats_data <- memoise::memoise (load_pkgstats_data_internal)
 
 convert_data <- function (x) {
 
-    is_r <- "package" %in% names (x)
+    is_r <- min (x$date) < "2005-01-01"
 
     tab <- table (x$month)
     tibble::tibble (language = ifelse (is_r, "R", "python"),

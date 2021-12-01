@@ -78,7 +78,7 @@ plot_new_vs_update <- function (datafile = "pkgstats-results.Rds",
     type <- match.arg (tolower (type), c ("bars", "lines"))
 
     x <- pkgstatsAnalyses::load_pkgstats_data (datafile, raw = TRUE)
-    is_r <- "package" %in% names (x)
+    is_r <- min (x$date) < "2005-01-01"
 
     dat <- m_new_vs_update_data (x)
 

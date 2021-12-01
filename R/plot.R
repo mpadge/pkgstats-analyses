@@ -77,7 +77,9 @@ plot_new_vs_update <- function (datafile = "pkgstats-results.Rds",
 
     type <- match.arg (tolower (type), c ("bars", "lines"))
 
-    x <- pkgstatsAnalyses::load_pkgstats_data (datafile, raw = TRUE)
+    x <- pkgstatsAnalyses::load_pkgstats_data (datafile,
+                                               raw = TRUE,
+                                               latest = FALSE)
     is_r <- min (x$date) < "2005-01-01"
 
     dat <- m_new_vs_update_data (x)
@@ -144,15 +146,15 @@ new_vs_update_data <- function (x) {
     tab_update <- table (p$month [which (!p$initial)])
 
     dat_new <- data.frame (type = "new",
-                             count = as.integer (tab_new),
-                             #n = as.numeric (tab_new / sum (tab_new)),
-                             n = as.numeric (tab_new / nrow (p)),
-                             date = lubridate::ymd (names (tab_new)))
+                           count = as.integer (tab_new),
+                           #n = as.numeric (tab_new / sum (tab_new)),
+                           n = as.numeric (tab_new / nrow (p)),
+                           date = lubridate::ymd (names (tab_new)))
     dat_update <- data.frame (type = "update",
-                                count = as.integer (tab_update),
-                                #n = as.numeric (tab_update / sum (tab_update)),
-                                n = as.numeric (tab_update / nrow (p)),
-                                date = lubridate::ymd (names (tab_update)))
+                              count = as.integer (tab_update),
+                              #n = as.numeric (tab_update / sum (tab_update)),
+                              n = as.numeric (tab_update / nrow (p)),
+                              date = lubridate::ymd (names (tab_update)))
 
     rbind (dat_new, dat_update)
 }

@@ -20,6 +20,9 @@ vignette: >
 
 ```{r pkg-load, echo = FALSE, message = FALSE}
 library (pkgstatsAnalyses)
+library (ggplot2)
+library (dplyr)
+library (tidyr)
 here <- here::here ()
 ```
 
@@ -169,7 +172,9 @@ x_p <- readRDS ("pypi-prepro.Rds")
 plot_r_py (x_r, x_p,
            bimonthly = FALSE,
            start_date = "2018-01-01",
-           type = "lines")
+           type = "lines") +
+    ggtitle ("Figure 1: Rates of submission to pypi and CRAN",
+             subtitle  = "Including new submissions and updates")
 ```
 
 Further examination of the CRAN data to distinguish between new submissions
@@ -179,12 +184,113 @@ submission of new packages remained fairly constant (Fig. 2).
 
 ```{r new-vs-update, echo = FALSE, warning = FALSE}
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
-plot_new_vs_update (datafile)
+plot_new_vs_update (datafile) +
+    ggtitle ("Figure 2: Rates of new submissions and updates to CRAN")
 ```
 
 We do not intend to hypothesise any reason for these observed patterns, but
-merely note them here for reference in the context of subsequent results.
+merely note them here for reference in the context of subsequent results. For
+reasons we do not speculate on here, updates to R packages have been strongly
+impacted by Covid19, unlike equivalent rates either for new submissions to
+CRAN, or for rates of submission of python packages to pypi. 
+
+## Temporal Development #1: Packages and meta-data
+
+The relatively regulated process of CRAN submissions [@seven-pkg-networks-2019]
+is reflected in more regulated meta-data able to be extracted from package
+'DESCRIPTION' files. Numbers of both authors and contributors have increased
+over time (Fig. 3), with contributors having been rarely acknowledged at all
+prior to 2010 (two years after the launch of GitHub), increasing to an average
+of one acknowledged contributor per package in 2021.
+
+```{r num_aut_ctb, echo = FALSE, warning = FALSE}
+datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
+x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
+    group_by (month) |>
+    summarise (n_aut = mean (desc_n_aut),
+               n_ctb = mean (desc_n_ctb)) |>
+    pivot_longer (cols = c (n_aut, n_ctb))
+ggplot (x, aes (x = month, y = value, colour = name)) +
+    geom_smooth (method = "loess", formula = y ~ x, se = FALSE) +
+    ggtitle ("Figure 3: Numbers of authors and contributors") +
+    theme (legend.position = c (0.1, 0.9),
+           plot.title = ggplot2::element_text (hjust = 0.5),
+           plot.subtitle = ggplot2::element_text (hjust = 0.5))
+```
+
+Numbers of unique licenses manifest an opposite tendency, decreasing notably
+over time (Fig. 4), resulting in the values shown in Table 1.
+
+```{r licenses, echo = FALSE}
+x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
+    mutate (year = lubridate::year (date))
+lic <- lapply (split (x, f = as.factor (x$year)), function (i) {
+                   lic <- unlist (strsplit (i$license, "\\|"))
+                   lic <- gsub ("^\\s*|\\s*$", "", lic)
+                   unique (lic) })
+y <- lubridate::year (paste0 (names (lic), "-01-01"))
+nlic <- data.frame (year = y,
+                    n = vapply (lic, length, integer (1)))
+ggplot (nlic, aes (x = year, y = n)) +
+    geom_line () +
+    ylab ("Number of distinct licenses") +
+    ggtitle ("Figure 4: Numbers of licenses")
+
+index <- which (x$year > 2010)
+lic <- sort (table (x$license [index]), decreasing = TRUE)
+lic <- data.frame (license = names (lic),
+                   n = as.integer (lic)) [1:10, ]
+knitr::kable (lic)
+```
+
+Numbers of translations peaked broadly in the 2010's, and have declined notably
+since around 2015, suggesting a pronounced increased acceptance since that time
+of English as a globally standard language, and a concomitant decrease in
+active acknowledgement of other languages.
+
+```{r translations, echo = FALSE}
+x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
+    mutate (year = lubridate::year (date))
+x$translations [x$translations == "NA"] <- NA_character_
+tr <- lapply (split (x, f = as.factor (x$year)), function (i) {
+                  tr <- unlist (strsplit (i$translations, ","))
+                  tr <- gsub ("^\\s*|\\s*$", "", tr [which (!is.na (tr))])
+                  tab <- sort (table (tr), decreasing = TRUE)
+                  data.frame (translation = names (tab),
+                              n = as.integer (tab)) })
+tr <- tr [which (vapply (tr, nrow, integer (1)) > 0)]
+for (i in seq_along (tr)) {
+    tr [[i]]$year <- names (tr) [i]
+}
+tr <- do.call (rbind, tr)
+rownames (tr) <- NULL
+tr$year <- lubridate::year (paste0 (tr$year, "-01-01"))
+
+tr_summary <- tr |> group_by (translation) |>
+    summarise (n = sum (n)) |>
+    arrange (desc (n))
+top10 <- tr_summary$translation [1:10]
+tr_top10 <- tr [which (tr$translation %in% top10), ]
+ggplot (tr_top10, aes (x = year, y = n, color = translation)) +
+    geom_line () +
+    ggtitle ("Figure 5: Top 10 translations")
+```
 
 
+- Translations
+- Files & Package structure
+
+
+## Temporal Development #2: Dependency Networks
+
+- Expansion of base + recommended packages over time
+- Use of base + recommended package in other packages over time
+- Use of contributed packages over time
+
+## Temporal Development #3: Code Metrics
+
+- Computer Languages
+- Trends in code metrics
+- Inter- versus intra-package patterns
 
 # References

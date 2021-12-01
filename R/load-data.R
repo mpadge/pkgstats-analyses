@@ -100,7 +100,10 @@ latest_data <- function (x) {
         dplyr::group_by (package) |>
         dplyr::slice_max (version)
     # And a few repeated versions
-    x <- x [-which (duplicated (x [, c ("package", "version", "date")])), ]
+    dups <- which (duplicated (x [, c ("package", "version", "date")]))
+    if (length (dups) > 0L) {
+        x <- x [-dups, ]
+    }
 
     return (x)
 }

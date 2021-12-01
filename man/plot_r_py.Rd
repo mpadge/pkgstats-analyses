@@ -9,7 +9,8 @@ plot_r_py(
   x_p,
   bimonthly = FALSE,
   start_date = "2018-01-01",
-  type = "bars"
+  type = "bars",
+  lwd = 1
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ range.}
 
 \item{type}{Either "bars" for a bar (column) graph, or "lines" for a line
 graph.}
+
+\item{lwd}{For type = "lines" only.}
 }
 \value{
 A \pkg{ggplot2} object (invisibly)

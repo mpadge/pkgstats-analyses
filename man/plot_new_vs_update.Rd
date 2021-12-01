@@ -8,7 +8,8 @@ plot_new_vs_update(
   datafile = "pkgstats-results.Rds",
   bimonthly = FALSE,
   start_date = "2018-01-01",
-  type = "lines"
+  type = "lines",
+  lwd = 1
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ range.}
 
 \item{type}{Either "bars" for a bar (column) graph, or "lines" for a line
 graph.}
+
+\item{lwd}{For type = "lines" only.}
 }
 \description{
 Plot time series of rates of new submissions versus updated packages

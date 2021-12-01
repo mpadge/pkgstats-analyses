@@ -9,11 +9,13 @@
 #' range.
 #' @param type Either "bars" for a bar (column) graph, or "lines" for a line
 #' graph.
+#' @param lwd For type = "lines" only.
 #' @return A \pkg{ggplot2} object (invisibly)
 #' @export
 plot_r_py <- function (x_r, x_p, bimonthly = FALSE,
                        start_date = "2018-01-01",
-                       type = "bars") {
+                       type = "bars",
+                       lwd = 1) {
 
     type <- match.arg (tolower (type), c ("bars", "lines"))
 
@@ -54,7 +56,7 @@ plot_r_py <- function (x_r, x_p, bimonthly = FALSE,
         g <- g + ggplot2::geom_col (alpha = 0.5,
                                     position = ggplot2::position_identity ())
     else
-        g <- g + ggplot2::geom_line (lwd = 1.5)
+        g <- g + ggplot2::geom_line (lwd = lwd)
 
     g + ggplot2::xlim (c (start_date, max (dat$date))) +
         ggplot2::ggtitle ("Rates of submission to pypi and CRAN",
@@ -73,7 +75,8 @@ plot_r_py <- function (x_r, x_p, bimonthly = FALSE,
 plot_new_vs_update <- function (datafile = "pkgstats-results.Rds",
                                 bimonthly = FALSE,
                                 start_date = "2018-01-01",
-                                type = "lines") {
+                                type = "lines",
+                                lwd = 1) {
 
     # suppress no visible binding notes:
     package <- n <- count <- NULL
@@ -120,7 +123,7 @@ plot_new_vs_update <- function (datafile = "pkgstats-results.Rds",
         g <- g + ggplot2::geom_col (alpha = 0.5,
                                     position = ggplot2::position_dodge ())
     else
-        g <- g + ggplot2::geom_line (lwd = 2)
+        g <- g + ggplot2::geom_line (lwd = lwd)
 
     where <- ifelse (is_r, "CRAN", "pypi")
     titl <- paste0 ("Rates of new submissions and updates to ", where)

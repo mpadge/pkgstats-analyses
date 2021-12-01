@@ -22,7 +22,7 @@ load_pkgstats_data <- function (datafile = "pkgstats-results.Rds",
 
     if (latest) {
 
-        x <- m_latests_data (x)
+        x <- m_latest_data (x)
 
     } else if (!raw) {
 
@@ -107,4 +107,4 @@ latest_data <- function (x) {
 
     return (x)
 }
-m_latests_data <- memoise::memoise (latest_data)
+m_latest_data <- memoise::memoise (latest_data)

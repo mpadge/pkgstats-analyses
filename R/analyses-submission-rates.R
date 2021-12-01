@@ -13,6 +13,8 @@ pkgstats_analyse_submission_rates <- function (datafile) {
 
 analyse_submission_rates <- function (x) {
 
+    package <- NULL # suppress no visible binding note
+
     x |>
         dplyr::arrange (date) |>
         dplyr::group_by (package) |>

@@ -90,6 +90,8 @@ m_convert_data <- memoise::memoise (convert_data)
 
 latest_data <- function (x) {
 
+    package <- NULL # suppress no visible binding note
+
     x <- x |>
         dplyr::group_by (package) |>
         dplyr::slice_max (date)

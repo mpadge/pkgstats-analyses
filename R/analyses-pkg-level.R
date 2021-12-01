@@ -37,6 +37,8 @@ pkgstats_analyse_packages <- function (datafile) {
 
 pkgstats_analyse_all_pkgs <- function (x, iv_nms) {
 
+    date_wt <- NULL # suppress no visible binding note
+
     old_plan <- future::plan (future::multisession (workers =
                         ceiling (parallelly::availableCores () - 1)))
 
@@ -71,6 +73,8 @@ pkgstats_analyse_all_pkgs <- function (x, iv_nms) {
 m_pkgstats_analyse_all_pkgs <- memoise::memoise (pkgstats_analyse_all_pkgs)
 
 pkgstats_analyse_time_only <- function (x) {
+
+    date_wt <- NULL # suppress no visible binding note
 
     if (any (duplicated (x$package)))
         stop ("'x' must be result of 'load_pkgstats_data' ",

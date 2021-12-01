@@ -87,7 +87,7 @@ pkgstats_analyse_time_only <- function (x) {
 
     one_effect <- function (x, nm) {
 
-        form <- as.formula (paste0 (nm, " ~ date"))
+        form <- stats::as.formula (paste0 (nm, " ~ date"))
         mod <- stats::lm (form,
                           weights = date_wt,
                           data = x)

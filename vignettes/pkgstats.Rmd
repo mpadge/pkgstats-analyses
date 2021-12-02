@@ -169,20 +169,9 @@ datafile <- file.path (here, "data-raw", "pypi.Rds")
 x <- load_pkgstats_data (datafile, raw = FALSE, latest = FALSE)
 saveRDS (x, "pypi-prepro.Rds")
 ```
-```{r figure-one, echo = FALSE, warning = FALSE, fig.cap = "**Figure 1.**"}
-datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
-x_r <- load_pkgstats_data (datafile, raw = FALSE, latest = FALSE)
-x_p <- readRDS ("pypi-prepro.Rds")
-p1 <- plot_r_py (x_r, x_p,
-                 bimonthly = FALSE,
-                 start_date = "2018-01-01",
-                 type = "lines") +
-    ggtitle ("A: Total submissions",
-             subtitle  = "Including new submissions and updates")
-p2 <- plot_new_vs_update (datafile) +
-    ggtitle ("B: CRAN submissions")
-p1 + p2
+```{r fig1, child = "figures/fig1.Rmd", eval = TRUE, echo = FALSE}
 ```
+
 
 Further examination of the CRAN data to distinguish between new submissions
 versus updates of existing packages reveals that the marked downturn evident in
@@ -206,38 +195,13 @@ of one acknowledged contributor per package in 2021. Numbers of unique licenses
 manifest an opposite tendency, decreasing notably
 over time (Fig. 2B, resulting in the values shown in Table 1.
 
-```{r num_aut_ctb, echo = FALSE, warning = FALSE, fig.cap = "**Figure 2.**"}
-datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
-x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
-    group_by (month) |>
-    summarise (n_aut = mean (desc_n_aut),
-               n_ctb = mean (desc_n_ctb)) |>
-    rename (aut = n_aut, ctb = n_ctb) |>
-    pivot_longer (cols = c (aut, ctb))
-p1 <- ggplot (x, aes (x = month, y = value, colour = name)) +
-    geom_smooth (method = "loess", formula = y ~ x, se = FALSE) +
-    ggtitle ("A: Numbers of authors and contributors") +
-    theme (legend.position = c (0.2, 0.4),
-           legend.background = element_rect(fill='transparent', colour='transparent'))
-
-x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
-    mutate (year = lubridate::year (date))
-lic <- lapply (split (x, f = as.factor (x$year)), function (i) {
-                   lic <- unlist (strsplit (i$license, "\\|"))
-                   lic <- gsub ("^\\s*|\\s*$", "", lic)
-                   unique (lic) })
-y <- lubridate::year (paste0 (names (lic), "-01-01"))
-nlic <- data.frame (year = y,
-                    n = vapply (lic, length, integer (1)))
-p2 <- ggplot (nlic, aes (x = year, y = n)) +
-    geom_line () +
-    ylab ("Number of distinct licenses") +
-    ggtitle ("B: Numbers of licenses")
-
-p1 | p2
+```{r fig2, child = "figures/fig2.Rmd", eval = TRUE, echo = FALSE}
 ```
 
 ```{r licenses, echo = FALSE}
+datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
+x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
+    mutate (year = lubridate::year (date))
 index <- which (x$year > 2010)
 lic <- sort (table (x$license [index]), decreasing = TRUE)
 lic <- data.frame (license = names (lic),
@@ -245,69 +209,8 @@ lic <- data.frame (license = names (lic),
 knitr::kable (lic, caption = "**Table 1.**")
 ```
 
-```{r tr_urls, echo = FALSE, message = FALSE, fig.cap = "**Figure 3.** (A) Annual frequencies of the top 10 translations. (B) Annual frequencies of the top 10 primary URL domains, with frequencies for GitHub divided by 20."}
-x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
-    mutate (year = lubridate::year (date))
-x$translations [x$translations == "NA"] <- NA_character_
-tr <- lapply (split (x, f = as.factor (x$year)), function (i) {
-                  tr <- unlist (strsplit (i$translations, ","))
-                  tr <- gsub ("^\\s*|\\s*$", "", tr [which (!is.na (tr))])
-                  tab <- sort (table (tr), decreasing = TRUE)
-                  data.frame (translation = names (tab),
-                              n = as.integer (tab)) })
-tr <- tr [which (vapply (tr, nrow, integer (1)) > 0)]
-for (i in seq_along (tr)) {
-    tr [[i]]$year <- names (tr) [i]
-}
-tr <- do.call (rbind, tr)
-rownames (tr) <- NULL
-tr$year <- lubridate::year (paste0 (tr$year, "-01-01"))
-
-tr_summary <- tr |> group_by (translation) |>
-    summarise (n = sum (n)) |>
-    arrange (desc (n))
-top10 <- tr_summary$translation [1:10]
-tr_top10 <- tr [which (tr$translation %in% top10), ]
-p3 <- ggplot (tr_top10, aes (x = year, y = n, color = translation)) +
-    geom_line () +
-    ggtitle ("A: Top 10 translations") +
-    guides (color = guide_legend (ncol = 2))
-
-x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
-    mutate (year = lubridate::year (date))
-x <- lapply (split (x, f = as.factor (x$year)), function (i) {
-                 urls <- unlist (strsplit (i$urls, ",|;|\\n|\\s"))
-                 urls <- gsub ("^(\\s*?)http(s?)\\:\\/\\/", "", urls [!is.na (urls)])
-                 urls <- table (gsub ("\\/.*$", "", urls))
-                 urls <- sort (urls, decreasing = TRUE)
-                 data.frame (year = rep (i$year [1], length (urls)),
-                             url = names (urls),
-                             n = as.integer (urls))
-                  })
-x <- do.call (rbind, x)
-x <- x [which (!x$url == ""), ]
-rownames (x) <- NULL
-x$year <- lubridate::year (paste0 (x$year, "-01-01"))
-
-top10 <- x |>
-    group_by (url) |>
-    summarise (n = sum (n)) |>
-    arrange (desc (n))
-top10 <- top10 [-grep ("^(cran|www\\.r-project)", top10$url), ]
-
-x_top10 <- x [which (x$url %in% top10$url [1:10]), ]
-x_top10$n [x_top10$url == "github.com"] <-
-    x_top10$n [x_top10$url == "github.com"] / 20
-p4 <- ggplot (x_top10, aes (x = year, y = n, color = url)) +
-    geom_line () +
-    ggtitle ("B: Top 10 URLs") +
-    #theme (legend.position = c (0.2, 0.7),
-    #       legend.background = element_rect(fill='transparent', colour='transparent')) +
-    guides (color = guide_legend (ncol = 2))
-
-p3 / p4
+```{r fig3, child = "figures/fig3.Rmd", eval = TRUE, echo = FALSE}
 ```
-
 
 
 Numbers of translations peaked broadly in the 2010's, and have declined notably
@@ -338,23 +241,8 @@ significantly are `vignettes` and `tests`, clearly indicating that packages
 have become both better documented and better tested, especially since 2010.
 
 
-```{r nfiles-plot, echo = FALSE, message = FALSE, fig.cap = "**Figure 4**"}
-x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
-    mutate (year = lubridate::year (date)) |>
-    group_by (year) |>
-    summarise (R = mean (files_R),
-               src = mean (files_src),
-               inst = mean (files_inst),
-               vignettes = mean (files_vignettes),
-               tests = mean (files_tests),
-               data = mean (num_data_files)) |>
-    pivot_longer (cols = c (R, src, inst, vignettes, tests, data))
-ggplot (x, aes (x = year, y = value, color = name)) +
-    geom_line () +
-    theme (legend.position = c (0.1, 0.8),
-           legend.background = element_rect(fill='transparent', colour='transparent'))
+```{r fig4, child = "figures/fig4.Rmd", eval = TRUE, echo = FALSE}
 ```
-
 
 
 

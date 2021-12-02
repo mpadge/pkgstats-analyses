@@ -1,0 +1,63 @@
+
+```{r fig3, echo = FALSE, message = FALSE, fig.cap = "**Figure 3.** (A) Annual frequencies of the top 10 translations. (B) Annual frequencies of the top 10 primary URL domains, with frequencies for GitHub divided by 20."}
+x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
+    mutate (year = lubridate::year (date))
+x$translations [x$translations == "NA"] <- NA_character_
+tr <- lapply (split (x, f = as.factor (x$year)), function (i) {
+                  tr <- unlist (strsplit (i$translations, ","))
+                  tr <- gsub ("^\\s*|\\s*$", "", tr [which (!is.na (tr))])
+                  tab <- sort (table (tr), decreasing = TRUE)
+                  data.frame (translation = names (tab),
+                              n = as.integer (tab)) })
+tr <- tr [which (vapply (tr, nrow, integer (1)) > 0)]
+for (i in seq_along (tr)) {
+    tr [[i]]$year <- names (tr) [i]
+}
+tr <- do.call (rbind, tr)
+rownames (tr) <- NULL
+tr$year <- lubridate::year (paste0 (tr$year, "-01-01"))
+
+tr_summary <- tr |> group_by (translation) |>
+    summarise (n = sum (n)) |>
+    arrange (desc (n))
+top10 <- tr_summary$translation [1:10]
+tr_top10 <- tr [which (tr$translation %in% top10), ]
+p3 <- ggplot (tr_top10, aes (x = year, y = n, color = translation)) +
+    geom_line () +
+    ggtitle ("A: Top 10 translations") +
+    guides (color = guide_legend (ncol = 2))
+
+x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
+    mutate (year = lubridate::year (date))
+x <- lapply (split (x, f = as.factor (x$year)), function (i) {
+                 urls <- unlist (strsplit (i$urls, ",|;|\\n|\\s"))
+                 urls <- gsub ("^(\\s*?)http(s?)\\:\\/\\/", "", urls [!is.na (urls)])
+                 urls <- table (gsub ("\\/.*$", "", urls))
+                 urls <- sort (urls, decreasing = TRUE)
+                 data.frame (year = rep (i$year [1], length (urls)),
+                             url = names (urls),
+                             n = as.integer (urls))
+                  })
+x <- do.call (rbind, x)
+x <- x [which (!x$url == ""), ]
+rownames (x) <- NULL
+x$year <- lubridate::year (paste0 (x$year, "-01-01"))
+
+top10 <- x |>
+    group_by (url) |>
+    summarise (n = sum (n)) |>
+    arrange (desc (n))
+top10 <- top10 [-grep ("^(cran|www\\.r-project)", top10$url), ]
+
+x_top10 <- x [which (x$url %in% top10$url [1:10]), ]
+x_top10$n [x_top10$url == "github.com"] <-
+    x_top10$n [x_top10$url == "github.com"] / 20
+p4 <- ggplot (x_top10, aes (x = year, y = n, color = url)) +
+    geom_line () +
+    ggtitle ("B: Top 10 URLs") +
+    #theme (legend.position = c (0.2, 0.7),
+    #       legend.background = element_rect(fill='transparent', colour='transparent')) +
+    guides (color = guide_legend (ncol = 2))
+
+p3 / p4
+```

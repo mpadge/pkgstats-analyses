@@ -1,0 +1,17 @@
+
+```{r fig4, echo = FALSE, message = FALSE, fig.cap = "**Figure 4**"}
+x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
+    mutate (year = lubridate::year (date)) |>
+    group_by (year) |>
+    summarise (R = mean (files_R),
+               src = mean (files_src),
+               inst = mean (files_inst),
+               vignettes = mean (files_vignettes),
+               tests = mean (files_tests),
+               data = mean (num_data_files)) |>
+    pivot_longer (cols = c (R, src, inst, vignettes, tests, data))
+ggplot (x, aes (x = year, y = value, color = name)) +
+    geom_line () +
+    theme (legend.position = c (0.1, 0.8),
+           legend.background = element_rect(fill='transparent', colour='transparent'))
+```

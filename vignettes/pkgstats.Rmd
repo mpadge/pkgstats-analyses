@@ -239,18 +239,37 @@ directory prior to 2010, after which they have notably increased.
 The two sub-directories in which numbers of files have increased most
 significantly are `vignettes` and `tests`, clearly indicating that packages
 have become both better documented and better tested, especially since 2010.
+These patterns are explored further below.
 
 
 ```{r fig4, child = "figures/fig4.Rmd", eval = TRUE, echo = FALSE}
 ```
 
 
+@static-analysis-2016,
 
 ## Temporal Development #2: Dependency Networks
+
+Like the "standard" libraries for the python language, R has a core set of
+"base" and "recommended" packages. Figure 5A shows the change in the relative
+use of these compared with "contributed", or externally user-generated
+packages, over time. The use of recommended packages has remained relatively
+constant over time, representing around 15-20% of all function calls. Calls to
+base R functions represented over 80% of all function calls in the early 2000s,
+yet have declined in recent years to below 70% (for unique function calls).
+This reduction has been offset by a concomitantly pronounced increase in calls
+to functions from contributed packages.
+
+
+```{r fig5, child = "figures/fig5.Rmd", eval = TRUE, echo = FALSE}
+```
 
 - Expansion of base + recommended packages over time
 - Use of base + recommended package in other packages over time
 - Use of contributed packages over time
+
+(These can not be done until data re-generated following [`pkgstats`
+issue#32](https://github.com/ropensci-review-tools/pkgstats/issues/32).
 
 ## Temporal Development #3: Code Metrics
 

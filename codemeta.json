@@ -10,7 +10,7 @@
   "codeRepository": "https://github.com/mpadge/pkgstats-analyses",
   "issueTracker": "https://github.com/mpadge/pkgstats-analyses/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.0.0.386",
+  "version": "0.0.0.387",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -263,5 +263,5 @@
       "sameAs": "https://CRAN.R-project.org/package=tibble"
     }
   ],
-  "fileSize": "2210.807KB"
+  "fileSize": "2375.181KB"
 }

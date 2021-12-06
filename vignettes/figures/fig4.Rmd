@@ -1,15 +1,41 @@
 
+```{r}
+n_files_file <- file.path (here, "vignettes", "n-files-data.Rds")
+n_files_exists <- file.exists (n_files_file)
+```
+
+```{r n-files-data, eval = !n_files_exists}
+x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
+nfiles_one_year <- function (x, year = 2015) {
+
+    x1 <- x |>
+        filter (year <= !!year) |>
+        group_by (package) |>
+        slice_max (date) |>
+        summarise (R = mean (files_R),
+                   src = mean (files_src),
+                   inst = mean (files_inst),
+                   vignettes = mean (files_vignettes),
+                   tests = mean (files_tests),
+                   data = mean (num_data_files))
+    n_mean <- colMeans (x1 [, -1], na.rm = TRUE)
+
+    c (year = year, n_mean)
+}
+dat <- vapply (sort (unique (x$year)), function (i)
+               nfiles_one_year (x, i),
+               numeric (7))
+dat <- data.frame (t (dat))
+dat$year <- lubridate::year (paste0 (dat$year, "-01-01"))
+
+saveRDS (dat, n_files_file)
+```
+
 ```{r fig4, echo = FALSE, message = FALSE, fig.cap = "**Figure 4**"}
-x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
-    group_by (year) |>
-    summarise (R = mean (files_R),
-               src = mean (files_src),
-               inst = mean (files_inst),
-               vignettes = mean (files_vignettes),
-               tests = mean (files_tests),
-               data = mean (num_data_files)) |>
-    pivot_longer (cols = c (R, src, inst, vignettes, tests, data))
-ggplot (x, aes (x = year, y = value, color = name)) +
+dat <- readRDS (n_files_file) |>
+    pivot_longer (cols = c (R, src, inst, vignettes, tests, data)) |>
+    rename (n_files = value, dir = name)
+ggplot (dat, aes (x = year, y = n_files, color = dir)) +
     geom_line () +
     theme (legend.position = c (0.1, 0.8),
            legend.background = element_rect(fill='transparent', colour='transparent'))

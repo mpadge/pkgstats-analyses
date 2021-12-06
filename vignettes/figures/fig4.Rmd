@@ -31,12 +31,58 @@ dat$year <- lubridate::year (paste0 (dat$year, "-01-01"))
 saveRDS (dat, n_files_file)
 ```
 
-```{r fig4, echo = FALSE, message = FALSE, fig.cap = "**Figure 4**"}
+
+
+```{r pkg-level-n-files, warning = FALSE, message = FALSE}
+x_per_pkg <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
+    group_by (package) |>
+    summarise (R = files_R / lag (files_R),
+               src = files_src / lag (files_src),
+               inst = files_inst / lag (files_inst),
+               vignettes = files_vignettes / lag (files_vignettes),
+               tests = files_tests / lag (files_tests),
+               data = num_data_files / lag (num_data_files),
+               seq = seq_along (R),
+               .groups = "keep") |>
+    mutate_at(vars (R, src, inst, vignettes, tests, data),
+              ~replace (., !is.finite (.), NA)) |>
+    group_by (seq) |>
+    summarise (R = mean (R, na.rm = TRUE),
+               src = mean (src, na.rm = TRUE),
+               inst = mean (inst, na.rm = TRUE),
+               vignettes = mean (vignettes, na.rm = TRUE),
+               tests = mean (tests, na.rm = TRUE),
+               data = mean (data, na.rm = TRUE),
+               .groups = "keep") |>
+    filter (seq > 1) |>
+    pivot_longer (cols = c (R, src, inst, vignettes, tests, data)) |>
+    rename (dir = name)
+
+# rm 1st inst value which is anomalously high:
+x_per_pkg$value [x_per_pkg$dir == "inst" & x_per_pkg$seq == 2] <- NA
+
+p2 <- x_per_pkg |>
+    filter (seq <= 10) |>
+    ggplot (aes (x = seq, y = value, colour = dir)) +
+    geom_line () +
+    xlab ("Release Sequence") +
+    ylab ("Ratio of #files") + 
+    ggtitle ("B: Ratio of #files / release") +
+    theme (legend.position = c (0.6, 0.8),
+           legend.background = element_rect(fill='transparent', colour='transparent'))
+```
+
+```{r fig4a}
 dat <- readRDS (n_files_file) |>
     pivot_longer (cols = c (R, src, inst, vignettes, tests, data)) |>
     rename (n_files = value, dir = name)
-ggplot (dat, aes (x = year, y = n_files, color = dir)) +
+p1 <- ggplot (dat, aes (x = year, y = n_files, color = dir)) +
     geom_line () +
-    theme (legend.position = c (0.1, 0.8),
-           legend.background = element_rect(fill='transparent', colour='transparent'))
+    ggtitle ("A: Numbers of files") +
+    ylab ("#files") +
+    theme (legend.position = "none")
+```
+
+```{r fig4, echo = FALSE, message = FALSE, fig.cap = "**Figure 4**"}
+p1 + p2
 ```

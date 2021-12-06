@@ -84,8 +84,8 @@ couplings <- function (x, year = 2015, summarise = TRUE) {
     deps$n_total_to [which (is.na (deps$n_total_to))] <- 0L
     deps$n_unique_to [which (is.na (deps$n_unique_to))] <- 0L
 
-    deps$instability_total <- deps$n_total_to / (deps$n_total_to + deps$n_total_from)
-    deps$instability_unique <- deps$n_unique_to / (deps$n_unique_to + deps$n_unique_from)
+    deps$instability_total <- deps$n_total_from / (deps$n_total_to + deps$n_total_from)
+    deps$instability_unique <- deps$n_unique_from / (deps$n_unique_to + deps$n_unique_from)
 
     if (summarise) {
 

@@ -9,6 +9,15 @@ x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
 x <- x [which (!(is.na (x$external_calls) | x$external_calls == "")), ]
 recommended <- recommended_pkgs ()
 deps <- dependencies (x)
+
+cp_dat_file <- file.path (here, "vignettes", "coupling-data.Rds")
+cp_dat_exists <- file.exists (cp_dat_file)
+```
+
+```{r coupling-data-generate, eval = !cp_dat_exists}
+cp_dat <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
+    summarise_coupling_data ()
+saveRDS (cp_dat, cp_dat_file)
 ```
 
 
@@ -82,118 +91,30 @@ deps2020 <- deps [deps$year == 2020, ]
 ```{r deps-p2}
 p2 <- ggplot (top10, aes (x = year, y = n, colour = package)) +
     geom_line () +
-    ggtitle ("B: Calls to top 10 packages") +
+    ggtitle ("C: Calls to top 10 packages") +
     ylab ("Number of calls") +
     scale_y_log10 () +
-    theme (legend.position = c (0.2, 0.65),
-           legend.background = element_rect(fill='transparent', colour='transparent'))
-```
-
-
-<!--
-
-# dependency networks over time
-
--->
-
-```{r}
-graph_data_file <- file.path (here, "vignettes", "graph-metrics.Rds")
-calc_graph_data <- !file.exists (graph_data_file)
-```
-
-```{r calc-graph-data, eval = calc_graph_data}
-xraw <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
-
-dat_one_year <- function (xraw, year = 2015) {
-
-    x <- xraw |>
-        filter (year <= !!year) |>
-        group_by (package) |>
-        slice_max (date)
-    x <- x [which (!(is.na (x$external_calls) | x$external_calls == "")), ]
-    x <- x [which (!(x$imports == "NA" | nchar (x$imports) == 0L)), ]
-    if (nrow (x) == 0) {
-        return (NULL)
-    }
-
-    imports <- lapply (seq (nrow (x)), function (i)
-                          data.frame (x$package [i],
-                                      imports = strsplit (x$imports [i], ",") [[1]]))
-    imports <- do.call (rbind, imports)
-    imports <- data.frame (from = gsub ("^\\s*|\\s*$", "", imports [, 1]),
-                           to = gsub ("^\\s*|\\s*$", "", imports [, 2]))
-    imports <- imports [which (!duplicated (imports)), ]
-
-    graph_from_data_frame (imports)
-}
-
-graph_metrics <- function (g) {
-
-    dd_in <- degree_distribution (g, mode = "in")
-    dd_in_zero <- length (which (dd_in < 1e-10)) / length (dd_in)
-    dd_in_mean <- mean (dd_in [which (dd_in > 1e-10)])
-    dd_in_med <- median (dd_in [which (dd_in > 1e-10)])
-    dd_out <- degree_distribution (g, mode = "out")
-    dd_out_zero <- length (which (dd_out < 1e-10)) / length (dd_out)
-    dd_out_mean <- mean (dd_out [which (dd_out > 1e-10)])
-    dd_out_med <- median (dd_out [which (dd_out > 1e-10)])
-
-    d <- distances (g)
-    d [!is.finite (d)] <- NA
-    stats <- apply (d, 2, function (i) c (median (i, na.rm = TRUE),
-                                          mean (i, na.rm = TRUE)))
-    c (dd_in_zero = dd_in_zero,
-       dd_in_mean = dd_in_mean,
-       dd_in_med = dd_in_med,
-       dd_out_zero = dd_out_zero,
-       dd_out_mean = dd_out_mean,
-       dd_out_med = dd_out_med,
-       re = reciprocity (g),
-       ad = assortativity_degree (g),
-       cb = centr_betw(g, directed = FALSE)$centralization,
-       cd = centr_degree(g)$centralization,
-       d_med = median (stats [1, ]),
-       d_mean = mean (stats [2, ]))
-}
-
-years <- sort (unique (xraw$year))
-dat <- lapply (years, function (y) {
-    g <- dat_one_year (xraw, y)
-    if (is.null (g)) {
-        return (NULL)
-    }
-    c (year = y, graph_metrics (g))
-       })
-dat <- data.frame (do.call (rbind, dat))
-
-saveRDS (dat, graph_data_file)
+    theme (legend.title = element_blank(),
+           legend.position = c (0.20, 0.67),
+           legend.background = element_rect(fill='transparent', colour='transparent')) +
+    guides (color = guide_legend (ncol = 3))
 ```
 
 ```{r}
-dat <- readRDS (graph_data_file)
-dat_dd <- pivot_longer (dat, cols = c (dd_in_zero, dd_in_mean, dd_out_mean)) |>
-    select (c (year, name, value)) |>
-    mutate (name = gsub ("^dd\\_", "", name))
-dat_cd <- pivot_longer (dat, cols = c (cb, cd, d_mean)) |>
-    select (c (year, name, value)) |>
-    mutate (name = case_when (
-                name == "cb" ~ "centr_betw",
-                name == "cd" ~ "centr_degree",
-                name == "d_mean" ~ "dist_mean"))
-
-p3 <- ggplot (dat_dd, aes (x = year, y = value, color = name)) +
+cp_dat <- readRDS (cp_dat_file) |>
+    select (-c (total_median, unique_median)) |>
+    rename (total = total_mean,
+            unique = unique_mean) |>
+    pivot_longer (cols = c (total, unique)) |>
+    rename (instability = value, type = name)
+# Values for total and unique are almost identical, so only show unique
+cp_dat <- cp_dat [cp_dat$type == "unique", ]
+cp_dat$year <- lubridate::year (paste0 (cp_dat$year, "-01-01"))
+p3 <- ggplot (cp_dat, aes (x = year, y = instability)) +
     geom_line () +
-    ggtitle ("C: Package dependencies") +
-    theme (legend.position = c (0.3, 0.7),
-           legend.background = element_rect(fill='transparent', colour='transparent'))
-
-p4 <- ggplot (dat_cd, aes (x = year, y = value, color = name)) +
-    geom_line () +
-    ggtitle ("D: Network Metrics") +
-    theme (legend.position = c (0.3, 0.7),
-           legend.background = element_rect(fill='transparent', colour='transparent'))
+    ggtitle ("B: Coupling Instability")
 ```
 
-```{r fig5, echo = FALSE, message = FALSE, fig.cap = "**Figure 5** Relative proportions of base, recommended, and contributed packages over time."}
-(p1 + p2) / (p3 + p4)
+```{r}
+(p1 | p3) / p2
 ```

@@ -3,6 +3,7 @@
 export(all_pypi)
 export(collate_temp_pypi_files)
 export(cran_archiving)
+export(dependencies)
 export(load_pkgstats_data)
 export(pkgstats_analyse_packages)
 export(pkgstats_analyse_submission_rates)

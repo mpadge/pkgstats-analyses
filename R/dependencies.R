@@ -1,4 +1,8 @@
 
+#' Get list of current recommended R packages
+#'
+#' @return Vector of names of recommended packages
+#' @export
 recommended_pkgs <- function () {
 
     u <- "https://github.com/wch/r-source/tree/trunk/src/library"

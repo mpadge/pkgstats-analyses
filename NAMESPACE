@@ -2,6 +2,7 @@
 
 export(all_pypi)
 export(collate_temp_pypi_files)
+export(couplings)
 export(cran_archiving)
 export(dependencies)
 export(load_pkgstats_data)
@@ -10,4 +11,5 @@ export(pkgstats_analyse_submission_rates)
 export(plot_new_vs_update)
 export(plot_r_py)
 export(recommended_pkgs)
+export(summarise_coupling_data)
 export(transform_pkgstats_data)

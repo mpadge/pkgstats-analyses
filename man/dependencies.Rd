@@ -8,7 +8,7 @@ data.}
 dependencies(x)
 }
 \arguments{
-\item{x}{Result of \link{load_pkgstats_data} with additional \code{year} column.}
+\item{x}{Result of \link{load_pkgstats_data}.}
 }
 \value{
 A \code{data.frame} of dependency data with \code{year} column.

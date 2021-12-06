@@ -4,7 +4,6 @@
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
 # select latest packages only
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
-    mutate (year = lubridate::year (date)) |>
     group_by (package) |>
     slice_max (date)
 x <- x [which (!(is.na (x$external_calls) | x$external_calls == "")), ]
@@ -103,8 +102,7 @@ calc_graph_data <- !file.exists (graph_data_file)
 ```
 
 ```{r calc-graph-data, eval = calc_graph_data}
-xraw <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
-    mutate (year = lubridate::year (date))
+xraw <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
 
 dat_one_year <- function (xraw, year = 2015) {
 

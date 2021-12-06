@@ -1,7 +1,6 @@
 
 ```{r fig4, echo = FALSE, message = FALSE, fig.cap = "**Figure 4**"}
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
-    mutate (year = lubridate::year (date)) |>
     group_by (year) |>
     summarise (R = mean (files_R),
                src = mean (files_src),

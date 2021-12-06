@@ -1,7 +1,6 @@
 
 ```{r fig3, echo = FALSE, message = FALSE, fig.cap = "**Figure 3.** (A) Annual frequencies of the top 10 translations. (B) Annual frequencies of the top 10 primary URL domains, with frequencies for GitHub divided by 20."}
-x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
-    mutate (year = lubridate::year (date))
+x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
 x$translations [x$translations == "NA"] <- NA_character_
 tr <- lapply (split (x, f = as.factor (x$year)), function (i) {
                   tr <- unlist (strsplit (i$translations, ","))
@@ -27,8 +26,7 @@ p3 <- ggplot (tr_top10, aes (x = year, y = n, color = translation)) +
     ggtitle ("A: Top 10 translations") +
     guides (color = guide_legend (ncol = 2))
 
-x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
-    mutate (year = lubridate::year (date))
+x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
 x <- lapply (split (x, f = as.factor (x$year)), function (i) {
                  urls <- unlist (strsplit (i$urls, ",|;|\\n|\\s"))
                  urls <- gsub ("^(\\s*?)http(s?)\\:\\/\\/", "", urls [!is.na (urls)])

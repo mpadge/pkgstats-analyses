@@ -14,8 +14,7 @@ p1 <- ggplot (x, aes (x = month, y = value, colour = name)) +
     theme (legend.position = c (0.2, 0.4),
            legend.background = element_rect(fill='transparent', colour='transparent'))
 
-x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
-    mutate (year = lubridate::year (date))
+x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
 lic <- lapply (split (x, f = as.factor (x$year)), function (i) {
                    lic <- unlist (strsplit (i$license, "\\|"))
                    lic <- gsub ("^\\s*|\\s*$", "", lic)

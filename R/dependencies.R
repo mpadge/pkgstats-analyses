@@ -24,7 +24,7 @@ recommended_pkgs <- function () {
 #' Extract all dependencies from the "external_calls" component of the main
 #' data.
 #'
-#' @param x Result of \link{load_pkgstats_data} with additional `year` column.
+#' @param x Result of \link{load_pkgstats_data}.
 #' @return A `data.frame` of dependency data with `year` column.
 #' @export
 dependencies <- function (x) {

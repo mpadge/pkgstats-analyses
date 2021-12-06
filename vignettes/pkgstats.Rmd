@@ -201,8 +201,7 @@ over time (Fig. 2B, resulting in the values shown in Table 1.
 
 ```{r licenses, echo = FALSE}
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
-x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
-    mutate (year = lubridate::year (date))
+x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
 index <- which (x$year > 2010)
 lic <- sort (table (x$license [index]), decreasing = TRUE)
 lic <- data.frame (license = names (lic),

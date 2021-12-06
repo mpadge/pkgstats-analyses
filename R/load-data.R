@@ -30,6 +30,9 @@ load_pkgstats_data <- function (datafile = "pkgstats-results.Rds",
 
     }
 
+    # Add year column:
+    x$year <- lubridate::year (x$date)
+
     return (x)
 }
 

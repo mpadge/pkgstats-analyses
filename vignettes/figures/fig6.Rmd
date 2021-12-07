@@ -36,13 +36,13 @@ deps2 |>
     filter (seq <= 50 & name != "n_contrib") |>
     ggplot (aes (x = seq, y = value, colour = name)) +
         geom_line (lty = 2) +
-        geom_smooth (method = "loess", formula = "y ~ x") +
+        geom_smooth (method = "loess", formula = "y ~ x", se = FALSE) +
         theme (legend.title = element_blank(),
                legend.position = c (0.50, 0.9),
                legend.background = element_rect(fill='transparent', colour='transparent')) +
         xlab ("Release sequence") +
         ylab ("Relative changes per release") +
-        ggtitle ("B: Change in calls") -> p1
+        ggtitle ("A: Change in calls") -> p1
 ```
 
 

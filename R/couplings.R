@@ -184,7 +184,7 @@ couplings_afferent <- function (x) {
 #' @export
 coupling_dependencies <- function (x) {
 
-    lapply (seq (nrow (x)), function (i) {
+    deps <- lapply (seq (nrow (x)), function (i) {
         # a few have rogue colons at start:
         ex <- gsub ("^\\:", "", x$external_calls [i])
         if (is.na (ex) | ex == "") {

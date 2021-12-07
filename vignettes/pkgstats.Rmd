@@ -348,7 +348,7 @@ both of increasing dependence of other packages on any given package, and
 decreasing dependence of packages on functionality provided by external
 packages.
 
-```{r fig6, child = "figures/fig6.Rmd", eval = TRUE, echo = FALSE}
+```{r fig6, child = "figures/fig6.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
 

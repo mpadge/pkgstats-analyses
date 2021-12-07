@@ -173,10 +173,12 @@ couplings_releases <- function (x) {
                 dplyr::ungroup ()
 
             c ("efferent_unique" = sum (deps_from_d$n_unique),
-               "afferent_unique" = sum (deps_to_d$n_unique),
                "efferent_total" = sum (deps_from_d$n_total),
-               "afferent_total" = sum (deps_to_d$n_total))
-        }, integer (4))
+               "afferent_unique" = sum (deps_to_d$n_unique),
+               "afferent_total" = sum (deps_to_d$n_total),
+               "afferent_npkgs" = length (deps_to_d$from),
+               "afferent_fns_per_pkg" = mean (deps_to_d$n_unique))
+        }, numeric (6))
 
         out <- cbind (package = rep (p, length (dates)),
                       seq = seq_along (dates),
@@ -194,12 +196,16 @@ couplings_releases <- function (x) {
                      efferent_unique = as.integer (n [, 4]),
                      afferent_unique = as.integer (n [, 5]),
                      efferent_total = as.integer (n [, 6]),
-                     afferent_total = as.integer (n [, 7]))
+                     afferent_total = as.integer (n [, 7]),
+                     afferent_npkgs = as.integer (n [, 8]),
+                     afferent_fns_per_pkg = as.numeric (n [, 9]))
 
     n$instability_unique <- n$efferent_unique / (n$efferent_unique + n$afferent_unique)
     n$instability_total <- n$efferent_total / (n$efferent_total + n$afferent_total)
+
     n$instability_unique [!is.finite (n$instability_unique)] <- NA
     n$instability_total [!is.finite (n$instability_total)] <- NA
+    n$afferent_fns_per_pkg [!is.finite (n$afferent_fns_per_pkg)] <- NA
 
     return (n)
 }

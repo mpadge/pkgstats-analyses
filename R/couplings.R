@@ -2,7 +2,7 @@
 #' Calculate afferent and efferent couplings between packages
 #'
 #' @param x Result of \link{load_pkgstats_data}.
-#' @param y Year for which coupling data are to be obtained
+#' @param year Year for which coupling data are to be obtained
 #' @param summarise if `TRUE`, convert full `data.frame` of results to summary
 #' statistics.
 #' @return The results

@@ -9,10 +9,10 @@ couplings(x, year = 2015, summarise = TRUE)
 \arguments{
 \item{x}{Result of \link{load_pkgstats_data}.}
 
+\item{year}{Year for which coupling data are to be obtained}
+
 \item{summarise}{if \code{TRUE}, convert full \code{data.frame} of results to summary
 statistics.}
-
-\item{y}{Year for which coupling data are to be obtained}
 }
 \value{
 The results

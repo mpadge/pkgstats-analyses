@@ -11,5 +11,6 @@ couplings_releases(x)
 }
 \description{
 These are couplings between packages but calculated for each release, to
-enable examination of changes in coupling stability across releases.
+enable examination of changes in coupling stability across releases. This
+takes around 10 minutes to calculate, so is not worth doing in parallel here.
 }

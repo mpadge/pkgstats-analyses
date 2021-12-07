@@ -133,7 +133,9 @@ m_coupling_summary_internal <- memoise::memoise (coupling_summary_internal)
 #' Get couplings for each release of each package
 #'
 #' These are couplings between packages but calculated for each release, to
-#' enable examination of changes in coupling stability across releases.
+#' enable examination of changes in coupling stability across releases. This
+#' takes around 10 minutes to calculate, so is not worth doing in parallel here.
+#'
 #' @inheritParams couplings
 #' @export
 couplings_releases <- function (x) {

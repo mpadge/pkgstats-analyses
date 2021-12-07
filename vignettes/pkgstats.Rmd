@@ -45,7 +45,7 @@ if (!file.exists (f_r)) {
 
 f_p <- file.path (path, "pypi.Rds")
 if (!file.exists (f_p)) {
-    u_r <- paste0 (u, "pypi.Rds")
+    u_p <- paste0 (u, "pypi.Rds")
     download.file (u_p, f_p)
 }
 ```
@@ -319,12 +319,32 @@ around 2013. The top two packages of {ggplot2} and {dplyr} account for
 `r prop_top2`% of all function calls from all contributed packages over the
 time shown.
 
-- Expansion of base + recommended packages over time
-- Use of base + recommended package in other packages over time
-- Use of contributed packages over time
+Figure 6 shows results equivalent to Figs 5A-B, but for changes with
+progressive releases of each package. The first panel (Fig. 5A) shows changes
+in the proportion of calls to the base and recommended packages for each
+sequential release, averaged over all packages. (Equivalent proportions of
+calls to recommended packages stay broadly constant, albeit with marked
+variability, and are not shown.) Relative changes generally remain above 1,
+indicating that packages make progressively more calls to base and recommended
+packages as they mature, with rates of calls to recommended packages
+progressively decreasing, and approaching stability after around 30 releases.
 
-(These can not be done until data re-generated following [`pkgstats`
-issue#32](https://github.com/ropensci-review-tools/pkgstats/issues/32).
+Calls to the base R package initially increase with each release out to around
+10-15 releases, indicating that packages incorporate progressively more calls
+to base R functions with each release. Beyond around 15 releases, relative
+rates of change also approach the stable level of 1, as for calls to
+recommended packages, with no further calls being added.
+
+Figure 6B shows the average trajectory of coupling instability for individual
+packages across the depicted numbers of sequential releases. While decreases in
+coupling instability should be expected as packages mature and are imported by
+increasing numbers of other packages (that is, afferent coupling should
+generally increase), that figure also shows that mean numbers of efferent calls
+tend to decrease with each sequential release.
+
+```{r fig6, child = "figures/fig6.Rmd", eval = TRUE, echo = FALSE}
+```
+
 
 ## Temporal Development #3: Code Metrics
 

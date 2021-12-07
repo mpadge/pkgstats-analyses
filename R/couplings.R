@@ -129,3 +129,91 @@ coupling_summary_internal <- function (x) {
     return (cp)
 }
 m_coupling_summary_internal <- memoise::memoise (coupling_summary_internal)
+
+#' Get afferent / inward couplings for each release of each package
+#'
+#' These are couplings between packages but calculated for each release, to
+#' enable examination of changes in coupling stability across releases.
+#' @inheritParams couplings
+#' @export
+couplings_afferent <- function (x) {
+
+    deps <- afferent_deps (x)
+
+    pkgs <- unique (deps$from)
+    latest <- max (deps$date)
+    n <- pbapply::pblapply (pkgs, function (p) {
+
+        index <- which (deps$from == p | deps$to == p)
+        deps_p <- deps [index, ]
+        # dependences have to be mapped to intervals between releases up to current
+        # date:
+        dates <- c (sort (unique (deps_p$date [deps_p$from == p])), latest)
+        # Only include deps after initial release date:
+        deps_to <- deps_p [which (deps_p$to == p & deps_p$date > dates [1]), ]
+        # Then remove that date, so only consider deps subsequent to each release:
+        dates <- dates [-1]
+
+        out <- 0L
+
+        if (nrow (deps_to) > 0L) {
+            
+            out <- vapply (dates, function (d) {
+                deps_d <- deps_to [deps_to$date <= d, ]
+                deps_d <- deps_d |>
+                    group_by (from) |>
+                    slice_max (date) |>
+                    ungroup ()
+
+                return (sum (deps_d$n_unique))
+            }, integer (1))
+        }
+        return (out)
+    })
+    names (n) <- pkgs
+    index <- which (vapply (n, length, integer (1)) > 2L)
+    n <- n [index]
+
+    return (n)
+}
+
+afferent_deps <- function (x) {
+
+    lapply (seq (nrow (x)), function (i) {
+        # a few have rogue colons at start:
+        ex <- gsub ("^\\:", "", x$external_calls [i])
+        if (is.na (ex) | ex == "") {
+            return (NULL)
+        }
+        out <- strsplit (strsplit (ex, ",") [[1]], "\\:")
+        lens <- vapply (out, length, integer (1))
+        out <- do.call (rbind, out [which (lens == 3)])
+
+        this_pkg <- x$package [i]
+        out <- out [which (out [, 1] != this_pkg), , drop = FALSE]
+
+        out <- cbind (out,
+                      rep (x$package [i], nrow (out)),
+                      rep (x$version [i], nrow (out)),
+                      rep (x$month [i], nrow (out)))
+
+        return (out)
+    })
+
+    deps <- do.call (rbind, deps)
+
+    # manual cleaning until https://github.com/ropensci-review-tools/pkgstats/issues/33
+    # '\' is punct, but 'n' is not, so first get rid of '\n':
+    deps [, 1] <- gsub ("^\\\\\\\\n", "", deps [, 1])
+    deps [, 1] <- gsub ("^[[:punct:]]*", "", deps [, 1])
+    deps <- deps [which (deps [, 1] != ""), ]
+
+    deps <- data.frame (from = deps [, 4],
+                        to = deps [, 1],
+                        version = deps [, 5],
+                        date =  lubridate::as_date (as.integer (deps [, 6])),
+                        n_total = as.integer (deps [, 2]),
+                        n_unique = as.integer (deps [, 3]))
+    
+    return (deps)
+}

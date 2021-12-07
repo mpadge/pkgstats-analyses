@@ -1,6 +1,6 @@
 Package: pkgstatsAnalyses
 Title: Analyses of 'pkgstats' Results for all CRAN Packages
-Version: 0.0.0.400
+Version: 0.0.0.401
 Authors@R: 
     person("Mark", "Padgham", , "mark.padgham@email.com", role = c("aut", "cre"))
 Description: Analyses of 'pkgstats' Results for all CRAN Packages.
@@ -20,6 +20,7 @@ Imports:
     lubridate,
     memoise,
     parallelly,
+    pbapply,
     rvest,
     stringi,
     tibble

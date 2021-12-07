@@ -194,8 +194,8 @@ couplings_releases <- function (x) {
                      seq = as.integer (n [, 2]),
                      date = lubridate::as_date (as.integer (n [, 3])),
                      efferent_unique = as.integer (n [, 4]),
-                     afferent_unique = as.integer (n [, 5]),
-                     efferent_total = as.integer (n [, 6]),
+                     efferent_total = as.integer (n [, 5]),
+                     afferent_unique = as.integer (n [, 6]),
                      afferent_total = as.integer (n [, 7]),
                      afferent_npkgs = as.integer (n [, 8]),
                      afferent_fns_per_pkg = as.numeric (n [, 9]))

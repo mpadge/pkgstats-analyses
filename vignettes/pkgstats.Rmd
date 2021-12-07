@@ -340,7 +340,13 @@ packages across the depicted numbers of sequential releases. While decreases in
 coupling instability should be expected as packages mature and are imported by
 increasing numbers of other packages (that is, afferent coupling should
 generally increase), that figure also shows that mean numbers of efferent calls
-tend to decrease with each sequential release.
+tend to decrease with each sequential release. Numbers of afferent calls (that
+is, inward calls from other packages to a given package) also naturally
+increase with sequential releases, as increasing numbers of packages depend on
+a given package. The observed decrease in instability reflects this combination
+both of increasing dependence of other packages on any given package, and
+decreasing dependence of packages on functionality provided by external
+packages.
 
 ```{r fig6, child = "figures/fig6.Rmd", eval = TRUE, echo = FALSE}
 ```
@@ -351,5 +357,8 @@ tend to decrease with each sequential release.
 - Computer Languages
 - Trends in code metrics
 - Inter- versus intra-package patterns
+
+Network metrics
+
 
 # References

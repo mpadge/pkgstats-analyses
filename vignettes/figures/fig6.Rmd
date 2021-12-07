@@ -83,6 +83,27 @@ deps |>
         ggtitle ("B: Coupling instability") -> p2
 ```
 
+```{r}
+# afferent fn imports by other pkgs
+deps <- readRDS (f)
+deps$afferent_fns_per_pkg [which (is.na (deps$afferent_fns_per_pkg))] <- 0L
+deps |>
+    group_by (seq) |>
+    summarise (packages = mean (afferent_npkgs),
+               fns_per_pkg = mean (afferent_fns_per_pkg, na.rm = TRUE)) |>
+    pivot_longer (c (packages, fns_per_pkg)) |>
+    rename (type = name, number = value) |>
+    filter (seq <= 50)  |>
+    ggplot (aes (x = seq, y = number, colour = type)) +
+        geom_line () +
+        xlab ("Release sequence") +
+        theme (legend.title = element_blank(),
+               legend.position = c (0.2, 0.8),
+               legend.background = element_rect(fill='transparent', colour='transparent')) +
+        ggtitle ("C: Imports by other pkgs") -> p3
+```
+
+
 ```{r, fig.cap = "**Fig. 6**"}
-p1 + p2
+(p1 | p2) / p3
 ```

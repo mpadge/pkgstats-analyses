@@ -2,6 +2,7 @@
 
 export(all_pypi)
 export(collate_temp_pypi_files)
+export(coupling_dependencies)
 export(couplings)
 export(couplings_afferent)
 export(cran_archiving)

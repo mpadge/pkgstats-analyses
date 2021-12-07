@@ -138,7 +138,7 @@ m_coupling_summary_internal <- memoise::memoise (coupling_summary_internal)
 #' @export
 couplings_afferent <- function (x) {
 
-    deps <- afferent_deps (x)
+    deps <- coupling_dependencies (x)
 
     pkgs <- unique (deps$from)
     latest <- max (deps$date)
@@ -177,7 +177,12 @@ couplings_afferent <- function (x) {
     return (n)
 }
 
-afferent_deps <- function (x) {
+#' Convert raw data (`x`) into `data.frame` of coupling dependencies as `from`
+#' and `to` columns for each package.
+#'
+#' @inheritParams coupling
+#' @export
+coupling_dependencies <- function (x) {
 
     lapply (seq (nrow (x)), function (i) {
         # a few have rogue colons at start:

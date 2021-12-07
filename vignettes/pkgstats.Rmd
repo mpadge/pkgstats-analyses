@@ -28,6 +28,29 @@ library (igraph)
 here <- here::here ()
 ```
 
+```{r dl-data, echo = FALSE}
+path <- file.path (here, "data-raw")
+if (!dir.exists (path)) {
+    dir.create (path, recursive = TRUE)
+}
+
+u <- paste0 ("https://github.com/mpadge/pkgstats-analyses/",
+             "releases/download/v0.0.1/")
+
+f_r <- file.path (path, "pkgstats-results.Rds")
+if (!file.exists (f_r)) {
+    u_r <- paste0 (u, "pkgstats-results.Rds")
+    download.file (u_r, f_r)
+}
+
+f_p <- file.path (path, "pypi.Rds")
+if (!file.exists (f_p)) {
+    u_r <- paste0 (u, "pypi.Rds")
+    download.file (u_p, f_p)
+}
+```
+
+
 # Introduction
 
 A key component of the success of Open Source Software (OSS) is package
@@ -228,22 +251,28 @@ years.
 ### Internal Package and File Structure
 
 The temporal development of numbers of files manifest several notable
-characteristics (Fig. 3). Unsurprisingly, R packages have always been dominated
-by files in the R directory, numbers of which increased considerably up to
-around 2010, after which they are generally stabilised at a mean value of
-around 20 files. The `src` and `data` directories are the only places within an
-R package in which numbers of files have remained relatively constant over the
-preceding 20+ years. Packages generally had very few files in the `inst`
-directory prior to 2010, after which they have notably increased.
-
-The two sub-directories in which numbers of files have increased most
-significantly are `vignettes` and `tests`, clearly indicating that packages
-have become both better documented and better tested, especially since 2010.
-These patterns are explored further below.
+characteristics (Figure 4). Unsurprisingly, R packages have always been
+dominated by files in the R directory, numbers of which increased considerably
+up to around 2010, after which they are generally stabilised at a mean value of
+around 20 files (Fig. 4A). The `src` and `data` directories are the only places
+within an R package in which numbers of files have remained relatively constant
+over the preceding 20+ years. Packages generally had very few files in the
+`inst` directory prior to 2010, after which they have notably increased. The
+two sub-directories in which numbers of files have increased most significantly
+are `vignettes` and `tests`, clearly indicating that packages have become both
+better documented and better tested, especially since 2010.
 
 
-```{r fig4, child = "figures/fig4.Rmd", eval = TRUE, echo = FALSE}
+```{r fig4, child = "figures/fig4.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
+
+Figure 4B shows equivalent relative changes within individual packages across
+successive releases. The changes there are proportional changes in numbers of
+files in each of the nominated directories, starting with the change between
+the second and first release (a "Release sequence" of 2). Although numbers of
+files generally increase with each new release, *rates* of increase tend to
+slow down, with packages approaching stability (a ratio of 1) after around 20
+releases.
 
 
 @static-analysis-2016,
@@ -264,7 +293,24 @@ to functions from contributed packages.
 ```{r fig5, child = "figures/fig5.Rmd", eval = TRUE, echo = FALSE}
 ```
 
-Figure 5B depicts changes in numbers of unique function calls from each package
+Figure 5B shows the "coupling instability" of packages over time. This is the
+proportion of *afferent* to total couplings, where afferent couplings are
+numbers of (unique) calls that a package makes to dependent functions defined
+in other packages. Total couplings include *efferent* couplings, or calls from
+other packages to functions of a given package. This measure of instability is
+thus a measure of the relative dependence of a package on external
+functionality compared with the observe dependence of other packages on that
+package. Packages which depend on many external functions, yet on which no
+other package depends are thus "unstable", whereas packages with little or not
+dependence on external packages, yet upon which many other packages depend, are
+comparably "stable".
+
+This result reveals that instability remained broadly stable until around 2012,
+after which it has progressively increased, from around 50% to almost 80%. This
+latter figure means that packages make on average eight calls to other packages
+for every two calls made to that package.
+
+Figure 5C depicts changes in numbers of unique function calls from each package
 to the top ten contributed packages, defined as the ten packages with the
 largest total number of unique function calls from all packages throughout the
 history of CRAN. Numbers of function calls are shown on a logarithmic scale,

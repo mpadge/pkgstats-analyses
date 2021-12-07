@@ -130,49 +130,74 @@ coupling_summary_internal <- function (x) {
 }
 m_coupling_summary_internal <- memoise::memoise (coupling_summary_internal)
 
-#' Get afferent / inward couplings for each release of each package
+#' Get couplings for each release of each package
 #'
 #' These are couplings between packages but calculated for each release, to
 #' enable examination of changes in coupling stability across releases.
 #' @inheritParams couplings
 #' @export
-couplings_afferent <- function (x) {
+couplings_releases <- function (x) {
 
     deps <- coupling_dependencies (x)
+
+    base_rec <- c ("base", recommended_pkgs ())
 
     pkgs <- unique (deps$from)
     latest <- max (deps$date)
     n <- pbapply::pblapply (pkgs, function (p) {
 
-        index <- which (deps$from == p | deps$to == p)
-        deps_p <- deps [index, ]
+        deps_p <- deps [which (deps$from == p | deps$to == p), ]
+        deps_from <- deps_p [which (deps_p$from == p &
+                                    !deps_p$to %in% base_rec), ]
+        deps_to <- deps_p [which (deps_p$to == p), ]
         # dependences have to be mapped to intervals between releases up to current
         # date:
-        dates <- c (sort (unique (deps_p$date [deps_p$from == p])), latest)
-        # Only include deps after initial release date:
-        deps_to <- deps_p [which (deps_p$to == p & deps_p$date > dates [1]), ]
+        dates <- c (sort (unique (deps_p$date)), latest)
         # Then remove that date, so only consider deps subsequent to each release:
         dates <- dates [-1]
 
-        out <- 0L
-
-        if (nrow (deps_to) > 0L) {
-            
-            out <- vapply (dates, function (d) {
-                deps_d <- deps_to [deps_to$date <= d, ]
-                deps_d <- deps_d |>
-                    group_by (from) |>
-                    slice_max (date) |>
-                    ungroup ()
-
-                return (sum (deps_d$n_unique))
-            }, integer (1))
+        if (length (dates) < 2L) {
+            return (matrix (nrow = 0L, ncol = 5L))
         }
+
+        out <- vapply (dates, function (d) {
+
+            deps_from_d <- deps_from [deps_from$date == d, ]
+
+            deps_to_d <- deps_to [deps_to$date <= d, ]
+            deps_to_d <- deps_to_d |>
+                dplyr::group_by (from) |>
+                dplyr::slice_max (date) |>
+                dplyr::ungroup ()
+
+            c ("efferent_unique" = sum (deps_from_d$n_unique),
+               "afferent_unique" = sum (deps_to_d$n_unique),
+               "efferent_total" = sum (deps_from_d$n_total),
+               "afferent_total" = sum (deps_to_d$n_total))
+        }, integer (4))
+
+        out <- cbind (package = rep (p, length (dates)),
+                      seq = seq_along (dates),
+                      date = dates,
+                      t (out))
+
         return (out)
     })
-    names (n) <- pkgs
-    index <- which (vapply (n, length, integer (1)) > 2L)
-    n <- n [index]
+    index <- which (vapply (n, nrow, integer (1)) > 1L)
+    n <- do.call (rbind, n [index])
+
+    n <- data.frame (package = n [, 1],
+                     seq = as.integer (n [, 2]),
+                     date = lubridate::as_date (as.integer (n [, 3])),
+                     efferent_unique = as.integer (n [, 4]),
+                     afferent_unique = as.integer (n [, 5]),
+                     efferent_total = as.integer (n [, 6]),
+                     afferent_total = as.integer (n [, 7]))
+
+    n$instability_unique <- n$efferent_unique / (n$efferent_unique + n$afferent_unique)
+    n$instability_total <- n$efferent_total / (n$efferent_total + n$afferent_total)
+    n$instability_unique [!is.finite (n$instability_unique)] <- NA
+    n$instability_total [!is.finite (n$instability_total)] <- NA
 
     return (n)
 }
@@ -180,7 +205,7 @@ couplings_afferent <- function (x) {
 #' Convert raw data (`x`) into `data.frame` of coupling dependencies as `from`
 #' and `to` columns for each package.
 #'
-#' @inheritParams coupling
+#' @inheritParams couplings
 #' @export
 coupling_dependencies <- function (x) {
 

@@ -7,6 +7,9 @@ and \code{to} columns for each package.}
 \usage{
 coupling_dependencies(x)
 }
+\arguments{
+\item{x}{Result of \link{load_pkgstats_data}.}
+}
 \description{
 Convert raw data (\code{x}) into \code{data.frame} of coupling dependencies as \code{from}
 and \code{to} columns for each package.

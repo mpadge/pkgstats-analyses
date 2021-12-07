@@ -5,6 +5,8 @@ n_files_exists <- file.exists (n_files_file)
 ```
 
 ```{r n-files-data, eval = !n_files_exists}
+# takes a few tens of seconds
+datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
 nfiles_one_year <- function (x, year = 2015) {
 

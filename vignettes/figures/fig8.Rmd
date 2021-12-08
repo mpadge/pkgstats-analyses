@@ -1,0 +1,128 @@
+
+```{r fig8-preload}
+datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
+x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
+        group_by (package) |>
+        mutate (seq = seq_along (package))
+x$loc_R [which (is.na (x$loc_R))] <- 0L
+x$loc_src [which (is.na (x$loc_src))] <- 0L
+x$loc_inst [which (is.na (x$loc_inst))] <- 0L
+x$loc_total <- x$loc_R + x$loc_src + x$loc_inst
+```
+
+```{r fig8-nfns-per-release}
+x_rel <- x |>
+    group_by (seq) |>
+    summarise (
+       loc = mean (loc_total),
+       loc_R = mean (loc_R, na.rm = TRUE),
+       loc_src = mean (loc_src, na.rm = TRUE),
+       loc_inst = mean (loc_inst, na.rm = TRUE),
+       n_fns_r_exported = mean (n_fns_r_exported, na.rm = TRUE),
+       n_fns_r_not_exported = mean (n_fns_r_not_exported, na.rm = TRUE),
+       n_fns_src = mean (n_fns_src, na.rm = TRUE),
+       n_fns_per_file_r = mean (n_fns_per_file_r, na.rm = TRUE),
+       n_fns_per_file_src = mean (n_fns_per_file_src, na.rm = TRUE),
+       npars_exported_mn = mean (npars_exported_mn, na.rm = TRUE),
+       npars_exported_md = mean (npars_exported_md, na.rm = TRUE),
+       loc_per_fn_r_mn = mean (loc_per_fn_r_mn, na.rm = TRUE),
+       loc_per_fn_r_md = mean (loc_per_fn_r_md, na.rm = TRUE),
+       loc_per_fn_r_exp_mn = mean (loc_per_fn_r_exp_mn, na.rm = TRUE),
+       loc_per_fn_r_exp_md = mean (loc_per_fn_r_exp_md, na.rm = TRUE),
+       loc_per_fn_r_not_exp_mn = mean (loc_per_fn_r_not_exp_mn, na.rm = TRUE),
+       loc_per_fn_r_not_exp_md = mean (loc_per_fn_r_not_exp_md, na.rm = TRUE),
+       loc_per_fn_src_mn = mean (loc_per_fn_src_mn, na.rm = TRUE),
+       loc_per_fn_src_md = mean (loc_per_fn_src_md, na.rm = TRUE),
+       doclines_per_fn_exp_mn = mean (doclines_per_fn_exp_mn, na.rm = TRUE),
+       doclines_per_fn_exp_md = mean (doclines_per_fn_exp_md, na.rm = TRUE),
+       doclines_per_fn_not_exp_mn = mean (doclines_per_fn_not_exp_mn, na.rm = TRUE),
+       doclines_per_fn_not_exp_md = mean (doclines_per_fn_not_exp_md, na.rm = TRUE),
+       docchars_per_par_exp_mn = mean (docchars_per_par_exp_mn, na.rm = TRUE),
+       docchars_per_par_exp_md = mean (docchars_per_par_exp_md, na.rm = TRUE))
+```
+
+```{r fig8A-loc-per-seq-plot}
+x_rel |>
+    select (c (seq, loc, loc_R, loc_src, loc_inst)) |>
+    rename (total = loc,
+            R = loc_R,
+            src = loc_src,
+            inst = loc_inst) |>
+    filter (seq <= 100) |>
+    pivot_longer (c (total, R, src, inst)) |>
+    rename (type = name, number = value) |>
+    ggplot (aes (x = seq, y = number, colour = type)) +
+        geom_line () +
+        geom_smooth (method = "loess", formula = "y ~ x", se = FALSE, lwd = 1) +
+        theme (legend.title = element_blank(),
+               legend.position = c (0.25, 0.85),
+               legend.background = element_rect(fill='transparent', colour='transparent')) +
+        ylab ("Lines of Code") +
+        guides (color = guide_legend (ncol = 2)) +
+        ggtitle ("A: Lines of Code") -> p1
+```
+
+```{r fig8B-loc-per-fn}
+x_rel |>
+    select (c (seq, loc_per_fn_r_exp_mn, loc_per_fn_r_not_exp_mn,
+               loc_per_fn_src_mn)) |>
+    rename (R_exp = loc_per_fn_r_exp_mn,
+            R_non = loc_per_fn_r_not_exp_mn,
+            src = loc_per_fn_src_mn) |>
+    filter (seq <= 100) |>
+    pivot_longer (c (R_exp, R_non, src)) |>
+    rename (type = name, number = value) |>
+    ggplot (aes (x = seq, y = number, colour = type)) +
+        geom_line () +
+        geom_smooth (method = "loess", formula = "y ~ x", se = FALSE) +
+        theme (legend.title = element_blank(),
+               legend.position = c (0.6, 0.85),
+               legend.background = element_rect(fill='transparent', colour='transparent')) +
+        ylab ("Lines of Code") +
+        guides (color = guide_legend (ncol = 2)) +
+        ggtitle ("B: LoC per fn") -> p2
+```
+
+```{r fig8C-fns-per-seq-plot}
+x_rel |>
+    select (c (seq, n_fns_r_exported, n_fns_r_not_exported, n_fns_src)) |>
+    rename (r_exp = n_fns_r_exported,
+            r_non = n_fns_r_not_exported,
+            src = n_fns_src) |>
+    filter (seq <= 100) |>
+    pivot_longer (c (r_exp, r_non, src)) |>
+    rename (type = name, number = value) |>
+    ggplot (aes (x = seq, y = number, colour = type)) +
+        geom_line () +
+        geom_smooth (method = "loess", formula = "y ~ x", se = FALSE) +
+        theme (legend.title = element_blank(),
+               legend.position = c (0.3, 0.85),
+               legend.background = element_rect(fill='transparent', colour='transparent')) +
+        ylab ("Numbers of functions") +
+        guides (color = guide_legend (ncol = 2)) +
+        ggtitle ("C: Total functions") -> p3
+```
+
+```{r fig8D-fns-per-file}
+x_rel |>
+    select (c (seq, n_fns_per_file_r, n_fns_per_file_src)) |>
+    rename (R = n_fns_per_file_r,
+            src = n_fns_per_file_src) |>
+    filter (seq <= 100) |>
+    pivot_longer (c (R, src)) |>
+    rename (type = name, number = value) |>
+    ggplot (aes (x = seq, y = number, colour = type)) +
+        geom_line () +
+        geom_smooth (method = "loess", formula = "y ~ x", se = FALSE) +
+        theme (legend.title = element_blank(),
+               legend.position = c (0.5, 0.85),
+               legend.background = element_rect(fill='transparent', colour='transparent')) +
+        ylab ("Numbers of functions") +
+        guides (color = guide_legend (ncol = 2)) +
+        ggtitle ("D: Functions per file") -> p4
+```
+
+
+```{r fig8-assemble, fig.cap = "**Fig. 8**"}
+(p1 + p2) / (p3 + p4)
+```

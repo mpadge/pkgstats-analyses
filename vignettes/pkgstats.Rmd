@@ -396,6 +396,36 @@ amount to less than six `R` functions and just over 8 `src` functions per file
 
 ## Intra-package Developments
 
+Figure 8 shows results equivalent to Fig. 7, but for the development of the
+respective metrics with each sequential release of a package, rather than being
+averaged over all packages for each year. Lines of code generally increase as
+packages mature, with mean numbers of lines in the `R` directory increasing
+tenfold from under 1000 for first releases to almost 10,000 in packages with
+100 or more releases. Changes in LoC in `src` and `inst` directories were less
+clear, yet the dominance of `R` code nevertheless produced an overall increase
+in LoC out to the 100th release of packages of around 12 times.
+
+These increases in LoC nevertheless corresponded to an equivalent decrease in
+LoC per function with increasing numbers of releases (Fig. 8B). Similar to the
+aggregate LoC measures of panel A, LoC per function in `src` directories
+remained broadly stable over releases, while LoC per `R` function decreased
+notably, and more so for exported than non-exported functions. Exported
+functions after 100 releases had just over 30 LoC per function, whereas initial
+releases average just under 60 LoC.
+
+The increasing total measures of LoC of panel A combined with decreasing LoC
+per function of panel B must mean that more functions are added as packages
+mature, which is precisely what Fig. 8C reveals. Packages initially contain
+around 20 exported functions on average, yet this increases almost 13-fold to
+over 250 by the 100th release. Non-exported functions increase by a similar
+10-fold proportion over the first 100 releases, while packages start with more
+many more `src` functions on initial releases, and so increases relatively less
+as packages mature. Finally, numbers of functions per file show no clear trend
+for `src` code, while approximately doubling in `R` code over the first 100
+releases of a package, from around 7 to 15.
+
+```{r fig8, child = "figures/fig8.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
+```
 
 ## Network metrics
 

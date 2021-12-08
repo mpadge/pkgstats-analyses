@@ -1,6 +1,6 @@
 
 
-```{r external-calls-data}
+```{r fig5-external-calls-data}
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
 # select latest packages only
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
@@ -14,7 +14,7 @@ cp_dat_file <- file.path (here, "vignettes", "coupling-data.Rds")
 cp_dat_exists <- file.exists (cp_dat_file)
 ```
 
-```{r coupling-data-generate, eval = !cp_dat_exists}
+```{r fig5-coupling-data-generate, eval = !cp_dat_exists}
 cp_dat <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
     summarise_coupling_data ()
 saveRDS (cp_dat, cp_dat_file)
@@ -22,7 +22,7 @@ saveRDS (cp_dat, cp_dat_file)
 
 
 
-```{r plot-base-rcmd-ctb}
+```{r fig5-plot-base-rcmd-ctb}
 
 #ggplot (deps, aes (x = year, y = proportion, color = type)) +
 #    geom_line () +
@@ -40,7 +40,7 @@ p1 <- ggplot (deps, aes (x = year, y = proportion, color = type)) +
 ```
 
 
-```{r dep-pkg-calls}
+```{r fig5-dep-pkg-calls}
 deps <- lapply (seq (nrow (x)), function (i) {
                     # a few have rogue colons at start:
                     ex <- gsub ("^\\:", "", x$external_calls [i])
@@ -88,7 +88,7 @@ prop_top2 <- round (100 * prop_top2, digits = 1)
 deps2020 <- deps [deps$year == 2020, ]
 ```
 
-```{r deps-p2}
+```{r fig5-deps-p2}
 p2 <- ggplot (top10, aes (x = year, y = n, colour = package)) +
     geom_line () +
     ggtitle ("C: Calls to top 10 packages") +
@@ -100,7 +100,7 @@ p2 <- ggplot (top10, aes (x = year, y = n, colour = package)) +
     guides (color = guide_legend (ncol = 3))
 ```
 
-```{r}
+```{r fig5-coupling-instability}
 cp_dat <- readRDS (cp_dat_file) |>
     select (-c (total_median, unique_median)) |>
     rename (total = total_mean,
@@ -115,6 +115,6 @@ p3 <- ggplot (cp_dat, aes (x = year, y = instability)) +
     ggtitle ("B: Coupling Instability")
 ```
 
-```{r, fig.cap = "**Fig. 5**"}
+```{r fig5-assemble, fig.cap = "**Fig. 5**"}
 (p1 | p3) / p2
 ```

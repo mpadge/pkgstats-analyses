@@ -1,10 +1,10 @@
 
-```{r}
+```{r fig4-n-files-data-load}
 n_files_file <- file.path (here, "vignettes", "n-files-data.Rds")
 n_files_exists <- file.exists (n_files_file)
 ```
 
-```{r n-files-data, eval = !n_files_exists}
+```{r fig4-n-files-data, eval = !n_files_exists}
 # takes a few tens of seconds
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
@@ -35,7 +35,7 @@ saveRDS (dat, n_files_file)
 
 
 
-```{r pkg-level-n-files, warning = FALSE, message = FALSE}
+```{r fig4-pkg-level-n-files, warning = FALSE, message = FALSE}
 x_per_pkg <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
     group_by (package) |>
     summarise (R = files_R / lag (files_R),

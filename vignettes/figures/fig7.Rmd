@@ -106,40 +106,7 @@ readRDS (f) |>
         ggtitle ("A: Lines of Code") -> p1
 ```
 
-```{r fig7B-fns-per-year-plot}
-readRDS (f) |>
-    select (c (year, n_fns_r_exported, n_fns_r_not_exported, n_fns_src)) |>
-    rename (r_exp = n_fns_r_exported,
-            r_non = n_fns_r_not_exported,
-            src = n_fns_src) |>
-    pivot_longer (c (r_exp, r_non, src)) |>
-    rename (type = name, number = value) |>
-    ggplot (aes (x = year, y = number, colour = type)) +
-        geom_line () +
-        theme (legend.title = element_blank(),
-               legend.position = c (0.15, 0.85),
-               legend.background = element_rect(fill='transparent', colour='transparent')) +
-        ylab ("Numbers of functions") +
-        ggtitle ("B: Total functions") -> p2
-```
-
-```{r Fig7C-fns-per-file}
-x <- readRDS (f) |>
-    select (c (year, n_fns_per_file_r, n_fns_per_file_src)) |>
-    rename (R = n_fns_per_file_r,
-            src = n_fns_per_file_src) |>
-    pivot_longer (c (R, src)) |>
-    rename (type = name, number = value) |>
-    ggplot (aes (x = year, y = number, colour = type)) +
-        geom_line () +
-        theme (legend.title = element_blank(),
-               legend.position = c (0.85, 0.9),
-               legend.background = element_rect(fill='transparent', colour='transparent')) +
-        ylab ("Numbers of functions") +
-        ggtitle ("C: Functions per file") -> p3
-```
-
-```{r fig7D-loc-per-fn}
+```{r fig7B-loc-per-fn}
 x <- readRDS (f) |>
     select (c (year, loc_per_fn_r_exp_mn, loc_per_fn_r_not_exp_mn,
                loc_per_fn_src_mn)) |>
@@ -154,7 +121,40 @@ x <- readRDS (f) |>
                legend.position = c (0.8, 0.8),
                legend.background = element_rect(fill='transparent', colour='transparent')) +
         ylab ("Numbers of functions") +
-        ggtitle ("D: LoC per fn") -> p4
+        ggtitle ("B: LoC per fn") -> p2
+```
+
+```{r fig7C-fns-per-year-plot}
+readRDS (f) |>
+    select (c (year, n_fns_r_exported, n_fns_r_not_exported, n_fns_src)) |>
+    rename (r_exp = n_fns_r_exported,
+            r_non = n_fns_r_not_exported,
+            src = n_fns_src) |>
+    pivot_longer (c (r_exp, r_non, src)) |>
+    rename (type = name, number = value) |>
+    ggplot (aes (x = year, y = number, colour = type)) +
+        geom_line () +
+        theme (legend.title = element_blank(),
+               legend.position = c (0.15, 0.85),
+               legend.background = element_rect(fill='transparent', colour='transparent')) +
+        ylab ("Numbers of functions") +
+        ggtitle ("C: Total functions") -> p3
+```
+
+```{r Fig7D-fns-per-file}
+x <- readRDS (f) |>
+    select (c (year, n_fns_per_file_r, n_fns_per_file_src)) |>
+    rename (R = n_fns_per_file_r,
+            src = n_fns_per_file_src) |>
+    pivot_longer (c (R, src)) |>
+    rename (type = name, number = value) |>
+    ggplot (aes (x = year, y = number, colour = type)) +
+        geom_line () +
+        theme (legend.title = element_blank(),
+               legend.position = c (0.85, 0.9),
+               legend.background = element_rect(fill='transparent', colour='transparent')) +
+        ylab ("Numbers of functions") +
+        ggtitle ("D: Functions per file") -> p4
 ```
 
 

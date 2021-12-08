@@ -364,14 +364,40 @@ more releases.
 
 ## Temporal Development #3: Code Metrics
 
+Figure 7 shows the temporal evolution of a number of code metrics. These figures distinguish between the two primary kinds of R functions, exported and non-exported, and also between the main sub-directories of R packages:
+
+- The `R` directory holding all source files in the `R` language;
+- The `src` directory holding all code in other languages which needs to be compiled on package installation;
+- The `inst` directory generally holding bundles of external code, but also
+  including code linked to within `src` code and used for cross-linking in
+  compilation of other packages.
+
+### Annual Developments
+
+Lines of Code ("LoC") in the primary `R` and `src` directories broadly
+increased up to around 2010 or slightly later, after which time LoC in these
+directories has progressively decreased. These follow similar trends in LoC per
+function (Fig. 7B), excepting the early years of CRAN, during which functions
+often had well over 100 lines each, especially `src` functions defined in other
+languages.
+
+Total numbers of R functions initially increased until around 2007, peaking at
+just under 50 exported and 75-80 non-exported functions per package (Fig. 7C).
+Numbers of exported R functions have decreased since then to around 27
+functions per package in 2021. In contrast, numbers of functions defined in
+`src` directories have progressively increased, and now total just over 150
+functions. In both `R` and `src` directories, numbers of functions per source
+file have nevertheless progressively decreased since the early 2000's to now
+amount to less than six `R` functions and just over 8 `src` functions per file
+(Fig. 7D).
+
 ```{r fig7, child = "figures/fig7.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
-- Computer Languages
-- Trends in code metrics
-- Inter- versus intra-package patterns
+## Intra-package Developments
 
-Network metrics
+
+## Network metrics
 
 
 # References

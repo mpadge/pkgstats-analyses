@@ -364,6 +364,9 @@ more releases.
 
 ## Temporal Development #3: Code Metrics
 
+```{r fig7, child = "figures/fig7.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
+```
+
 - Computer Languages
 - Trends in code metrics
 - Inter- versus intra-package patterns

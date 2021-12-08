@@ -1,0 +1,163 @@
+
+```{r fig7-preload}
+datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
+x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
+x$num_languages <- vapply (strsplit (x$languages, ","), length,
+                           integer (1))
+```
+
+```{r fig7-lang-file}
+f <- file.path (here, "data-raw", "languages.Rds")
+langs_exists <- file.exists (f)
+```
+
+```{r fig7-languages, eval = !langs_exists}
+lang_one_year <- function (x, year = 2015) {
+    x1 <- x |>
+        filter (year <= !!year) |>
+        group_by (package) |>
+        slice_max (date) |>
+        mutate (nlangs = mean (num_languages))
+
+    return (mean (x1$nlangs))
+}
+years <- sort (unique (x$year))
+n <- vapply (years, function (i) lang_one_year (x, i),
+             numeric (1))
+dat <- data.frame (year = years, n = n)
+saveRDS (dat, f)
+```
+```{r fig7A}
+readRDS (f) |>
+    rename (num_languages = n) |>
+    ggplot (aes (x = year, y = num_languages)) +
+        geom_line () -> p1
+```
+
+```{r fig7-fns-per-year-file}
+f <- file.path (here, "data-raw", "fns-per-year.Rds")
+fns_per_year_exists <- file.exists (f)
+```
+```{r fig7-nfns-per-year, eval = !fns_per_year_exists}
+fns_per_year <- function (x, year = 2015) {
+
+    x1 <- x |>
+        filter (year <= !!year) |>
+        group_by (package) |>
+        slice_max (date)
+
+    x1$loc_R [which (is.na (x1$loc_R))] <- 0L
+    x1$loc_src [which (is.na (x1$loc_src))] <- 0L
+    x1$loc_inst [which (is.na (x1$loc_inst))] <- 0L
+    loc <- x1$loc_R + x1$loc_src + x1$loc_inst
+
+    c (year = year,
+       loc = mean (loc),
+       loc_R = mean (x1$loc_R, na.rm = TRUE),
+       loc_src = mean (x1$loc_src, na.rm = TRUE),
+       loc_inst = mean (x1$loc_inst, na.rm = TRUE),
+       loc_vignettes = mean (x1$loc_vignettes, na.rm = TRUE),
+       loc_tests = mean (x1$loc_tests, na.rm = TRUE),
+       n_fns_r_exported = mean (x1$n_fns_r_exported, na.rm = TRUE),
+       n_fns_r_not_exported = mean (x1$n_fns_r_not_exported, na.rm = TRUE),
+       n_fns_src = mean (x1$n_fns_src, na.rm = TRUE),
+       n_fns_per_file_r = mean (x1$n_fns_per_file_r, na.rm = TRUE),
+       n_fns_per_file_src = mean (x1$n_fns_per_file_src, na.rm = TRUE),
+       npars_exported_mn = mean (x1$npars_exported_mn, na.rm = TRUE),
+       npars_exported_md = mean (x1$npars_exported_md, na.rm = TRUE),
+       loc_per_fn_r_mn = mean (x1$loc_per_fn_r_mn, na.rm = TRUE),
+       loc_per_fn_r_md = mean (x1$loc_per_fn_r_md, na.rm = TRUE),
+       loc_per_fn_r_exp_mn = mean (x1$loc_per_fn_r_exp_mn, na.rm = TRUE),
+       loc_per_fn_r_exp_md = mean (x1$loc_per_fn_r_exp_md, na.rm = TRUE),
+       loc_per_fn_r_not_exp_mn = mean (x1$loc_per_fn_r_not_exp_mn, na.rm = TRUE),
+       loc_per_fn_r_not_exp_md = mean (x1$loc_per_fn_r_not_exp_md, na.rm = TRUE),
+       loc_per_fn_src_mn = mean (x1$loc_per_fn_src_mn, na.rm = TRUE),
+       loc_per_fn_src_md = mean (x1$loc_per_fn_src_md, na.rm = TRUE),
+       doclines_per_fn_exp_mn = mean (x1$doclines_per_fn_exp_mn, na.rm = TRUE),
+       doclines_per_fn_exp_md = mean (x1$doclines_per_fn_exp_md, na.rm = TRUE),
+       doclines_per_fn_not_exp_mn = mean (x1$doclines_per_fn_not_exp_mn, na.rm = TRUE),
+       doclines_per_fn_not_exp_md = mean (x1$doclines_per_fn_not_exp_md, na.rm = TRUE),
+       docchars_per_par_exp_mn = mean (x1$docchars_per_par_exp_mn, na.rm = TRUE),
+       docchars_per_par_exp_md = mean (x1$docchars_per_par_exp_md, na.rm = TRUE))
+}
+years <- sort (unique (x$year))
+dat <- lapply (years, function (i) fns_per_year (x, i))
+dat <- data.frame (do.call (rbind, dat))
+saveRDS (dat, f)
+```
+
+```{r fig7A-loc-per-year-plot}
+readRDS (f) |>
+    select (c (year, loc, loc_R, loc_src, loc_inst)) |>
+    rename (total = loc,
+            R = loc_R,
+            src = loc_src,
+            inst = loc_inst) |>
+    mutate (total = total * max (inst, na.rm = TRUE) / max (total, na.rm = TRUE)) |>
+    pivot_longer (c (total, R, src, inst)) |>
+    rename (type = name, number = value) |>
+    ggplot (aes (x = year, y = number, colour = type)) +
+        geom_line () +
+        theme (legend.title = element_blank(),
+               legend.position = c (0.5, 0.45),
+               legend.background = element_rect(fill='transparent', colour='transparent')) +
+        ylab ("Numbers of functions") +
+        guides (color = guide_legend (ncol = 2)) +
+        ggtitle ("A: Lines of Code") -> p1
+```
+
+```{r fig7B-fns-per-year-plot}
+readRDS (f) |>
+    select (c (year, n_fns_r_exported, n_fns_r_not_exported, n_fns_src)) |>
+    rename (r_exp = n_fns_r_exported,
+            r_non = n_fns_r_not_exported,
+            src = n_fns_src) |>
+    pivot_longer (c (r_exp, r_non, src)) |>
+    rename (type = name, number = value) |>
+    ggplot (aes (x = year, y = number, colour = type)) +
+        geom_line () +
+        theme (legend.title = element_blank(),
+               legend.position = c (0.15, 0.85),
+               legend.background = element_rect(fill='transparent', colour='transparent')) +
+        ylab ("Numbers of functions") +
+        ggtitle ("B: Total functions") -> p2
+```
+
+```{r Fig7C-fns-per-file}
+x <- readRDS (f) |>
+    select (c (year, n_fns_per_file_r, n_fns_per_file_src)) |>
+    rename (R = n_fns_per_file_r,
+            src = n_fns_per_file_src) |>
+    pivot_longer (c (R, src)) |>
+    rename (type = name, number = value) |>
+    ggplot (aes (x = year, y = number, colour = type)) +
+        geom_line () +
+        theme (legend.title = element_blank(),
+               legend.position = c (0.85, 0.9),
+               legend.background = element_rect(fill='transparent', colour='transparent')) +
+        ylab ("Numbers of functions") +
+        ggtitle ("C: Functions per file") -> p3
+```
+
+```{r fig7D-loc-per-fn}
+x <- readRDS (f) |>
+    select (c (year, loc_per_fn_r_exp_mn, loc_per_fn_r_not_exp_mn,
+               loc_per_fn_src_mn)) |>
+    rename (R_exp = loc_per_fn_r_exp_mn,
+            R_non = loc_per_fn_r_not_exp_mn,
+            src = loc_per_fn_src_mn) |>
+    pivot_longer (c (R_exp, R_non, src)) |>
+    rename (type = name, number = value) |>
+    ggplot (aes (x = year, y = number, colour = type)) +
+        geom_line () +
+        theme (legend.title = element_blank(),
+               legend.position = c (0.8, 0.8),
+               legend.background = element_rect(fill='transparent', colour='transparent')) +
+        ylab ("Numbers of functions") +
+        ggtitle ("D: LoC per fn") -> p4
+```
+
+
+```{r fig7-assemble}
+(p1 + p2) / (p3 + p4)
+```

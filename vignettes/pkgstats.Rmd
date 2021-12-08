@@ -348,6 +348,13 @@ both of increasing dependence of other packages on any given package, and
 decreasing dependence of packages on functionality provided by external
 packages.
 
+Finally, Fig. 6C shows progressions of packages being imported into other
+packages as a function of release sequence. The number of packages importing
+a package increases progressively with numbers of releases. Packages with less
+than ten releases are, on average, imported by very few other packages, while
+packages with 30 or more releases are imported by ten other packages on
+average. 
+
 ```{r fig6, child = "figures/fig6.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 

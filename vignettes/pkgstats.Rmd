@@ -353,7 +353,10 @@ packages as a function of release sequence. The number of packages importing
 a package increases progressively with numbers of releases. Packages with less
 than ten releases are, on average, imported by very few other packages, while
 packages with 30 or more releases are imported by ten other packages on
-average. 
+average. The second line on that figure nevertheless reveals that numbers of
+functions actually used by other packages increase above one after around ten
+releases, yet always remain below two on average, even for packages with 50 or
+more releases.
 
 ```{r fig6, child = "figures/fig6.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```

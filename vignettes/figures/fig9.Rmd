@@ -1,0 +1,145 @@
+
+
+<!--
+
+# dependency networks over time
+
+-->
+
+```{r fig9-precalc}
+graph_data_file <- file.path (here, "vignettes", "graph-metrics.Rds")
+calc_graph_data <- !file.exists (graph_data_file)
+```
+
+```{r fig9-calc-graph-data, eval = calc_graph_data}
+xraw <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
+
+dat_one_year <- function (xraw, year = 2015) {
+
+    x <- xraw |>
+        filter (year <= !!year) |>
+        group_by (package) |>
+        slice_max (date)
+    x <- x [which (!(is.na (x$external_calls) | x$external_calls == "")), ]
+    x <- x [which (!(x$imports == "NA" | nchar (x$imports) == 0L)), ]
+    if (nrow (x) == 0) {
+        return (NULL)
+    }
+
+    imports <- lapply (seq (nrow (x)), function (i)
+                          data.frame (to = x$package [i],
+                                      from = strsplit (x$imports [i], ",") [[1]]))
+    imports <- do.call (rbind, imports)
+    imports$from <- gsub ("^\\s*|\\s*$", "", imports$from)
+    imports$to <- gsub ("^\\s*|\\s*$", "", imports$to)
+    imports <- imports [which (!duplicated (imports)), ]
+
+    graph_from_data_frame (imports)
+}
+
+graph_metrics <- function (g) {
+
+    dd_in <- degree (g, mode = "in")
+    dd_in_zero <- length (which (dd_in < 1e-10)) / length (dd_in)
+    dd_in_mean_no0 <- mean (dd_in [which (dd_in > 1e-10)])
+    dd_in_mean <- mean (dd_in)
+
+    dd_out <- degree (g, mode = "out")
+    dd_out_zero <- length (which (dd_out < 1e-10)) / length (dd_out)
+    dd_out_mean_no0 <- mean (dd_out [which (dd_out > 1e-10)])
+    dd_out_mean <- mean (dd_out)
+
+    d <- distances (g)
+    d [!is.finite (d)] <- NA
+    stats <- apply (d, 2, function (i) c (median (i, na.rm = TRUE),
+                                          mean (i, na.rm = TRUE)))
+    c (dd_in_zero = dd_in_zero,
+       dd_in_mean_no0 = dd_in_mean_no0,
+       dd_in_mean = dd_in_mean,
+       dd_out_zero = dd_out_zero,
+       dd_out_mean_no0 = dd_out_mean_no0,
+       dd_out_mean = dd_out_mean,
+       re = reciprocity (g),
+       ad = assortativity_degree (g),
+       cb = centr_betw(g, directed = FALSE)$centralization,
+       cd = centr_degree(g)$centralization,
+       d_med = median (stats [1, ]),
+       d_mean = mean (stats [2, ]))
+}
+
+years <- sort (unique (xraw$year))
+dat <- lapply (years, function (y) {
+    g <- dat_one_year (xraw, y)
+    if (is.null (g)) {
+        return (NULL)
+    }
+    c (year = y, graph_metrics (g))
+       })
+dat <- data.frame (do.call (rbind, dat))
+
+saveRDS (dat, graph_data_file)
+```
+
+```{r fig9-construct-old, eval = FALSE}
+dat <- readRDS (graph_data_file)
+dat_dd <- pivot_longer (dat, cols = c (dd_in_zero, dd_in_mean, dd_out_mean)) |>
+    select (c (year, name, value)) |>
+    mutate (name = gsub ("^dd\\_", "", name))
+dat_cd <- pivot_longer (dat, cols = c (cb, cd, d_mean)) |>
+    select (c (year, name, value)) |>
+    mutate (name = case_when (
+                name == "cb" ~ "centr_betw",
+                name == "cd" ~ "centr_degree",
+                name == "d_mean" ~ "dist_mean"))
+
+p1 <- ggplot (dat_dd, aes (x = year, y = value, color = name)) +
+    geom_line () +
+    ggtitle ("A: Package dependencies") +
+    theme (legend.position = c (0.3, 0.7),
+           legend.background = element_rect(fill='transparent', colour='transparent'))
+
+p2 <- ggplot (dat_cd, aes (x = year, y = value, color = name)) +
+    geom_line () +
+    ggtitle ("B: Network Metrics") +
+    theme (legend.position = c (0.3, 0.7),
+           legend.background = element_rect(fill='transparent', colour='transparent'))
+p1 + p2
+```
+
+```{r fig9-construct, eval = TRUE}
+dat <- readRDS (graph_data_file)
+coeff_fig9_p1 <- max (dat$dd_in_zero) / max (dat$dd_in_mean)
+colours_fig9_p1 <- c ("vert_degree" = "red",
+                      "not_imported" = "blue")
+
+p1 <- ggplot (dat, aes (x = year)) +
+        geom_line (aes (y = dd_in_mean, col = "vert_degree")) +
+        geom_line (aes (y = dd_in_zero / coeff_fig9_p1, col = "not_imported")) +
+        ylab ("Vertex degree") +
+        scale_y_continuous (
+            sec.axis = sec_axis (~.*coeff_fig9_p1, name = "Prop. non-imported pkgs")) +
+        ggtitle ("A: Package dependencies") +
+        theme (legend.title = element_blank (),
+               legend.position = c (0.2, 0.9),
+               legend.background = element_rect(fill='transparent', colour='transparent'))
+
+coeff_fig9_p2 <- max (dat$d_mean) / max (dat$cb)
+colours_fig9_p2 <- c ("centr_betw" = "red",
+                      "centr_degree" = "green",
+                      "mean_dist" = "blue")
+p2 <- ggplot (dat, aes (x = year)) +
+        geom_line (aes (y = cb, col = "centr_betw")) +
+        geom_line (aes (y = cd, col = "centr_degree")) +
+        geom_line (aes (y = d_mean / coeff_fig9_p2, col = "mean_dist")) +
+        ylab ("centrality") +
+        scale_y_continuous (
+            sec.axis = sec_axis (~.*coeff_fig9_p2, name = "Mean distance")) +
+        ggtitle ("B: Network Metrics") +
+        theme (legend.title = element_blank (),
+               legend.position = c (0.7, 0.9),
+               legend.background = element_rect(fill='transparent', colour='transparent'))
+```
+
+```{r fig9-assemble, echo = FALSE, message = FALSE, fig.cap = "**Figure 9** Network metrics"}
+p1 + p2
+```

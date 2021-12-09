@@ -92,6 +92,6 @@ fig10_p2 <- x2 |>
 ```
 
 
-```{r fig10-assemble, echo = FALSE, message = FALSE, fig.cap = "**Figure 10** Network metrics"}
+```{r fig10-assemble, echo = FALSE, message = FALSE, fig.height = 3.5, fig.cap = "**Figure 10** Network metrics"}
 fig10_p1 + fig10_p2
 ```

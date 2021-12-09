@@ -85,6 +85,6 @@ p1 <- ggplot (dat, aes (x = year, y = n_files, color = dir)) +
     theme (legend.position = "none")
 ```
 
-```{r fig4, echo = FALSE, message = FALSE, fig.cap = "**Figure 4**"}
+```{r fig4, echo = FALSE, message = FALSE, fig.width = 7, fig.height = 3.5, fig.cap = "**Figure 4**"}
 p1 + p2
 ```

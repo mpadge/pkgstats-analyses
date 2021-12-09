@@ -1,5 +1,5 @@
 
-```{r fig3, echo = FALSE, message = FALSE, fig.cap = "**Figure 3.** (A) Annual frequencies of the top 10 translations. (B) Annual frequencies of the top 10 primary URL domains, with frequencies for GitHub divided by 20."}
+```{r fig3, echo = FALSE, message = FALSE, fig.width = 7, fig.height = 7, fig.cap = "**Figure 3.** (A) Annual frequencies of the top 10 translations. (B) Annual frequencies of the top 10 primary URL domains, with frequencies for GitHub divided by 20."}
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
 x$translations [x$translations == "NA"] <- NA_character_
 tr <- lapply (split (x, f = as.factor (x$year)), function (i) {

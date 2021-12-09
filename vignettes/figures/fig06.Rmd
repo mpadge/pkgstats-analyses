@@ -111,6 +111,6 @@ p3 <- ggplot (deps_p3, aes (x = seq)) +
 ```
 
 
-```{r fig6-assemble, fig.cap = "**Fig. 6**"}
+```{r fig6-assemble, fig.width = 7, fig.height = 7, fig.cap = "**Fig. 6**"}
 (p1 | p2) / p3
 ```

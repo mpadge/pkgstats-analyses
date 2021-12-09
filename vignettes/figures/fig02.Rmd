@@ -1,5 +1,5 @@
 
-```{r fig2-num_aut_ctb, echo = FALSE, warning = FALSE, fig.cap = "**Figure 2.**"}
+```{r fig2-num_aut_ctb, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 3.5, fig.cap = "**Figure 2.**"}
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
     group_by (month) |>

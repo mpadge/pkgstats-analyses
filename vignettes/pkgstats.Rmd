@@ -209,7 +209,7 @@ of one acknowledged contributor per package in 2021. Numbers of unique licenses
 manifest an opposite tendency, decreasing notably
 over time (Fig. 2B, resulting in the values shown in Table 1.
 
-```{r fig2, child = "figures/fig2.Rmd", eval = TRUE, echo = FALSE}
+```{r fig02, child = "figures/fig02.Rmd", eval = TRUE, echo = FALSE}
 ```
 
 ```{r licenses, echo = FALSE}
@@ -222,7 +222,7 @@ lic <- data.frame (license = names (lic),
 knitr::kable (lic, caption = "**Table 1.**")
 ```
 
-```{r fig3, child = "figures/fig3.Rmd", eval = TRUE, echo = FALSE}
+```{r fig03, child = "figures/fig03.Rmd", eval = TRUE, echo = FALSE}
 ```
 
 
@@ -255,7 +255,7 @@ are `vignettes` and `tests`, clearly indicating that packages have become both
 better documented and better tested, especially since 2010.
 
 
-```{r fig4, child = "figures/fig4.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
+```{r fig04, child = "figures/fig04.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
 Figure 4B shows equivalent relative changes within individual packages across
@@ -313,7 +313,7 @@ This reduction has been offset by a concomitantly pronounced increase in calls
 to functions from contributed packages.
 
 
-```{r fig5, child = "figures/fig5.Rmd", eval = TRUE, echo = FALSE}
+```{r fig05, child = "figures/fig05.Rmd", eval = TRUE, echo = FALSE}
 ```
 
 Figure 5B shows the "coupling instability" of packages over time. This is the
@@ -381,7 +381,7 @@ functions actually used by other packages increase above one after around ten
 releases, yet always remain below two on average, even for packages with 50 or
 more releases.
 
-```{r fig6, child = "figures/fig6.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
+```{r fig06, child = "figures/fig06.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
 ## Temporal Development #3: Code Metrics
@@ -413,7 +413,7 @@ file have nevertheless progressively decreased since the early 2000's to now
 amount to less than six `R` functions and just over 8 `src` functions per file
 (Fig. 7D).
 
-```{r fig7, child = "figures/fig7.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
+```{r fig07, child = "figures/fig07.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
 ## Intra-package Developments
@@ -446,12 +446,12 @@ as packages mature. Finally, numbers of functions per file show no clear trend
 for `src` code, while approximately doubling in `R` code over the first 100
 releases of a package, from around 7 to 15.
 
-```{r fig8, child = "figures/fig8.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
+```{r fig08, child = "figures/fig08.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
 ## Network metrics
 
-```{r fig9, child = "figures/fig9.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
+```{r fig09, child = "figures/fig09.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
 ```{r fig10, child = "figures/fig10.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}

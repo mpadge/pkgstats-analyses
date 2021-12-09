@@ -209,6 +209,6 @@ fig9_p4 <- dat |>
 ```
 
 
-```{r fig9-assemble, echo = FALSE, message = FALSE, fig.cap = "**Figure 9** Network metrics"}
+```{r fig9-assemble, echo = FALSE, message = FALSE, fig.width = 7, fig.height = 7, fig.cap = "**Figure 9** Network metrics"}
 (fig9_p1 + fig9_p2) / (fig9_p3 + fig9_p4)
 ```

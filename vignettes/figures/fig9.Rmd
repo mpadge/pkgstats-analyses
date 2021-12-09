@@ -8,13 +8,16 @@
 
 ```{r fig9-precalc}
 graph_data_file <- file.path (here, "vignettes", "graph-metrics.Rds")
+graph_intern_data_file <- file.path (here, "vignettes", "graph-metrics-intern.Rds")
 calc_graph_data <- !file.exists (graph_data_file)
+calc_graph_data_intern <- !file.exists (graph_intern_data_file)
 ```
 
 ```{r fig9-calc-graph-data, eval = calc_graph_data}
+# graph metrics for inter-package dependency networks
 xraw <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
 
-dat_one_year <- function (xraw, year = 2015) {
+graph_one_year <- function (xraw, year = 2015) {
 
     x <- xraw |>
         filter (year <= !!year) |>
@@ -69,7 +72,7 @@ graph_metrics <- function (g) {
 
 years <- sort (unique (xraw$year))
 dat <- lapply (years, function (y) {
-    g <- dat_one_year (xraw, y)
+    g <- graph_one_year (xraw, y)
     if (is.null (g)) {
         return (NULL)
     }
@@ -80,30 +83,39 @@ dat <- data.frame (do.call (rbind, dat))
 saveRDS (dat, graph_data_file)
 ```
 
-```{r fig9-construct-old, eval = FALSE}
-dat <- readRDS (graph_data_file)
-dat_dd <- pivot_longer (dat, cols = c (dd_in_zero, dd_in_mean, dd_out_mean)) |>
-    select (c (year, name, value)) |>
-    mutate (name = gsub ("^dd\\_", "", name))
-dat_cd <- pivot_longer (dat, cols = c (cb, cd, d_mean)) |>
-    select (c (year, name, value)) |>
-    mutate (name = case_when (
-                name == "cb" ~ "centr_betw",
-                name == "cd" ~ "centr_degree",
-                name == "d_mean" ~ "dist_mean"))
+```{r fig9-intra-pkg-network-stats, eval = calc_graph_data_intern}
+xraw <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
+dat_one_year <- function (xraw, year = 2015) {
 
-p1 <- ggplot (dat_dd, aes (x = year, y = value, color = name)) +
-    geom_line () +
-    ggtitle ("A: Package dependencies") +
-    theme (legend.position = c (0.3, 0.7),
-           legend.background = element_rect(fill='transparent', colour='transparent'))
+    x <- xraw |>
+        filter (year <= !!year) |>
+        group_by (package) |>
+        slice_max (date)
 
-p2 <- ggplot (dat_cd, aes (x = year, y = value, color = name)) +
-    geom_line () +
-    ggtitle ("B: Network Metrics") +
-    theme (legend.position = c (0.3, 0.7),
-           legend.background = element_rect(fill='transparent', colour='transparent'))
-p1 + p2
+    c (year = year,
+       n_edges = mean (x$n_edges [which (!is.na (x$n_edges))]),
+       n_edges_r = mean (x$n_edges_r [which (!is.na (x$n_edges_r))]),
+       n_edges_src = mean (x$n_edges_src [which (!is.na (x$n_edges_src))]),
+       n_clusters = mean (x$n_clusters [which (!is.na (x$n_clusters))]),
+       centr_dir_mn = mean (x$centrality_dir_mn [which (!is.na (x$centrality_dir_mn))]),
+       centr_dir_md = mean (x$centrality_dir_md [which (!is.na (x$centrality_dir_md))]),
+       centr_dir_mn_no0 = mean (x$centrality_dir_mn_no0 [which (!is.na (x$centrality_dir_mn_no0))]),
+       centr_dir_md_no0 = mean (x$centrality_dir_md_no0 [which (!is.na (x$centrality_dir_md_no0))]),
+       centr_undir_mn = mean (x$centrality_undir_mn [which (!is.na (x$centrality_undir_mn))]),
+       centr_undir_md = mean (x$centrality_undir_md [which (!is.na (x$centrality_undir_md))]),
+       centr_undir_mn_no0 = mean (x$centrality_undir_mn_no0 [which (!is.na (x$centrality_undir_mn_no0))]),
+       centr_undir_md_no0 = mean (x$centrality_undir_md_no0 [which (!is.na (x$centrality_undir_md_no0))]),
+       central_edges_dir = mean (x$num_terminal_edges_dir [which (!is.na (x$num_terminal_edges_dir))]),
+       term_edges = mean (x$num_terminal_edges_undir [which (!is.na (x$num_terminal_edges_undir))]),
+       node_degree_mn = mean (x$node_degree_mn [which (!is.na (x$node_degree_mn))]),
+       node_degree_md = mean (x$node_degree_md [which (!is.na (x$node_degree_md))]),
+       node_degree_max = mean (x$node_degree_max [which (!is.na (x$node_degree_max))]))
+}
+years <- sort (unique (xraw$year))
+dat <- lapply (years, function (y) dat_one_year (xraw, y))
+dat <- data.frame (do.call (rbind, dat))
+
+saveRDS (dat, graph_intern_data_file)
 ```
 
 ```{r fig9-construct, eval = TRUE}
@@ -112,13 +124,13 @@ coeff_fig9_p1 <- max (dat$dd_in_zero) / max (dat$dd_in_mean)
 colours_fig9_p1 <- c ("vert_degree" = "red",
                       "not_imported" = "blue")
 
-p1 <- ggplot (dat, aes (x = year)) +
+fig9_p1 <- ggplot (dat, aes (x = year)) +
         geom_line (aes (y = dd_in_mean, col = "vert_degree")) +
         geom_line (aes (y = dd_in_zero / coeff_fig9_p1, col = "not_imported")) +
         ylab ("Vertex degree") +
         scale_y_continuous (
             sec.axis = sec_axis (~.*coeff_fig9_p1, name = "Prop. non-imported pkgs")) +
-        ggtitle ("A: Package dependencies") +
+        ggtitle ("A: CRAN pkg deps") +
         theme (legend.title = element_blank (),
                legend.position = c (0.2, 0.9),
                legend.background = element_rect(fill='transparent', colour='transparent'))
@@ -127,19 +139,76 @@ coeff_fig9_p2 <- max (dat$d_mean) / max (dat$cb)
 colours_fig9_p2 <- c ("centr_betw" = "red",
                       "centr_degree" = "green",
                       "mean_dist" = "blue")
-p2 <- ggplot (dat, aes (x = year)) +
+fig9_p2 <- ggplot (dat, aes (x = year)) +
         geom_line (aes (y = cb, col = "centr_betw")) +
         geom_line (aes (y = cd, col = "centr_degree")) +
         geom_line (aes (y = d_mean / coeff_fig9_p2, col = "mean_dist")) +
         ylab ("centrality") +
         scale_y_continuous (
             sec.axis = sec_axis (~.*coeff_fig9_p2, name = "Mean distance")) +
-        ggtitle ("B: Network Metrics") +
+        ggtitle ("B: CRAN network metrics") +
+        #guides (color = guide_legend (ncol = 2)) +
         theme (legend.title = element_blank (),
                legend.position = c (0.7, 0.9),
                legend.background = element_rect(fill='transparent', colour='transparent'))
 ```
 
+```{r fig9-network-internal1}
+dat <- readRDS (graph_intern_data_file)
+coeff_fig9_p3 <- max (dat$n_clusters) / max (dat$n_edges)
+colours_fig9_p3 <- c ("total" = "red",
+                      "R" = "green",
+                      "src" = "blue",
+                      "n_clusters" = "orange")
+fig9_p3 <- dat |>
+    select (year, starts_with ("n_")) |>
+    rename (total = n_edges, R = n_edges_r, src = n_edges_src) |>
+    ggplot (aes (x = year)) +
+        geom_line (aes (y = total, col = "total")) +
+        geom_line (aes (y = R, col = "R")) +
+        geom_line (aes (y = src, col = "src")) +
+        geom_line (aes (y = n_clusters / coeff_fig9_p3, col = "n_clusters")) +
+        scale_colour_manual (values = colours_fig9_p3) +
+        ylab ("Num. edges") +
+        scale_y_continuous (
+            sec.axis = sec_axis (~.*coeff_fig9_p3, name = "Num. clusters")) +
+        ggtitle ("C: pkg edges and clusters") +
+        guides (color = guide_legend (ncol = 2)) +
+        theme (legend.title = element_blank (),
+               legend.position = c (0.5, 0.15),
+               legend.background = element_rect(fill='transparent', colour='transparent'))
+```
+
+```{r fig9-network-internal2}
+dat <- readRDS (graph_intern_data_file)
+coeff_fig9_p4 <- max (dat$term_edges) / max (dat$centr_undir_mn)
+colours_fig9_p4 <- c ("centr_undir" = "red",
+                      "centr_dir" = "green",
+                      "vert_degree" = "blue",
+                      "term_edges" = "orange")
+
+fig9_p4 <- dat |>
+    select (year, centr_undir_mn, centr_dir_mn, node_degree_mn, term_edges) |>
+    rename (centr_undir = centr_undir_mn,
+            centr_dir = centr_dir_mn,
+            vert_degree = node_degree_mn) |>
+    mutate (vert_degree = vert_degree * 10) |>
+    ggplot (aes (x = year)) +
+        geom_line (aes (y = centr_undir, col = "centr_undir")) +
+        geom_line (aes (y = centr_dir, col = "centr_dir")) +
+        geom_line (aes (y = vert_degree / coeff_fig9_p4, col = "vert_degree")) +
+        geom_line (aes (y = term_edges / coeff_fig9_p4, col = "term_edges")) +
+        scale_y_continuous (
+            sec.axis = sec_axis (~.*coeff_fig9_p4, name = "Vert. degree (*10) / Term. edges")) +
+        ggtitle ("D: pkg centrality metrics") +
+        guides (color = guide_legend (ncol = 2)) +
+        theme (legend.title = element_blank (),
+               legend.position = c (0.5, 0.45),
+               legend.background = element_rect(fill='transparent', colour='transparent'))
+fig9_p4
+```
+
+
 ```{r fig9-assemble, echo = FALSE, message = FALSE, fig.cap = "**Figure 9** Network metrics"}
-p1 + p2
+(fig9_p1 + fig9_p2) / (fig9_p3 + fig9_p4)
 ```

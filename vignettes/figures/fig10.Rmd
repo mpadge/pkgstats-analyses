@@ -1,0 +1,97 @@
+
+<!--
+Fig 9 but over package release instead of year
+-->
+
+```{r fig10-calc-graph-data}
+# graph metrics for inter-package dependency networks
+datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
+xraw <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
+
+x <- xraw |>
+    group_by (package) |>
+    mutate (seq = seq_along (package)) |>
+    group_by (seq) |>
+    summarise (
+               n_edges = mean (n_edges [which (!is.na (n_edges))]),
+               n_edges_r = mean (n_edges_r [which (!is.na (n_edges_r))]),
+               n_edges_src = mean (n_edges_src [which (!is.na (n_edges_src))]),
+               n_clusters = mean (n_clusters [which (!is.na (n_clusters))]),
+               centr_dir_mn = mean (centrality_dir_mn [which (!is.na (centrality_dir_mn))]),
+               centr_dir_md = mean (centrality_dir_md [which (!is.na (centrality_dir_md))]),
+               centr_dir_mn_no0 = mean (centrality_dir_mn_no0 [which (!is.na (centrality_dir_mn_no0))]),
+               centr_dir_md_no0 = mean (centrality_dir_md_no0 [which (!is.na (centrality_dir_md_no0))]),
+               centr_undir_mn = mean (centrality_undir_mn [which (!is.na (centrality_undir_mn))]),
+               centr_undir_md = mean (centrality_undir_md [which (!is.na (centrality_undir_md))]),
+               centr_undir_mn_no0 = mean (centrality_undir_mn_no0 [which (!is.na (centrality_undir_mn_no0))]),
+                centr_undir_md_no0 = mean (centrality_undir_md_no0 [which (!is.na (centrality_undir_md_no0))]),
+                central_edges_dir = mean (num_terminal_edges_dir [which (!is.na (num_terminal_edges_dir))]),
+                term_edges = mean (num_terminal_edges_undir [which (!is.na (num_terminal_edges_undir))]),
+                node_degree_mn = mean (node_degree_mn [which (!is.na (node_degree_mn))]),
+                node_degree_md = mean (node_degree_md [which (!is.na (node_degree_md))]),
+                node_degree_max = mean (node_degree_max [which (!is.na (node_degree_max))]))
+```
+
+
+```{r fig10-network-internal1}
+x1 <- x |>
+    select (seq, starts_with ("n_")) |>
+    rename (total = n_edges, R = n_edges_r, src = n_edges_src) |>
+    filter (seq <= 100)
+
+coeff_fig10_p1 <- max (x1$n_clusters) / max (x1$total)
+colours_fig10_p1 <- c ("total" = "red",
+                       "R" = "green",
+                       "src" = "blue",
+                       "n_clusters" = "orange")
+
+fig10_p1 <- x1 |>
+    ggplot (aes (x = seq)) +
+        geom_line (aes (y = total, col = "total")) +
+        geom_line (aes (y = R, col = "R")) +
+        geom_line (aes (y = src, col = "src")) +
+        geom_line (aes (y = n_clusters / coeff_fig10_p1, col = "n_clusters")) +
+        #scale_colour_manual (values = colours_fig10_p1) +
+        ylab ("Num. edges") +
+        scale_y_continuous (
+            sec.axis = sec_axis (~.*coeff_fig10_p1, name = "Num. clusters")) +
+        ggtitle ("A: pkg network metrics") +
+        guides (color = guide_legend (ncol = 2)) +
+        theme (legend.title = element_blank (),
+               legend.position = c (0.45, 0.95),
+               legend.background = element_rect(fill='transparent', colour='transparent'))
+```
+
+```{r fig10-network-internal2}
+x2 <- x |>
+    select (seq, centr_undir_mn, centr_dir_mn, node_degree_mn, term_edges) |>
+    rename (centr_undir = centr_undir_mn,
+            centr_dir = centr_dir_mn,
+            vert_degree = node_degree_mn)  |>
+    mutate (vert_degree = vert_degree * 10) |>
+    filter (seq < 100)
+
+coeff_fig10_p2 <- max (x2$term_edges) / max (x2$centr_undir)
+colours_fig1e_p2 <- c ("centr_undir" = "red",
+                      "centr_dir" = "green",
+                      "vert_degree" = "blue",
+                      "term_edges" = "orange")
+fig10_p2 <- x2 |>
+    ggplot (aes (x = seq)) +
+        geom_line (aes (y = centr_undir, col = "centr_undir")) +
+        geom_line (aes (y = centr_dir, col = "centr_dir")) +
+        geom_line (aes (y = vert_degree / coeff_fig10_p2, col = "vert_degree")) +
+        geom_line (aes (y = term_edges / coeff_fig10_p2, col = "term_edges")) +
+        scale_y_continuous (
+            sec.axis = sec_axis (~.*coeff_fig10_p2, name = "Vert. degree / Term. edges")) +
+        ggtitle ("D: pkg centrality metrics") +
+        guides (color = guide_legend (ncol = 2)) +
+        theme (legend.title = element_blank (),
+               legend.position = c (0.44, 0.95),
+               legend.background = element_rect(fill='transparent', colour='transparent'))
+```
+
+
+```{r fig10-assemble, echo = FALSE, message = FALSE, fig.cap = "**Figure 10** Network metrics"}
+fig10_p1 + fig10_p2
+```

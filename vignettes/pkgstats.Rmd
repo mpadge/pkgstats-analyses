@@ -454,5 +454,8 @@ releases of a package, from around 7 to 15.
 ```{r fig9, child = "figures/fig9.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
+```{r fig10, child = "figures/fig10.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
+```
+
 
 # References

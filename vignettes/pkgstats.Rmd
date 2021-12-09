@@ -293,8 +293,6 @@ file have nevertheless progressively decreased since the early 2000's to now
 amount to less than six `R` functions and just over 8 `src` functions per file
 (Fig. 7D).
 
-```{r fig7, child = "figures/fig7.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
-```
 
 
 @static-analysis-2016,
@@ -385,9 +383,6 @@ more releases.
 
 ```{r fig6, child = "figures/fig6.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
-
-# Discussion
-=======
 
 ## Temporal Development #3: Code Metrics
 

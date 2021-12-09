@@ -1,5 +1,5 @@
 
-```{r fig7-preload}
+```{r fig7-pre}
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
 x$num_languages <- vapply (strsplit (x$languages, ","), length,

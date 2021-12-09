@@ -387,5 +387,74 @@ more releases.
 ```
 
 # Discussion
+=======
+
+## Temporal Development #3: Code Metrics
+
+Figure 7 shows the temporal evolution of a number of code metrics. These figures distinguish between the two primary kinds of R functions, exported and non-exported, and also between the main sub-directories of R packages:
+
+- The `R` directory holding all source files in the `R` language;
+- The `src` directory holding all code in other languages which needs to be compiled on package installation;
+- The `inst` directory generally holding bundles of external code, but also
+  including code linked to within `src` code and used for cross-linking in
+  compilation of other packages.
+
+### Annual Developments
+
+Lines of Code ("LoC") in the primary `R` and `src` directories broadly
+increased up to around 2010 or slightly later, after which time LoC in these
+directories has progressively decreased. These follow similar trends in LoC per
+function (Fig. 7B), excepting the early years of CRAN, during which functions
+often had well over 100 lines each, especially `src` functions defined in other
+languages.
+
+Total numbers of R functions initially increased until around 2007, peaking at
+just under 50 exported and 75-80 non-exported functions per package (Fig. 7C).
+Numbers of exported R functions have decreased since then to around 27
+functions per package in 2021. In contrast, numbers of functions defined in
+`src` directories have progressively increased, and now total just over 150
+functions. In both `R` and `src` directories, numbers of functions per source
+file have nevertheless progressively decreased since the early 2000's to now
+amount to less than six `R` functions and just over 8 `src` functions per file
+(Fig. 7D).
+
+```{r fig7, child = "figures/fig7.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
+```
+
+## Intra-package Developments
+
+Figure 8 shows results equivalent to Fig. 7, but for the development of the
+respective metrics with each sequential release of a package, rather than being
+averaged over all packages for each year. Lines of code generally increase as
+packages mature, with mean numbers of lines in the `R` directory increasing
+tenfold from under 1000 for first releases to almost 10,000 in packages with
+100 or more releases. Changes in LoC in `src` and `inst` directories were less
+clear, yet the dominance of `R` code nevertheless produced an overall increase
+in LoC out to the 100th release of packages of around 12 times.
+
+These increases in LoC nevertheless corresponded to an equivalent decrease in
+LoC per function with increasing numbers of releases (Fig. 8B). Similar to the
+aggregate LoC measures of panel A, LoC per function in `src` directories
+remained broadly stable over releases, while LoC per `R` function decreased
+notably, and more so for exported than non-exported functions. Exported
+functions after 100 releases had just over 30 LoC per function, whereas initial
+releases average just under 60 LoC.
+
+The increasing total measures of LoC of panel A combined with decreasing LoC
+per function of panel B must mean that more functions are added as packages
+mature, which is precisely what Fig. 8C reveals. Packages initially contain
+around 20 exported functions on average, yet this increases almost 13-fold to
+over 250 by the 100th release. Non-exported functions increase by a similar
+10-fold proportion over the first 100 releases, while packages start with more
+many more `src` functions on initial releases, and so increases relatively less
+as packages mature. Finally, numbers of functions per file show no clear trend
+for `src` code, while approximately doubling in `R` code over the first 100
+releases of a package, from around 7 to 15.
+
+```{r fig8, child = "figures/fig8.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
+```
+
+## Network metrics
+
 
 # References

@@ -1,19 +1,23 @@
 
-```{r fig2-num_aut_ctb, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 3.5, fig.cap = "**Figure 2.**"}
+```{r fig2-precalc}
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
+f_fig2_aut_ctb <- file.path (here, "vignettes", "fig2-aut-ctb.Rds")
+calc_fig2_aut_ctb <- !file.exists (f_fig2_aut_ctb)
+f_fig2_lic <- file.path (here, "vignettes", "fig2-lic.Rds")
+calc_fig2_lic <- !file.exists (f_fig2_lic)
+```
+
+```{r fig2-aut-ctb, eval = calc_fig2_aut_ctb}
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
     group_by (month) |>
     summarise (n_aut = mean (desc_n_aut),
                n_ctb = mean (desc_n_ctb)) |>
     rename (aut = n_aut, ctb = n_ctb) |>
     pivot_longer (cols = c (aut, ctb))
-p1 <- ggplot (x, aes (x = month, y = value, colour = name)) +
-    geom_smooth (method = "loess", formula = y ~ x, se = FALSE) +
-    ggtitle ("A: Numbers of authors and contributors") +
-    ylab ("year") +
-    theme (legend.position = c (0.2, 0.4),
-           legend.background = element_rect(fill='transparent', colour='transparent'))
+saveRDS (x, f_fig2_aut_ctb)
+```
 
+```{r fig2-lic, eval = calc_fig2_lic}
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
 lic <- lapply (split (x, f = as.factor (x$year)), function (i) {
                    lic <- unlist (strsplit (i$license, "\\|"))
@@ -22,7 +26,23 @@ lic <- lapply (split (x, f = as.factor (x$year)), function (i) {
 y <- lubridate::year (paste0 (names (lic), "-01-01"))
 nlic <- data.frame (year = y,
                     n = vapply (lic, length, integer (1)))
-p2 <- ggplot (nlic, aes (x = year, y = n)) +
+saveRDS (nlic, f_fig2_lic)
+```
+
+
+
+```{r fig2-num_aut_ctb, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 3.5, fig.cap = "**Figure 2.**"}
+
+p1 <- readRDS (f_fig2_aut_ctb) |>
+    ggplot (aes (x = month, y = value, colour = name)) +
+    geom_smooth (method = "loess", formula = y ~ x, se = FALSE) +
+    ggtitle ("A: Numbers of authors and contributors") +
+    ylab ("year") +
+    theme (legend.position = c (0.2, 0.4),
+           legend.background = element_rect(fill='transparent', colour='transparent'))
+
+p2 <- readRDS (f_fig2_lic) |>
+    ggplot (aes (x = year, y = n)) +
     geom_line () +
     ylab ("Number of distinct licenses") +
     ggtitle ("B: Numbers of licenses")

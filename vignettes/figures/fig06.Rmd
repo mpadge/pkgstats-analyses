@@ -3,9 +3,18 @@
 ```{r fig6-pre-load}
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) 
-deps <- coupling_dependencies (x)
 recommended <- recommended_pkgs ()
 ```
+
+```{r Fig6-call-coupling-deps}
+f <- file.path (here, "coupling_deps.Rds")
+if (!file.exists (f)) {
+    deps <- coupling_dependencies (x)
+    saveRDS (deps, f)
+}
+deps <- readRDS (f)
+```
+
 ```{r fig6-p1}
 deps_p1 <- deps |>
     group_by (from, version) |>

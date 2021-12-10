@@ -39,8 +39,13 @@ p1 <- ggplot (deps, aes (x = year, y = proportion, color = type)) +
            legend.background = element_rect(fill='transparent', colour='transparent'))
 ```
 
+```{r fig5-top10-file}
+f_top10 <- file.path (here, "vignettes", "top10-pkgs.Rds")
+calc_top10 <- !file.exists (f_top10)
+```
 
-```{r fig5-dep-pkg-calls}
+
+```{r fig5-dep-pkg-calls, eval = calc_top10}
 deps <- lapply (seq (nrow (x)), function (i) {
                     # a few have rogue colons at start:
                     ex <- gsub ("^\\:", "", x$external_calls [i])
@@ -82,14 +87,16 @@ top <- deps |>
 
 top10 <- deps [deps$package %in% top$package [1:10], ]
 
-prop_top2 <- sum (top$n [1:2]) / sum (top$n [-(1:2)])
-prop_top2 <- round (100 * prop_top2, digits = 1)
-
-deps2020 <- deps [deps$year == 2020, ]
+saveRDS (top10, f_top10)
 ```
 
 ```{r fig5-deps-p2}
-p2 <- ggplot (top10, aes (x = year, y = n, colour = package)) +
+top <- readRDS (f_top10)
+prop_top2 <- sum (top$n [1:2]) / sum (top$n [-(1:2)])
+prop_top2 <- round (100 * prop_top2, digits = 1)
+
+top |>
+    ggplot (aes (x = year, y = n, colour = package)) +
     geom_line () +
     ggtitle ("C: Calls to top 10 packages") +
     ylab ("Number of calls") +
@@ -97,7 +104,7 @@ p2 <- ggplot (top10, aes (x = year, y = n, colour = package)) +
     theme (legend.title = element_blank(),
            legend.position = c (0.20, 0.67),
            legend.background = element_rect(fill='transparent', colour='transparent')) +
-    guides (color = guide_legend (ncol = 3))
+    guides (color = guide_legend (ncol = 3)) -> p2
 ```
 
 ```{r fig5-coupling-instability}

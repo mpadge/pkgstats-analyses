@@ -7,7 +7,7 @@ recommended <- recommended_pkgs ()
 ```
 
 ```{r Fig6-call-coupling-deps}
-f <- file.path (here, "coupling_deps.Rds")
+f <- file.path (here, "vignettes", "coupling_deps.Rds")
 if (!file.exists (f)) {
     deps <- coupling_dependencies (x)
     saveRDS (deps, f)
@@ -16,7 +16,7 @@ deps <- readRDS (f)
 ```
 
 ```{r fig6-p1-deps}
-f <- file.path (here, "fig6_deps_p1.Rds")
+f <- file.path (here, "vignettes", "fig6_deps_p1.Rds")
 calc_fig6_p1_deps <- !file.exists (f)
 ```
 

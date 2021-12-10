@@ -1,8 +1,8 @@
 
 ```{r fig3-prepro}
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
-f_fig3_top10 <- file.path (here, "vignettes", "fig3-top10.Rds")
-f_fig3_tr <- file.path (here, "vignettes", "fig3-tr.Rds")
+f_fig3_top10 <- file.path (v_data_dir, "fig3-top10.Rds")
+f_fig3_tr <- file.path (v_data_dir, "fig3-tr.Rds")
 fig3_calc_top10_data <- !file.exists (f_fig3_top10)
 fig3_calc_tr_data <- !file.exists (f_fig3_tr)
 

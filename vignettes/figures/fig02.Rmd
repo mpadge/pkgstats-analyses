@@ -1,9 +1,9 @@
 
 ```{r fig2-precalc}
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
-f_fig2_aut_ctb <- file.path (here, "vignettes", "fig2-aut-ctb.Rds")
+f_fig2_aut_ctb <- file.path (v_data_dir, "fig2-aut-ctb.Rds")
 calc_fig2_aut_ctb <- !file.exists (f_fig2_aut_ctb)
-f_fig2_lic <- file.path (here, "vignettes", "fig2-lic.Rds")
+f_fig2_lic <- file.path (v_data_dir, "fig2-lic.Rds")
 calc_fig2_lic <- !file.exists (f_fig2_lic)
 ```
 

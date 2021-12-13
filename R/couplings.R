@@ -9,10 +9,14 @@
 #' @export
 couplings <- function (x, year = 2015, summarise = TRUE) {
 
-    x <- x |>
-        dplyr::filter (year <= !!year) |>
-        dplyr::group_by (package) |>
-        dplyr::slice_max (date)
+    cran_by_year <- !is.na (year)
+
+    if (cran_by_year) {
+        x <- x |>
+            dplyr::filter (year <= !!year) |>
+            dplyr::group_by (package) |>
+            dplyr::slice_max (date)
+    }
 
     x <- x [which (!(is.na (x$external_calls) | x$external_calls == "")), ]
     x <- x [which (!(x$imports == "NA" | nchar (x$imports) == 0L)), ]
@@ -45,7 +49,8 @@ couplings <- function (x, year = 2015, summarise = TRUE) {
                         if (length (i_ctb) == 0L)
                             return (NULL)
 
-                        out <- data.frame (from = this_pkg,
+                        out <- data.frame (year = x$year [i],
+                                           from = this_pkg,
                                            to = out [i_ctb, 1],
                                            n_total = n_total [i_ctb],
                                            n_unique = n_unique [i_ctb])
@@ -54,6 +59,9 @@ couplings <- function (x, year = 2015, summarise = TRUE) {
     })
 
     deps <- do.call (rbind, deps)
+    if (cran_by_year) {
+        deps$year <- year
+    }
 
     deps$from <- gsub ("^[[:punct:]]+", "", deps$from)
     deps$to <- gsub ("^[[:punct:]]+", "", deps$to)
@@ -61,24 +69,49 @@ couplings <- function (x, year = 2015, summarise = TRUE) {
                          nchar (deps$to) > 1L), ]
 
     # outward or EFFERENT couplings:
-    deps_from <- deps |>
-        dplyr::group_by (from) |>
-        dplyr::summarise (n_total = sum (n_total),
-                          n_unique = sum (n_unique)) |>
-        dplyr::rename (package = from,
-                       n_total_from = n_total,
-                       n_unique_from = n_unique)
+    if (cran_by_year) {
 
-    # inward or AFFERENT couplings:
-    deps_to <- deps |>
-        dplyr::group_by (to) |>
-        dplyr::summarise (n_total = sum (n_total),
-                          n_unique = sum (n_unique)) |>
-        dplyr::rename (package = to,
-                       n_total_to = n_total,
-                       n_unique_to = n_unique)
+        deps_from <- deps |>
+            dplyr::group_by (from) |>
+            dplyr::summarise (n_total = sum (n_total),
+                              n_unique = sum (n_unique)) |>
+            dplyr::rename (package = from,
+                           n_total_from = n_total,
+                           n_unique_from = n_unique)
 
-    deps <- dplyr::full_join (deps_from, deps_to, by = "package")
+        # inward or AFFERENT couplings:
+        deps_to <- deps |>
+            dplyr::group_by (to) |>
+            dplyr::summarise (n_total = sum (n_total),
+                              n_unique = sum (n_unique)) |>
+            dplyr::rename (package = to,
+                           n_total_to = n_total,
+                           n_unique_to = n_unique)
+    } else {
+
+        deps_from <- deps |>
+            dplyr::group_by (year, from) |>
+            dplyr::summarise (n_total = sum (n_total),
+                              n_unique = sum (n_unique)) |>
+            dplyr::rename (package = from,
+                           n_total_from = n_total,
+                           n_unique_from = n_unique)
+
+        # inward or AFFERENT couplings:
+        deps_to <- deps |>
+            dplyr::group_by (year, to) |>
+            dplyr::summarise (n_total = sum (n_total),
+                              n_unique = sum (n_unique)) |>
+            dplyr::rename (package = to,
+                           n_total_to = n_total,
+                           n_unique_to = n_unique)
+    }
+
+    if (cran_by_year) {
+        deps <- dplyr::full_join (deps_from, deps_to, by = "package")
+    } else {
+        deps <- dplyr::full_join (deps_from, deps_to, by = c ("package", "year"))
+    }
     deps$n_total_from [which (is.na (deps$n_total_from))] <- 0L
     deps$n_unique_from [which (is.na (deps$n_unique_from))] <- 0L
     deps$n_total_to [which (is.na (deps$n_total_to))] <- 0L
@@ -89,13 +122,26 @@ couplings <- function (x, year = 2015, summarise = TRUE) {
 
     if (summarise) {
 
-        deps <- c (
-            year = year,
-            tot_med = stats::median (deps$instability_total),
-            tot_mean = mean (deps$instability_total),
-            un_med = stats::median (deps$instability_unique),
-            un_mean = mean (deps$instability_unique)
-            )
+        if (cran_by_year) {
+
+            deps <- c (
+                year = year,
+                tot_med = stats::median (deps$instability_total),
+                tot_mean = mean (deps$instability_total),
+                un_med = stats::median (deps$instability_unique),
+                un_mean = mean (deps$instability_unique)
+                )
+        } else {
+
+            deps <- deps |>
+                dplyr::group_by (year) |>
+                dplyr::summarise (
+                    tot_med = stats::median (instability_total),
+                    tot_mean = mean (instability_total),
+                    un_med = stats::median (instability_unique),
+                    un_mean = mean (instability_unique))
+
+        }
     }
 
     return (deps)
@@ -106,19 +152,27 @@ couplings <- function (x, year = 2015, summarise = TRUE) {
 #' @inheritParams couplings
 #' @return A `data.frame` of annual summary statistics on coupling instability.
 #' @export
-summarise_coupling_data <- function (x) {
+summarise_coupling_data <- function (x, cran_by_year = TRUE) {
 
-    m_coupling_summary_internal (x)
+    m_coupling_summary_internal (x, cran_by_year)
 }
 
-coupling_summary_internal <- function (x) {
+coupling_summary_internal <- function (x, cran_by_year) {
 
     x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
-    years <- sort (unique (x$year))
-    cp <- vapply (years, function (i)
-                  couplings (x, i, summarise = TRUE),
-                  numeric (5))
-    cp <- data.frame (t (cp))
+
+    if (cran_by_year) {
+
+        years <- sort (unique (x$year))
+        cp <- vapply (years, function (i)
+                      couplings (x, i, summarise = TRUE),
+                      numeric (5))
+        cp <- data.frame (t (cp))
+
+    } else {
+
+        cp <- couplings (x, year = NA)
+    }
 
     names (cp) <- c ("year", "total_median", "total_mean",
                      "unique_median", "unique_mean")

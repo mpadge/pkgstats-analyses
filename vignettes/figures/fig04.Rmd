@@ -30,6 +30,20 @@ dat <- vapply (sort (unique (x$year)), function (i)
 dat <- data.frame (t (dat))
 dat$year <- lubridate::year (paste0 (dat$year, "-01-01"))
 
+xy <- x |>
+    group_by (year) |>
+    summarise (R = mean (files_R),
+               src = mean (files_src),
+               inst = mean (files_inst),
+               vignettes = mean (files_vignettes),
+               tests = mean (files_tests),
+               data = mean (num_data_files))
+
+dat$what <- "cran_by_year"
+xy$what <- "annual"
+
+dat <- rbind (dat, xy)
+
 saveRDS (dat, n_files_file)
 ```
 
@@ -69,13 +83,20 @@ saveRDS (x_per_pkg, f_fig4_pkg_level)
 
 ```{r fig4a}
 dat <- readRDS (n_files_file) |>
+    filter (what == "cran_by_year") |>
+    pivot_longer (cols = c (R, src, inst, vignettes, tests, data)) |>
+    rename (n_files = value, dir = name)
+dat_ann <- readRDS (n_files_file) |>
+    filter (what == "annual") |>
     pivot_longer (cols = c (R, src, inst, vignettes, tests, data)) |>
     rename (n_files = value, dir = name)
 p1 <- ggplot (dat, aes (x = year, y = n_files, color = dir)) +
     geom_line () +
+    #geom_line (data = dat_ann, lty = 2) +
     ggtitle ("A: Numbers of files") +
     ylab ("#files") +
     theme (legend.position = "none")
+# dat_ann are very similar but much noisier, so not shown
 ```
 
 ```{r fig4-p2, warning = FALSE, message = FALSE}

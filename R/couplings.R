@@ -22,7 +22,7 @@ couplings <- function (x, year = 2015, summarise = TRUE) {
     x <- x [which (!(x$imports == "NA" | nchar (x$imports) == 0L)), ]
 
     if (nrow (x) == 0L) {
-        return (rep (NA, 5))
+        return (rep (NA, 7))
     }
 
     recommended <- recommended_pkgs ()
@@ -128,8 +128,10 @@ couplings <- function (x, year = 2015, summarise = TRUE) {
                 year = year,
                 tot_med = stats::median (deps$instability_total),
                 tot_mean = mean (deps$instability_total),
+                tot_se = sd (deps$instability_total) / nrow (deps),
                 un_med = stats::median (deps$instability_unique),
-                un_mean = mean (deps$instability_unique)
+                un_mean = mean (deps$instability_unique),
+                un_se = sd (deps$instability_unique) / nrow (deps)
                 )
         } else {
 
@@ -138,8 +140,10 @@ couplings <- function (x, year = 2015, summarise = TRUE) {
                 dplyr::summarise (
                     tot_med = stats::median (instability_total),
                     tot_mean = mean (instability_total),
+                    tot_se = sd (instability_total) / length (instability_total),
                     un_med = stats::median (instability_unique),
-                    un_mean = mean (instability_unique))
+                    un_mean = mean (instability_unique),
+                    un_se = sd (instability_unique) / length (instability_total))
 
         }
     }
@@ -159,14 +163,12 @@ summarise_coupling_data <- function (x, cran_by_year = TRUE) {
 
 coupling_summary_internal <- function (x, cran_by_year) {
 
-    x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
-
     if (cran_by_year) {
 
         years <- sort (unique (x$year))
         cp <- vapply (years, function (i)
                       couplings (x, i, summarise = TRUE),
-                      numeric (5))
+                      numeric (7))
         cp <- data.frame (t (cp))
 
     } else {
@@ -174,8 +176,8 @@ coupling_summary_internal <- function (x, cran_by_year) {
         cp <- couplings (x, year = NA)
     }
 
-    names (cp) <- c ("year", "total_median", "total_mean",
-                     "unique_median", "unique_mean")
+    names (cp) <- c ("year", "total_median", "total_mean", "total_se",
+                     "unique_median", "unique_mean", "unique_se")
     cp <- cp [which (!is.na (cp$year)), ]
 
     class (cp$year) <- as.integer (cp$year)

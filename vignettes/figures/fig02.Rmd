@@ -8,36 +8,50 @@ calc_fig2_lic <- !file.exists (f_fig2_lic)
 ```
 
 ```{r fig2-aut-ctb, eval = calc_fig2_aut_ctb}
-x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
-    group_by (month) |>
-    summarise (n_aut = mean (desc_n_aut),
-               n_ctb = mean (desc_n_ctb)) |>
-    rename (aut = n_aut, ctb = n_ctb) |>
-    pivot_longer (cols = c (aut, ctb))
-saveRDS (x, f_fig2_aut_ctb)
+x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
+do1 <- function (x, year = 2018) {
+    xy <- x |>
+        filter (year <= !!year) |>
+        group_by (package) |>
+        slice_max (date)
+    c (year = year,
+       n_aut = mean (xy$desc_n_aut),
+       n_ctb = mean (xy$desc_n_ctb))
+}
+years <- sort (unique (x$year))
+n <- vapply (years, function (y) do1 (x, y), numeric (3))
+n <- data.frame (t (n))
+saveRDS (n, f_fig2_aut_ctb)
 ```
 
 ```{r fig2-lic, eval = calc_fig2_lic}
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
-lic <- lapply (split (x, f = as.factor (x$year)), function (i) {
-                   lic <- unlist (strsplit (i$license, "\\|"))
-                   lic <- gsub ("^\\s*|\\s*$", "", lic)
-                   unique (lic) })
-y <- lubridate::year (paste0 (names (lic), "-01-01"))
-nlic <- data.frame (year = y,
-                    n = vapply (lic, length, integer (1)))
+do1 <- function (x, year = 2018) {
+    xy <- x |>
+        filter (year <= !!year) |>
+        group_by (package) |>
+        slice_max (date)
+    lic <- unlist (strsplit (xy$license, "\\|"))
+    lic <- unique (gsub ("^\\s*|\\s*$", "", lic))
+    c (year = year, n = length (lic))
+}
+years <- sort (unique (x$year))
+nlic <- vapply (years, function (y) do1 (x, y), numeric (2))
+nlic <- data.frame (t (nlic))
 saveRDS (nlic, f_fig2_lic)
 ```
+
 
 
 
 ```{r fig2-num_aut_ctb, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 3.5, fig.cap = "**Figure 2.**"}
 
 p1 <- readRDS (f_fig2_aut_ctb) |>
-    ggplot (aes (x = month, y = value, colour = name)) +
+    rename (aut = n_aut, ctb = n_ctb) |>
+    pivot_longer (cols = c (aut, ctb)) |>
+    ggplot (aes (x = year, y = value, colour = name)) +
     geom_smooth (method = "loess", formula = y ~ x, se = FALSE) +
     ggtitle ("A: Numbers of authors and contributors") +
-    ylab ("year") +
     theme (legend.position = c (0.2, 0.4),
            legend.background = element_rect(fill='transparent', colour='transparent'))
 

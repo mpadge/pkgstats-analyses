@@ -35,9 +35,14 @@ dependencies <- function (x, cran_by_year = TRUE) {
 
     recommended <- recommended_pkgs ()
 
-    years <- sort (unique (x$year))
-    deps <- lapply (years, function (y)
-                    dependencies_one_year (x, recommended, y, cran_by_year))
+    if (cran_by_year) {
+        years <- sort (unique (x$year))
+        deps <- lapply (years, function (y)
+                        dependencies_one_year (x, recommended, y, cran_by_year))
+        deps <- do.call (rbind, deps)
+    } else {
+        deps <- dependencies_one_year (x, recommended, 2018, cran_by_year)
+    }
 
     return (deps)
 }

@@ -42,8 +42,13 @@ cp_dat_exists <- file.exists (cp_dat_file)
 ```
 
 ```{r fig5-coupling-data-generate, eval = !cp_dat_exists}
-cp_dat <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
-    summarise_coupling_data ()
+cp_dat1 <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
+    summarise_coupling_data (cran_by_year = TRUE)
+cp_dat2 <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
+    summarise_coupling_data (cran_by_year = FALSE)
+cp_dat1$what <- "cran_by_year"
+cp_dat2$what <- "annual"
+cp_dat <- rbind (cp_dat1, cp_dat2)
 saveRDS (cp_dat, cp_dat_file)
 ```
 
@@ -131,18 +136,26 @@ top |>
 ```
 
 ```{r fig5-coupling-instability}
+# Values for total and unique are almost identical, so only show unique
 cp_dat <- readRDS (cp_dat_file) |>
     select (-c (total_median, unique_median)) |>
     rename (total = total_mean,
             unique = unique_mean) |>
-    pivot_longer (cols = c (total, unique)) |>
-    rename (instability = value, type = name)
-# Values for total and unique are almost identical, so only show unique
-cp_dat <- cp_dat [cp_dat$type == "unique", ]
-cp_dat$year <- lubridate::year (paste0 (cp_dat$year, "-01-01"))
-p3 <- ggplot (cp_dat, aes (x = year, y = instability)) +
+    mutate (lo = total - total_se,
+            hi = total + total_se) |>
+    #pivot_longer (cols = c (total, unique)) |>
+    #rename (instability = value, type = name)
+    rename (instability = total)
+cp_dat$lty <- cp_dat$what == "cran_by_year"
+cp_dat$year <- as.integer (cp_dat$year)
+
+p3 <- ggplot (cp_dat, aes (x = year, y = instability, colour = what, lty = lty)) +
+    geom_ribbon (aes (ymin = lo, ymax = hi, fill = what, colour = NULL),
+                 alpha = 0.15, show.legend = FALSE) +
     geom_line () +
+    theme (legend.position = "none") +
     ggtitle ("B: Coupling Instability")
+p3
 ```
 
 ```{r fig5-assemble, fig.width = 7, fig.height = 7, fig.cap = "**Fig. 5**"}

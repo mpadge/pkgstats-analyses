@@ -23,6 +23,18 @@ do1 <- function (x, year = 2018) {
 years <- sort (unique (x$year))
 n <- vapply (years, function (y) do1 (x, y), numeric (5))
 n <- data.frame (t (n))
+
+# Then values for actual years
+xy <- x |>
+    group_by (year) |>
+    summarise (
+               n_aut = mean (desc_n_aut),
+               n_ctb = mean (desc_n_ctb),
+               se_aut = sd (desc_n_aut) / sqrt (length (desc_n_aut)),
+               se_ctb = sd (desc_n_ctb) / sqrt (length (desc_n_aut)))
+n$what <- "cran_by_year"
+xy$what <- "annual"
+n <- rbind (n, xy)
 saveRDS (n, f_fig2_aut_ctb)
 ```
 
@@ -51,25 +63,32 @@ dat <- readRDS (f_fig2_aut_ctb)
 lo <- dat |>
     mutate (aut_lo = n_aut - se_aut,
             ctb_lo = n_ctb - se_ctb) |>
-    select (year, aut_lo, ctb_lo) |>
+    select (year, aut_lo, ctb_lo, what) |>
     pivot_longer (c (aut_lo, ctb_lo))
 hi <- dat |>
     mutate (aut_hi = n_aut + se_aut,
             ctb_hi = n_ctb + se_ctb) |>
-    select (year, aut_hi, ctb_hi) |>
+    select (year, aut_hi, ctb_hi, what) |>
     pivot_longer (c (aut_hi, ctb_hi))
-dat <- dat |>
+fig2_dat <- dat |>
     rename (aut = n_aut, ctb = n_ctb) |>
-    select (year, aut, ctb) |>
+    select (year, aut, ctb, what) |>
     pivot_longer (cols = c (aut, ctb))
-dat$lo <- lo$value
-dat$hi <- hi$value
+fig2_dat$lo <- lo$value
+fig2_dat$hi <- hi$value
 
-p1 <- dat |>
+dat_annual <- fig2_dat [fig2_dat$what == "annual", ]
+fig2_dat <- fig2_dat [fig2_dat$what == "cran_by_year", ]
+
+p1 <- fig2_dat |>
     ggplot (aes (x = year, y = value, colour = name)) +
     geom_ribbon (aes (ymin = lo, ymax = hi, fill = name, colour = NULL),
                  alpha = 0.15, show.legend = FALSE) +
     geom_line () +
+    geom_ribbon (data = dat_annual,
+                 aes (ymin = lo, ymax = hi, fill = name, colour = NULL),
+                 alpha = 0.15, show.legend = FALSE) +
+    geom_line (data = dat_annual, lty = 2) +
     ggtitle ("A: Numbers of authors and contributors") +
     theme (legend.title = element_blank(),
            legend.position = c (0.2, 0.4),

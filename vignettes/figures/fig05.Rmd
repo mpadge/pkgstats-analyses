@@ -21,16 +21,21 @@ saveRDS (x, f_fig5_exdat)
 x <- readRDS (f_fig5_exdat)
 ```
 ```{r fig5-deps-data-file}
-f_fig5_deps <- file.path (v_data_dir, "fig5-deps.Rds")
-calc_fig5_deps <- !file.exists(f_fig5_deps)
+f_fig5_deps1 <- file.path (v_data_dir, "fig5-deps1.Rds")
+f_fig5_deps2 <- file.path (v_data_dir, "fig5-deps2.Rds")
+calc_fig5_deps <- !file.exists(f_fig5_deps1)
 ```
 
 ```{r fig5-deps-calc, eval = calc_fig5_deps}
-deps <- dependencies (x)
-saveRDS (deps, f_fig5_deps)
+x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
+deps1 <- dependencies (x, cran_by_year = TRUE)
+saveRDS (deps1, f_fig5_deps1)
+deps2 <- dependencies (x, cran_by_year = FALSE)
+saveRDS (deps2, f_fig5_deps2)
 ```
 ```{r fig5-prepro}
-deps <- readRDS (f_fig5_deps)
+deps1 <- readRDS (f_fig5_deps1)
+deps2 <- readRDS (f_fig5_deps2)
 recommended <- recommended_pkgs ()
 cp_dat_file <- file.path (v_data_dir, "coupling-data.Rds")
 cp_dat_exists <- file.exists (cp_dat_file)
@@ -46,16 +51,12 @@ saveRDS (cp_dat, cp_dat_file)
 
 ```{r fig5-plot-base-rcmd-ctb}
 
-#ggplot (deps, aes (x = year, y = proportion, color = type)) +
-#    geom_line () +
-#    facet_wrap (~category) +
-#    theme (legend.position = c (0.1, 0.7),
-#           legend.background = element_rect(fill='transparent', colour='transparent'))
+deps1 <- deps1 [deps1$category == "unique", ]
+deps2 <- deps2 [deps2$category == "unique", ]
 
-deps <- deps [deps$category == "unique", ]
-
-p1 <- ggplot (deps, aes (x = year, y = proportion, color = type)) +
+p1 <- ggplot (deps2, aes (x = year, y = proportion, color = type)) +
     geom_line () +
+    geom_line (data = deps1, lty = 2) +
     ggtitle ("A: Proportion of function calls") +
     theme (legend.position = c (0.3, 0.7),
            legend.background = element_rect(fill='transparent', colour='transparent'))

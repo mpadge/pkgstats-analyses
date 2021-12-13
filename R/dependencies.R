@@ -25,25 +25,35 @@ recommended_pkgs <- function () {
 #' data.
 #'
 #' @param x Result of \link{load_pkgstats_data}.
+#' @param cran_by_year If `TRUE`, calculate dependencies for each year from a
+#' full snapshot of all latest CRAN packages in that year, regardless of when
+#' these were uploaded. If `FALSE`, calculate annual values from packages which
+#' were uploaded in that year.
 #' @return A `data.frame` of dependency data with `year` column.
 #' @export
-dependencies <- function (x) {
+dependencies <- function (x, cran_by_year = TRUE) {
 
     recommended <- recommended_pkgs ()
 
     years <- sort (unique (x$year))
     deps <- lapply (years, function (y)
-                    dependencies_one_year (x, recommended, y))
+                    dependencies_one_year (x, recommended, y, cran_by_year))
 
     return (deps)
 }
 
-dependencies_one_year <- function (x, recommended, year = 2018) {
+#' If !cran_by_year, this calculates the whole thing in one call.
+#' @noRd
+dependencies_one_year <- function (x, recommended, year = 2018, cran_by_year = TRUE) {
 
-    x_y <- x |>
-        dplyr::filter (year <= !!year) |>
-        dplyr::group_by (package) |>
-        dplyr::slice_max (date)
+    if (cran_by_year) {
+        x_y <- x |>
+            dplyr::filter (year <= !!year) |>
+            dplyr::group_by (package) |>
+            dplyr::slice_max (date)
+    } else {
+        x_y <- x
+    }
 
     deps <- lapply (seq (nrow (x_y)), function (i) {
                         # a few have rogue colons at start:
@@ -92,14 +102,28 @@ dependencies_one_year <- function (x, recommended, year = 2018) {
     deps <- deps_full |>
         dplyr::mutate (year = lubridate::year (date),
                        n_total = n_total_base + n_total_rmcd + n_total_ctb,
-                       n_unique = n_unique_base + n_unique_rmcd + n_unique_ctb) |>
-        #dplyr::group_by (year) |>
-        dplyr::summarise (base_total = sum (n_total_base) / sum (n_total),
-                   recommended_total = sum (n_total_rmcd) / sum (n_total),
-                   contributed_total = sum (n_total_ctb) / sum (n_total),
-                   base_unique = sum (n_unique_base) / sum (n_unique),
-                   recommended_unique = sum (n_unique_rmcd) / sum (n_unique),
-                   contributed_unique = sum (n_unique_ctb) / sum (n_unique))
+                       n_unique = n_unique_base + n_unique_rmcd + n_unique_ctb)
+
+    if (!cran_by_year) {
+
+        deps <- dplyr::group_by (deps, year) |>
+            dplyr::summarise (base_total = sum (n_total_base) / sum (n_total),
+                              recommended_total = sum (n_total_rmcd) / sum (n_total),
+                              contributed_total = sum (n_total_ctb) / sum (n_total),
+                              base_unique = sum (n_unique_base) / sum (n_unique),
+                              recommended_unique = sum (n_unique_rmcd) / sum (n_unique),
+                              contributed_unique = sum (n_unique_ctb) / sum (n_unique))
+    } else {
+
+        deps <- deps |>
+            dplyr::summarise (year = !!year,
+                              base_total = sum (n_total_base) / sum (n_total),
+                              recommended_total = sum (n_total_rmcd) / sum (n_total),
+                              contributed_total = sum (n_total_ctb) / sum (n_total),
+                              base_unique = sum (n_unique_base) / sum (n_unique),
+                              recommended_unique = sum (n_unique_rmcd) / sum (n_unique),
+                              contributed_unique = sum (n_unique_ctb) / sum (n_unique))
+    }
 
     deps <- tidyr::pivot_longer (deps,
                                  cols = c (base_total, recommended_total, contributed_total,
@@ -109,8 +133,6 @@ dependencies_one_year <- function (x, recommended, year = 2018) {
         dplyr::rename (proportion = value,
                        type = total,
                        category = unique)
-
-    deps$year <- year
 
     return (deps)
 }

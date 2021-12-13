@@ -5,10 +5,15 @@
 \title{Extract all dependencies from the "external_calls" component of the main
 data.}
 \usage{
-dependencies(x)
+dependencies(x, cran_by_year = TRUE)
 }
 \arguments{
 \item{x}{Result of \link{load_pkgstats_data}.}
+
+\item{cran_by_year}{If \code{TRUE}, calculate dependencies for each year from a
+full snapshot of all latest CRAN packages in that year, regardless of when
+these were uploaded. If \code{FALSE}, calculate annual values from packages which
+were uploaded in that year.}
 }
 \value{
 A \code{data.frame} of dependency data with \code{year} column.

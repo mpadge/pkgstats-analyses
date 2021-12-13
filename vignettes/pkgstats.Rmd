@@ -460,5 +460,10 @@ releases of a package, from around 7 to 15.
 ```{r fig10, child = "figures/fig10.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
+## Code formatting
+
+
+```{r fig11, child = "figures/fig11.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
+```
 
 # References

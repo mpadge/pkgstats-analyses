@@ -16,10 +16,12 @@ do1 <- function (x, year = 2018) {
         slice_max (date)
     c (year = year,
        n_aut = mean (xy$desc_n_aut),
-       n_ctb = mean (xy$desc_n_ctb))
+       n_ctb = mean (xy$desc_n_ctb),
+       se_aut = sd (xy$desc_n_aut) / sqrt (nrow (xy)),
+       se_ctb = sd (xy$desc_n_ctb) / sqrt (nrow (xy)))
 }
 years <- sort (unique (x$year))
-n <- vapply (years, function (y) do1 (x, y), numeric (3))
+n <- vapply (years, function (y) do1 (x, y), numeric (5))
 n <- data.frame (t (n))
 saveRDS (n, f_fig2_aut_ctb)
 ```
@@ -43,16 +45,34 @@ saveRDS (nlic, f_fig2_lic)
 
 
 
-
 ```{r fig2-num_aut_ctb, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 3.5, fig.cap = "**Figure 2.**"}
 
-p1 <- readRDS (f_fig2_aut_ctb) |>
+dat <- readRDS (f_fig2_aut_ctb)
+lo <- dat |>
+    mutate (aut_lo = n_aut - se_aut,
+            ctb_lo = n_ctb - se_ctb) |>
+    select (year, aut_lo, ctb_lo) |>
+    pivot_longer (c (aut_lo, ctb_lo))
+hi <- dat |>
+    mutate (aut_hi = n_aut + se_aut,
+            ctb_hi = n_ctb + se_ctb) |>
+    select (year, aut_hi, ctb_hi) |>
+    pivot_longer (c (aut_hi, ctb_hi))
+dat <- dat |>
     rename (aut = n_aut, ctb = n_ctb) |>
-    pivot_longer (cols = c (aut, ctb)) |>
+    select (year, aut, ctb) |>
+    pivot_longer (cols = c (aut, ctb))
+dat$lo <- lo$value
+dat$hi <- hi$value
+
+p1 <- dat |>
     ggplot (aes (x = year, y = value, colour = name)) +
-    geom_smooth (method = "loess", formula = y ~ x, se = FALSE) +
+    geom_ribbon (aes (ymin = lo, ymax = hi, fill = name, colour = NULL),
+                 alpha = 0.15, show.legend = FALSE) +
+    geom_line () +
     ggtitle ("A: Numbers of authors and contributors") +
-    theme (legend.position = c (0.2, 0.4),
+    theme (legend.title = element_blank(),
+           legend.position = c (0.2, 0.4),
            legend.background = element_rect(fill='transparent', colour='transparent'))
 
 p2 <- readRDS (f_fig2_lic) |>

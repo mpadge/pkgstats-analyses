@@ -31,7 +31,21 @@ dependencies <- function (x) {
 
     recommended <- recommended_pkgs ()
 
-    deps <- lapply (seq (nrow (x)), function (i) {
+    years <- sort (unique (x$year))
+    deps <- lapply (years, function (y)
+                    dependencies_one_year (x, recommended, y))
+
+    return (deps)
+}
+
+dependencies_one_year <- function (x, recommended, year = 2018) {
+
+    x_y <- x |>
+        dplyr::filter (year <= !!year) |>
+        dplyr::group_by (package) |>
+        dplyr::slice_max (date)
+
+    deps <- lapply (seq (nrow (x_y)), function (i) {
                         # a few have rogue colons at start:
                         ex <- gsub ("^\\:", "", x$external_calls [i])
                         out <- strsplit (strsplit (ex, ",") [[1]], "\\:")
@@ -79,7 +93,7 @@ dependencies <- function (x) {
         dplyr::mutate (year = lubridate::year (date),
                        n_total = n_total_base + n_total_rmcd + n_total_ctb,
                        n_unique = n_unique_base + n_unique_rmcd + n_unique_ctb) |>
-        dplyr::group_by (year) |>
+        #dplyr::group_by (year) |>
         dplyr::summarise (base_total = sum (n_total_base) / sum (n_total),
                    recommended_total = sum (n_total_rmcd) / sum (n_total),
                    contributed_total = sum (n_total_ctb) / sum (n_total),
@@ -95,6 +109,8 @@ dependencies <- function (x) {
         dplyr::rename (proportion = value,
                        type = total,
                        category = unique)
+
+    deps$year <- year
 
     return (deps)
 }

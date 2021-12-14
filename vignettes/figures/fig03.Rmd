@@ -69,9 +69,43 @@ saveRDS (tr_top10, f_fig3_tr)
 
 ```{r fig3, echo = FALSE, message = FALSE, fig.width = 7, fig.height = 7, fig.cap = "**Figure 3.** (A) Annual frequencies of the top 10 translations. (B) Annual frequencies of the top 10 primary URL domains, with frequencies for GitHub divided by 20."}
 
-readRDS (f_fig3_tr) |>
-     ggplot (aes (x = year, y = n, color = translation)) +
+tr <- readRDS (f_fig3_tr)
+tr_total <- tr |>
+    group_by (year) |>
+    summarise (n = sum (n)) |>
+    mutate (translation = "ALL")
+tr_total$n <- tr_total$n * max (tr$n) / max (tr_total$n)
+
+tr_vals <- c (sort (unique (tr$translation)), "ALL")
+
+tr <- bind_rows (tr, tr_total)
+
+# colours from `ggplot_build(p1)$data`:
+#tr |>
+#    ggplot (aes (x = year, y = n, color = translation)) +
+#    geom_line () -> p1
+#dat <- ggplot_build (p1)$data [[1]]
+#unique (dat$colour)
+
+cols <- c ("de" = "#F8766D",
+           "en@quot" = "#D89000",
+           "es" = "#A3A500",
+           "fr" = "#39B600",
+           "it" = "#00BF7D",
+           "ja" = "#00BFC4",
+           "ko" = "#00B0F6",
+           "pl" = "#9590FF",
+           "pt_BR" = "#E76BF3",
+           "ru" = "#FF62BC",
+           "ALL" = "#111111")
+
+# But don't plot "ALL" because it doesn't add much
+tr <- tr |> filter (translation != "ALL")
+
+tr |>
+    ggplot (aes (x = year, y = n, color = translation)) +
     geom_line () +
+    scale_colour_manual (values = cols) +
     ggtitle ("A: Top 10 translations") +
     guides (color = guide_legend (ncol = 2)) -> p1
 

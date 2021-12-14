@@ -8,8 +8,8 @@
 
 ```{r fig9-precalc}
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
-graph_data_file <- file.path (v_data_dir, "graph-metrics.Rds")
-graph_intern_data_file <- file.path (v_data_dir, "graph-metrics-intern.Rds")
+graph_data_file <- file.path (v_data_dir, "Fig09-graph-metrics.Rds")
+graph_intern_data_file <- file.path (v_data_dir, "Fig09-graph-metrics-intern.Rds")
 calc_graph_data <- !file.exists (graph_data_file)
 calc_graph_data_intern <- !file.exists (graph_intern_data_file)
 ```
@@ -18,12 +18,18 @@ calc_graph_data_intern <- !file.exists (graph_intern_data_file)
 # graph metrics for inter-package dependency networks
 xraw <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
 
-graph_one_year <- function (xraw, year = 2015) {
+graph_one_year <- function (xraw, year = 2015, cran_by_year = TRUE) {
 
-    x <- xraw |>
-        filter (year <= !!year) |>
-        group_by (package) |>
-        slice_max (date)
+    if (cran_by_year) {
+        x <- xraw |>
+            filter (year <= !!year) |>
+            group_by (package) |>
+            slice_max (date)
+    } else {
+        x <- xraw |>
+            filter (year == !!year)
+    }
+
     x <- x [which (!(is.na (x$external_calls) | x$external_calls == "")), ]
     x <- x [which (!(x$imports == "NA" | nchar (x$imports) == 0L)), ]
     if (nrow (x) == 0) {
@@ -73,13 +79,19 @@ graph_metrics <- function (g) {
 
 years <- sort (unique (xraw$year))
 dat <- lapply (years, function (y) {
-    g <- graph_one_year (xraw, y)
-    if (is.null (g)) {
-        return (NULL)
+    g1 <- graph_one_year (xraw, y, cran_by_year = TRUE)
+    if (!is.null (g1)) {
+        g1 <- c (year = y, graph_metrics (g1), what = 0)
     }
-    c (year = y, graph_metrics (g))
+    g2 <- graph_one_year (xraw, y, cran_by_year = FALSE)
+    if (!is.null (g2)) {
+        g2 <- c (year = y, graph_metrics (g2), what = 1)
+    }
+    return (rbind (g1, g2))
        })
 dat <- data.frame (do.call (rbind, dat))
+dat$what [dat$what == 0] <- "cran_by_year"
+dat$what [dat$what == 1] <- "annual"
 
 saveRDS (dat, graph_data_file)
 ```
@@ -115,12 +127,37 @@ dat_one_year <- function (xraw, year = 2015) {
 years <- sort (unique (xraw$year))
 dat <- lapply (years, function (y) dat_one_year (xraw, y))
 dat <- data.frame (do.call (rbind, dat))
+dat$what <- "cran_by_year"
 
-saveRDS (dat, graph_intern_data_file)
+xs <- xraw |>
+    group_by (year) |>
+    summarise (
+        n_edges = mean (n_edges [which (!is.na (n_edges))]),
+        n_edges_r = mean (n_edges_r [which (!is.na (n_edges_r))]),
+        n_edges_src = mean (n_edges_src [which (!is.na (n_edges_src))]),
+        n_clusters = mean (n_clusters [which (!is.na (n_clusters))]),
+        centr_dir_mn = mean (centrality_dir_mn [which (!is.na (centrality_dir_mn))]),
+        centr_dir_md = mean (centrality_dir_md [which (!is.na (centrality_dir_md))]),
+        centr_dir_mn_no0 = mean (centrality_dir_mn_no0 [which (!is.na (centrality_dir_mn_no0))]),
+        centr_dir_md_no0 = mean (centrality_dir_md_no0 [which (!is.na (centrality_dir_md_no0))]),
+        centr_undir_mn = mean (centrality_undir_mn [which (!is.na (centrality_undir_mn))]),
+        centr_undir_md = mean (centrality_undir_md [which (!is.na (centrality_undir_md))]),
+        centr_undir_mn_no0 = mean (centrality_undir_mn_no0 [which (!is.na (centrality_undir_mn_no0))]),
+        centr_undir_md_no0 = mean (centrality_undir_md_no0 [which (!is.na (centrality_undir_md_no0))]),
+        central_edges_dir = mean (num_terminal_edges_dir [which (!is.na (num_terminal_edges_dir))]),
+        term_edges = mean (num_terminal_edges_undir [which (!is.na (num_terminal_edges_undir))]),
+        node_degree_mn = mean (node_degree_mn [which (!is.na (node_degree_mn))]),
+        node_degree_md = mean (node_degree_md [which (!is.na (node_degree_md))]),
+        node_degree_max = mean (node_degree_max [which (!is.na (node_degree_max))]))
+xs$what <- "annual"
+
+saveRDS (rbind (dat, xs), graph_intern_data_file)
 ```
 
 ```{r fig9-construct, eval = TRUE}
 dat <- readRDS (graph_data_file)
+dat_cran <- dat |> filter (what == "cran_by_year")
+dat <- dat |> filter (what == "annual")
 coeff_fig9_p1 <- max (dat$dd_in_zero) / max (dat$dd_in_mean)
 colours_fig9_p1 <- c ("vert_degree" = "red",
                       "not_imported" = "blue")
@@ -128,6 +165,8 @@ colours_fig9_p1 <- c ("vert_degree" = "red",
 fig9_p1 <- ggplot (dat, aes (x = year)) +
         geom_line (aes (y = dd_in_mean, col = "vert_degree")) +
         geom_line (aes (y = dd_in_zero / coeff_fig9_p1, col = "not_imported")) +
+        geom_line (data = dat_cran, aes (y = dd_in_mean, col = "vert_degree"), lty = 2) +
+        geom_line (data = dat_cran, aes (y = dd_in_zero / coeff_fig9_p1, col = "not_imported"), lty = 2) +
         ylab ("Vertex degree") +
         scale_y_continuous (
             sec.axis = sec_axis (~.*coeff_fig9_p1, name = "Prop. non-imported pkgs")) +
@@ -144,6 +183,9 @@ fig9_p2 <- ggplot (dat, aes (x = year)) +
         geom_line (aes (y = cb, col = "centr_betw")) +
         geom_line (aes (y = cd, col = "centr_degree")) +
         geom_line (aes (y = d_mean / coeff_fig9_p2, col = "mean_dist")) +
+        geom_line (data = dat_cran, aes (y = cb, col = "centr_betw"), lty = 2) +
+        geom_line (data = dat_cran, aes (y = cd, col = "centr_degree"), lty = 2) +
+        geom_line (data = dat_cran, aes (y = d_mean / coeff_fig9_p2, col = "mean_dist"), lty = 2) +
         ylab ("centrality") +
         scale_y_continuous (
             sec.axis = sec_axis (~.*coeff_fig9_p2, name = "Mean distance")) +
@@ -156,12 +198,17 @@ fig9_p2 <- ggplot (dat, aes (x = year)) +
 
 ```{r fig9-network-internal1}
 dat <- readRDS (graph_intern_data_file)
+dat_cran <- dat |>
+    filter (what == "cran_by_year") |>
+    select (year, starts_with ("n_")) |>
+    rename (total = n_edges, R = n_edges_r, src = n_edges_src)
 coeff_fig9_p3 <- max (dat$n_clusters) / max (dat$n_edges)
 colours_fig9_p3 <- c ("total" = "red",
                       "R" = "green",
                       "src" = "blue",
                       "n_clusters" = "orange")
 fig9_p3 <- dat |>
+    filter (what == "annual") |>
     select (year, starts_with ("n_")) |>
     rename (total = n_edges, R = n_edges_r, src = n_edges_src) |>
     ggplot (aes (x = year)) +
@@ -169,6 +216,10 @@ fig9_p3 <- dat |>
         geom_line (aes (y = R, col = "R")) +
         geom_line (aes (y = src, col = "src")) +
         geom_line (aes (y = n_clusters / coeff_fig9_p3, col = "n_clusters")) +
+        #geom_line (data = dat_cran, aes (y = total, col = "total"), lty = 2) +
+        #geom_line (data = dat_cran, aes (y = R, col = "R"), lty = 2) +
+        #geom_line (data = dat_cran, aes (y = src, col = "src"), lty = 2) +
+        #geom_line (data = dat_cran, aes (y = n_clusters / coeff_fig9_p3, col = "n_clusters"), lty = 2) +
         #scale_colour_manual (values = colours_fig9_p3) +
         ylab ("Num. edges") +
         scale_y_continuous (
@@ -182,6 +233,13 @@ fig9_p3 <- dat |>
 
 ```{r fig9-network-internal2}
 dat <- readRDS (graph_intern_data_file)
+dat_cran <- dat |>
+    filter (what == "cran_by_year") |>
+    select (year, centr_undir_mn, centr_dir_mn, node_degree_mn, term_edges) |>
+    rename (centr_undir = centr_undir_mn,
+            centr_dir = centr_dir_mn,
+            vert_degree = node_degree_mn) |>
+    mutate (vert_degree = vert_degree * 10)
 coeff_fig9_p4 <- max (dat$term_edges) / max (dat$centr_undir_mn)
 colours_fig9_p4 <- c ("centr_undir" = "red",
                       "centr_dir" = "green",
@@ -189,6 +247,7 @@ colours_fig9_p4 <- c ("centr_undir" = "red",
                       "term_edges" = "orange")
 
 fig9_p4 <- dat |>
+    filter (what == "annual") |>
     select (year, centr_undir_mn, centr_dir_mn, node_degree_mn, term_edges) |>
     rename (centr_undir = centr_undir_mn,
             centr_dir = centr_dir_mn,
@@ -199,6 +258,10 @@ fig9_p4 <- dat |>
         geom_line (aes (y = centr_dir, col = "centr_dir")) +
         geom_line (aes (y = vert_degree / coeff_fig9_p4, col = "vert_degree")) +
         geom_line (aes (y = term_edges / coeff_fig9_p4, col = "term_edges")) +
+        #geom_line (data = dat_cran, aes (y = centr_undir, col = "centr_undir"), lty = 2) +
+        #geom_line (data = dat_cran, aes (y = centr_dir, col = "centr_dir"), lty = 2) +
+        #geom_line (data = dat_cran, aes (y = vert_degree / coeff_fig9_p4, col = "vert_degree"), lty = 2) +
+        #geom_line (data = dat_cran, aes (y = term_edges / coeff_fig9_p4, col = "term_edges"), lty = 2) +
         scale_y_continuous (
             sec.axis = sec_axis (~.*coeff_fig9_p4, name = "Vert. degree (*10) / Term. edges")) +
         ggtitle ("D: pkg centrality metrics") +

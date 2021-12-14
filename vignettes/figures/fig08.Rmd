@@ -51,13 +51,13 @@ graph_metrics <- function (g) {
 
     dd_in <- degree (g, mode = "in")
     dd_in_zero <- length (which (dd_in < 1e-10)) / length (dd_in)
-    dd_in_mean_no0 <- mean (dd_in [which (dd_in > 1e-10)])
-    dd_in_mean <- mean (dd_in)
+    dd_in_mean_no0 <- logmean (dd_in [which (dd_in > 1e-10)])
+    dd_in_mean <- logmean (dd_in)
 
     dd_out <- degree (g, mode = "out")
     dd_out_zero <- length (which (dd_out < 1e-10)) / length (dd_out)
-    dd_out_mean_no0 <- mean (dd_out [which (dd_out > 1e-10)])
-    dd_out_mean <- mean (dd_out)
+    dd_out_mean_no0 <- logmean (dd_out [which (dd_out > 1e-10)])
+    dd_out_mean <- logmean (dd_out)
 
     d <- distances (g)
     d [!is.finite (d)] <- NA
@@ -74,7 +74,7 @@ graph_metrics <- function (g) {
        cb = centr_betw(g, directed = FALSE)$centralization,
        cd = centr_degree(g)$centralization,
        d_med = median (stats [1, ]),
-       d_mean = mean (stats [2, ]))
+       d_mean = logmean (stats [2, ]))
 }
 
 years <- sort (unique (xraw$year))
@@ -106,23 +106,23 @@ dat_one_year <- function (xraw, year = 2015) {
         slice_max (date)
 
     c (year = year,
-       n_edges = mean (x$n_edges [which (!is.na (x$n_edges))]),
-       n_edges_r = mean (x$n_edges_r [which (!is.na (x$n_edges_r))]),
-       n_edges_src = mean (x$n_edges_src [which (!is.na (x$n_edges_src))]),
-       n_clusters = mean (x$n_clusters [which (!is.na (x$n_clusters))]),
-       centr_dir_mn = mean (x$centrality_dir_mn [which (!is.na (x$centrality_dir_mn))]),
-       centr_dir_md = mean (x$centrality_dir_md [which (!is.na (x$centrality_dir_md))]),
-       centr_dir_mn_no0 = mean (x$centrality_dir_mn_no0 [which (!is.na (x$centrality_dir_mn_no0))]),
-       centr_dir_md_no0 = mean (x$centrality_dir_md_no0 [which (!is.na (x$centrality_dir_md_no0))]),
-       centr_undir_mn = mean (x$centrality_undir_mn [which (!is.na (x$centrality_undir_mn))]),
-       centr_undir_md = mean (x$centrality_undir_md [which (!is.na (x$centrality_undir_md))]),
-       centr_undir_mn_no0 = mean (x$centrality_undir_mn_no0 [which (!is.na (x$centrality_undir_mn_no0))]),
-       centr_undir_md_no0 = mean (x$centrality_undir_md_no0 [which (!is.na (x$centrality_undir_md_no0))]),
-       central_edges_dir = mean (x$num_terminal_edges_dir [which (!is.na (x$num_terminal_edges_dir))]),
-       term_edges = mean (x$num_terminal_edges_undir [which (!is.na (x$num_terminal_edges_undir))]),
-       node_degree_mn = mean (x$node_degree_mn [which (!is.na (x$node_degree_mn))]),
-       node_degree_md = mean (x$node_degree_md [which (!is.na (x$node_degree_md))]),
-       node_degree_max = mean (x$node_degree_max [which (!is.na (x$node_degree_max))]))
+       n_edges = logmean (x$n_edges, na.rm = TRUE),
+       n_edges_r = logmean (x$n_edges_r, na.rm = TRUE),
+       n_edges_src = logmean (x$n_edges_src, na.rm = TRUE),
+       n_clusters = logmean (x$n_clusters, na.rm = TRUE),
+       centr_dir_mn = logmean (x$centrality_dir_mn, na.rm = TRUE),
+       centr_dir_md = logmean (x$centrality_dir_md, na.rm = TRUE),
+       centr_dir_mn_no0 = logmean (x$centrality_dir_mn_no0, na.rm = TRUE),
+       centr_dir_md_no0 = logmean (x$centrality_dir_md_no0, na.rm = TRUE),
+       centr_undir_mn = logmean (x$centrality_undir_mn, na.rm = TRUE),
+       centr_undir_md = logmean (x$centrality_undir_md, na.rm = TRUE),
+       centr_undir_mn_no0 = logmean (x$centrality_undir_mn_no0, na.rm = TRUE),
+       centr_undir_md_no0 = logmean (x$centrality_undir_md_no0, na.rm = TRUE),
+       central_edges_dir = logmean (x$num_terminal_edges_dir, na.rm = TRUE),
+       term_edges = logmean (x$num_terminal_edges_undir, na.rm = TRUE),
+       node_degree_mn = logmean (x$node_degree_mn, na.rm = TRUE),
+       node_degree_md = logmean (x$node_degree_md, na.rm = TRUE),
+       node_degree_max = logmean (x$node_degree_max, na.rm = TRUE))
 }
 years <- sort (unique (xraw$year))
 dat <- lapply (years, function (y) dat_one_year (xraw, y))
@@ -132,23 +132,23 @@ dat$what <- "cran_by_year"
 xs <- xraw |>
     group_by (year) |>
     summarise (
-        n_edges = mean (n_edges [which (!is.na (n_edges))]),
-        n_edges_r = mean (n_edges_r [which (!is.na (n_edges_r))]),
-        n_edges_src = mean (n_edges_src [which (!is.na (n_edges_src))]),
-        n_clusters = mean (n_clusters [which (!is.na (n_clusters))]),
-        centr_dir_mn = mean (centrality_dir_mn [which (!is.na (centrality_dir_mn))]),
-        centr_dir_md = mean (centrality_dir_md [which (!is.na (centrality_dir_md))]),
-        centr_dir_mn_no0 = mean (centrality_dir_mn_no0 [which (!is.na (centrality_dir_mn_no0))]),
-        centr_dir_md_no0 = mean (centrality_dir_md_no0 [which (!is.na (centrality_dir_md_no0))]),
-        centr_undir_mn = mean (centrality_undir_mn [which (!is.na (centrality_undir_mn))]),
-        centr_undir_md = mean (centrality_undir_md [which (!is.na (centrality_undir_md))]),
-        centr_undir_mn_no0 = mean (centrality_undir_mn_no0 [which (!is.na (centrality_undir_mn_no0))]),
-        centr_undir_md_no0 = mean (centrality_undir_md_no0 [which (!is.na (centrality_undir_md_no0))]),
-        central_edges_dir = mean (num_terminal_edges_dir [which (!is.na (num_terminal_edges_dir))]),
-        term_edges = mean (num_terminal_edges_undir [which (!is.na (num_terminal_edges_undir))]),
-        node_degree_mn = mean (node_degree_mn [which (!is.na (node_degree_mn))]),
-        node_degree_md = mean (node_degree_md [which (!is.na (node_degree_md))]),
-        node_degree_max = mean (node_degree_max [which (!is.na (node_degree_max))]))
+        n_edges = logmean (n_edges, na.rm = TRUE),
+        n_edges_r = logmean (n_edges_r, na.rm = TRUE),
+        n_edges_src = logmean (n_edges_src, na.rm = TRUE),
+        n_clusters = logmean (n_clusters, na.rm = TRUE),
+        centr_dir_mn = logmean (centrality_dir_mn, na.rm = TRUE),
+        centr_dir_md = logmean (centrality_dir_md, na.rm = TRUE),
+        centr_dir_mn_no0 = logmean (centrality_dir_mn_no0, na.rm = TRUE),
+        centr_dir_md_no0 = logmean (centrality_dir_md_no0, na.rm = TRUE),
+        centr_undir_mn = logmean (centrality_undir_mn, na.rm = TRUE),
+        centr_undir_md = logmean (centrality_undir_md, na.rm = TRUE),
+        centr_undir_mn_no0 = logmean (centrality_undir_mn_no0, na.rm = TRUE),
+        centr_undir_md_no0 = logmean (centrality_undir_md_no0, na.rm = TRUE),
+        central_edges_dir = logmean (num_terminal_edges_dir, na.rm = TRUE),
+        term_edges = logmean (num_terminal_edges_undir, na.rm = TRUE),
+        node_degree_mn = logmean (node_degree_mn, na.rm = TRUE),
+        node_degree_md = logmean (node_degree_md, na.rm = TRUE),
+        node_degree_max = logmean (node_degree_max, na.rm = TRUE))
 xs$what <- "annual"
 
 saveRDS (rbind (dat, xs), graph_intern_data_file)

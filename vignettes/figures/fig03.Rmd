@@ -97,7 +97,8 @@ dat_ann <- readRDS (n_files_file) |>
     pivot_longer (cols = c (R, src, inst, vignettes, tests, data)) |>
     rename (n_files = value, dir = name)
 p1 <- ggplot (dat, aes (x = year, y = n_files, color = dir)) +
-    geom_line () +
+    geom_line (lwd = 0.4, lty = 2) +
+    geom_smooth (method = "loess", formula = "y ~ x", se = FALSE) +
     #geom_line (data = dat_ann, lty = 2) +
     ggtitle ("A: Numbers of files") +
     ylab ("#files") +
@@ -114,7 +115,8 @@ x_per_pkg$value [x_per_pkg$dir == "inst" & x_per_pkg$seq == 2] <- NA
 p2 <- x_per_pkg |>
     filter (seq <= 10) |>
     ggplot (aes (x = seq, y = value, colour = dir)) +
-    geom_line () +
+    geom_line (lwd = 0.4, lty = 2) +
+    geom_smooth (method = "lm", formula = "y ~ x", se = FALSE, span = 0.7) +
     xlab ("Release Sequence") +
     ylab ("Ratio of #files") + 
     ggtitle ("B: Ratio of #files / release") +

@@ -1,6 +1,6 @@
 Package: pkgstatsAnalyses
 Title: Analyses of 'pkgstats' Results for all CRAN Packages
-Version: 0.0.1.057
+Version: 0.0.1.058
 Authors@R: 
     person("Mark", "Padgham", , "mark.padgham@email.com", role = c("aut", "cre"))
 Description: Analyses of 'pkgstats' Results for all CRAN Packages.

@@ -111,8 +111,8 @@ deps_p3 <- readRDS (f)
 deps_p3$afferent_fns_per_pkg [which (is.na (deps_p3$afferent_fns_per_pkg))] <- 0L
 deps_p3 <- deps_p3 |>
     group_by (seq) |>
-    summarise (packages = mean (afferent_npkgs),
-               fns_per_pkg = mean (afferent_fns_per_pkg, na.rm = TRUE)) |>
+    summarise (packages = 10 ^ mean (log10 (afferent_npkgs [which (afferent_npkgs > 0)])),
+               fns_per_pkg = 10 ^ mean (log10 (afferent_fns_per_pkg [which (afferent_fns_per_pkg > 0)]), na.rm = TRUE)) |>
     filter (seq <= 50)
 coeff_p3 <- max (deps_p3$fns_per_pkg) / max (deps_p3$packages)
 # colours from `ggplot_build(p1)$data`:
@@ -127,7 +127,7 @@ p3 <- ggplot (deps_p3, aes (x = seq)) +
         xlab ("Release sequence") +
         scale_colour_manual (values = colours_p3) +
         theme (legend.title = element_blank(),
-               legend.position = c (0.15, 0.85),
+               legend.position = c (0.15, 0.5),
                legend.background = element_rect(fill='transparent', colour='transparent')) +
         ggtitle ("C: Imports by other pkgs")
 ```

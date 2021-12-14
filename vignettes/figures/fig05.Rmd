@@ -84,8 +84,8 @@ deps_p2 <- readRDS (f)
 #deps_p2$efferent_unique [deps_p2$efferent_unique == 0L] <- NA_integer_
 deps_p2 <- deps_p2 |>
     group_by (seq) |>
-    summarise (instability = mean (instability_unique, na.rm = TRUE),
-               efferent = mean (efferent_unique, na.rm = TRUE))
+    summarise (instability = logmean (instability_unique, na.rm = TRUE),
+               efferent = logmean (efferent_unique, na.rm = TRUE))
 coeff_p2 <- max (deps_p2$efferent, na.rm = TRUE) / max (deps_p2$instability)
 colours_p2 <- c ("instability" = "#F8766D",
                  "efferent" = "#00BFC4")
@@ -111,8 +111,8 @@ deps_p3 <- readRDS (f)
 deps_p3$afferent_fns_per_pkg [which (is.na (deps_p3$afferent_fns_per_pkg))] <- 0L
 deps_p3 <- deps_p3 |>
     group_by (seq) |>
-    summarise (packages = 10 ^ mean (log10 (afferent_npkgs [which (afferent_npkgs > 0)])),
-               fns_per_pkg = 10 ^ mean (log10 (afferent_fns_per_pkg [which (afferent_fns_per_pkg > 0)]), na.rm = TRUE)) |>
+    summarise (packages = logmean (afferent_npkgs),
+               fns_per_pkg = logmean (afferent_fns_per_pkg)) |>
     filter (seq <= 50)
 coeff_p3 <- max (deps_p3$fns_per_pkg) / max (deps_p3$packages)
 # colours from `ggplot_build(p1)$data`:

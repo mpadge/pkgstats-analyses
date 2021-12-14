@@ -14,12 +14,12 @@ nfiles_one_year <- function (x, year = 2015) {
         filter (year <= !!year) |>
         group_by (package) |>
         slice_max (date) |>
-        summarise (R = 10 ^ mean (log10 (files_R [which (files_R > 0)])),
-                   src = 10 ^ mean (log10 (files_src [which (files_src > 0)])),
-                   inst = 10 ^ mean (log10 (files_inst [which (files_inst > 0)])),
-                   vignettes = 10 ^ mean (log10 (files_vignettes [which (files_vignettes > 0)])),
-                   tests = 10 ^ mean (log10 (files_tests [which (files_tests > 0)])),
-                   data = 10 ^ mean (log10 (num_data_files [which (num_data_files > 0)])))
+        summarise (R = logmean (files_R),
+                   src = logmean (files_src),
+                   inst = logmean (files_inst),
+                   vignettes = logmean (files_vignettes),
+                   tests = logmean (files_tests),
+                   data = logmean (num_data_files))
     n_mean <- colMeans (x1 [, -1], na.rm = TRUE)
 
     c (year = year, n_mean)
@@ -32,12 +32,12 @@ dat$year <- lubridate::year (paste0 (dat$year, "-01-01"))
 
 xy <- x |>
     group_by (year) |>
-    summarise (R = 10 ^ mean (log10 (files_R [which (files_R > 0)])),
-               src = 10 ^ mean (log10 (files_src [which (files_src > 0)])),
-               inst = 10 ^ mean (log10 (files_inst [which (files_inst > 0)])),
-               vignettes = 10 ^ mean (log10 (files_vignettes [which (files_vignettes > 0)])),
-               tests = 10 ^ mean (log10 (files_tests [which (files_tests > 0)])),
-               data = 10 ^ mean (log10 (num_data_files [which (num_data_files > 0)])))
+    summarise (R = logmean (files_R),
+               src = logmean (files_src),
+               inst = logmean (files_inst),
+               vignettes = logmean (files_vignettes),
+               tests = logmean (files_tests),
+               data = logmean (num_data_file))
 
 dat$what <- "cran_by_year"
 xy$what <- "annual"

@@ -29,6 +29,9 @@ here <- here::here ()
 v_data_dir <- file.path (here, "vignettes", "data")
 if (!dir.exists (v_data_dir))
     dir.create (v_data_dir, recursive = TRUE)
+logmean <- function (x, ...) {
+    10 ^ mean (log10 (x [which (x > 0)]), na.rm = TRUE)
+}
 ```
 
 ```{r dl-data, echo = FALSE}
@@ -161,13 +164,12 @@ and database.
 -->
 
 Most of the methodology used in this study derives from [the `pkgstats`
-package](https://docs.ropensci.org/pkgstats/), an R package with
-a primary eponymous function used to collect static metrics from an R package.
-This package also contains [a function,
+package](https://docs.ropensci.org/pkgstats/), which we developed to quantify
+the structure and content of R packages using static code analysis techniques.
+Data for the present analyses were derived from [a function within the package,
 `pkgstats_from_archive`](https://docs.ropensci.org/pkgstats/reference/pkgstats_from_archive.html),
 which can be applied to a local mirror of the CRAN archive to collate
-statistics from all packages. Data for these analyses were derived directly
-from this function.
+statistics from all packages.
 
 <!-- Then, a brief description of analytical methods, referencing exact variables -->
 

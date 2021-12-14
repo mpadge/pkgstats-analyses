@@ -13,23 +13,27 @@ x <- xraw |>
     mutate (seq = seq_along (package)) |>
     group_by (seq) |>
     summarise (
-               n_edges = mean (n_edges [which (!is.na (n_edges))]),
-               n_edges_r = mean (n_edges_r [which (!is.na (n_edges_r))]),
-               n_edges_src = mean (n_edges_src [which (!is.na (n_edges_src))]),
-               n_clusters = mean (n_clusters [which (!is.na (n_clusters))]),
-               centr_dir_mn = mean (centrality_dir_mn [which (!is.na (centrality_dir_mn))]),
-               centr_dir_md = mean (centrality_dir_md [which (!is.na (centrality_dir_md))]),
-               centr_dir_mn_no0 = mean (centrality_dir_mn_no0 [which (!is.na (centrality_dir_mn_no0))]),
-               centr_dir_md_no0 = mean (centrality_dir_md_no0 [which (!is.na (centrality_dir_md_no0))]),
-               centr_undir_mn = mean (centrality_undir_mn [which (!is.na (centrality_undir_mn))]),
-               centr_undir_md = mean (centrality_undir_md [which (!is.na (centrality_undir_md))]),
-               centr_undir_mn_no0 = mean (centrality_undir_mn_no0 [which (!is.na (centrality_undir_mn_no0))]),
-                centr_undir_md_no0 = mean (centrality_undir_md_no0 [which (!is.na (centrality_undir_md_no0))]),
+               #n_edges = mean (n_edges [which (!is.na (n_edges))]),
+               #n_edges_r = mean (n_edges_r [which (!is.na (n_edges_r))]),
+               #n_edges_src = mean (n_edges_src [which (!is.na (n_edges_src))]),
+               #n_clusters = mean (n_clusters [which (!is.na (n_clusters))]),
+               n_edges = 10 ^ mean (log10 (n_edges [which (!is.na (n_edges) & n_edges > 0L)]), na.rm = TRUE),
+               n_edges_r = 10 ^ mean (log10 (n_edges_r [which (!is.na (n_edges_r) & n_edges_r > 0L)]), na.rm = TRUE),
+               n_edges_src = 10 ^ mean (log10 (n_edges_src [which (!is.na (n_edges_src) & n_edges_src > 0L)]), na.rm = TRUE),
+               n_clusters = 10 ^ mean (log10 (n_clusters [which (!is.na (n_clusters) & n_clusters > 0L)]), na.rm = TRUE),
+               centr_dir_mn = 10 ^ mean (log10 (centrality_dir_mn [which (!is.na (centrality_dir_mn) & centrality_dir_mn > 0L)])),
+               centr_dir_md = 10 ^ mean (log10 (centrality_dir_md [which (!is.na (centrality_dir_md))])),
+               centr_dir_mn_no0 = 10 ^ mean (log10 (centrality_dir_mn_no0 [which (!is.na (centrality_dir_mn_no0) & centrality_dir_mn_no0 > 0)])),
+               centr_dir_md_no0 = 10 ^ mean (log10 (centrality_dir_md_no0 [which (!is.na (centrality_dir_md_no0) & centrality_dir_md_no0 > 0)])),
+               centr_undir_mn = 10 ^ mean (log10 (centrality_undir_mn [which (!is.na (centrality_undir_mn) & centrality_undir_mn > 0)])),
+               centr_undir_md = 10 ^ mean (log10 (centrality_undir_md [which (!is.na (centrality_undir_md) & centrality_undir_md > 0)])),
+               centr_undir_mn_no0 = 10 ^ mean (log10 (centrality_undir_mn_no0 [which (!is.na (centrality_undir_mn_no0) & centrality_undir_mn_no0 > 0)])),
+                centr_undir_md_no0 = 10 ^ mean (log10 (centrality_undir_md_no0 [which (!is.na (centrality_undir_md_no0) & centrality_undir_md_no0 > 0)])),
                 central_edges_dir = mean (num_terminal_edges_dir [which (!is.na (num_terminal_edges_dir))]),
-                term_edges = mean (num_terminal_edges_undir [which (!is.na (num_terminal_edges_undir))]),
-                node_degree_mn = mean (node_degree_mn [which (!is.na (node_degree_mn))]),
-                node_degree_md = mean (node_degree_md [which (!is.na (node_degree_md))]),
-                node_degree_max = mean (node_degree_max [which (!is.na (node_degree_max))]))
+                term_edges = 10 ^ mean (log10 (num_terminal_edges_undir [which (!is.na (num_terminal_edges_undir) & num_terminal_edges_undir > 0)])),
+                node_degree_mn = 10 ^ mean (log10 (node_degree_mn [which (!is.na (node_degree_mn) & node_degree_mn > 0)])),
+                node_degree_md = 10 ^ mean (log10 (node_degree_md [which (!is.na (node_degree_md) & node_degree_md > 0)])),
+                node_degree_max = 10 ^ mean (log10 (node_degree_max [which (!is.na (node_degree_max) & node_degree_max > 0)])))
 ```
 
 
@@ -69,7 +73,8 @@ x2 <- x |>
             centr_dir = centr_dir_mn,
             vert_degree = node_degree_mn)  |>
     mutate (vert_degree = vert_degree * 10) |>
-    filter (seq < 100)
+    filter (seq < 100) |>
+    mutate (centr_dir = centr_dir * max (centr_undir) / max (centr_dir))
 
 coeff_fig9_p2 <- max (x2$term_edges) / max (x2$centr_undir)
 colours_fig1e_p2 <- c ("centr_undir" = "red",

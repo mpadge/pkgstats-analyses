@@ -7,11 +7,18 @@ calc_fig11 <- !file.exists (f_fig11)
 
 ```{r fig11-calc, eval = calc_fig11}
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
-do1 <- function (x, year = 2018) {
-    xy <- x |>
-        filter (year <= !!year) |>
-        group_by (package) |>
-        slice_max (date)
+do1 <- function (x, year = 2018, cran_by_year = TRUE) {
+
+    if (cran_by_year) {
+        xy <- x |>
+            filter (year <= !!year) |>
+            group_by (package) |>
+            slice_max (date)
+    } else {
+        xy <- x |>
+            filter (year == !!year)
+    }
+
     tot_R <- xy$blank_lines_R + xy$comment_lines_R + xy$loc_R
     tot_src <- xy$blank_lines_src + xy$comment_lines_src + xy$loc_src
 
@@ -29,19 +36,31 @@ do1 <- function (x, year = 2018) {
        indentation = indentation)
 }
 years <- sort (unique (x$year))
-n <- vapply (years, function (y) do1 (x, y), numeric (8))
-n <- data.frame (t (n))
-saveRDS (n, f_fig11)
+
+n1 <- vapply (years, function (y) do1 (x, y, cran_by_year = TRUE), numeric (8))
+n1 <- data.frame (t (n1))
+n1$what <- "cran_by_year"
+
+n2 <- vapply (years, function (y) do1 (x, y, cran_by_year = FALSE), numeric (8))
+n2 <- data.frame (t (n2))
+n2$what <- "annual"
+saveRDS (rbind (n1, n2), f_fig11)
 ```
 
 
 ```{r fig11, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 3.5, fig.cap = "**Figure 11.**"}
 
+x1_cran <- readRDS (f_fig11) |>
+    filter (what == "cran_by_year") |>
+    select (year, blank_R, blank_src, comment_R, comment_src) |>
+    pivot_longer (cols = c (blank_R, blank_src, comment_R, comment_src))
 p1 <- readRDS (f_fig11) |>
+    filter (what == "annual") |>
     select (year, blank_R, blank_src, comment_R, comment_src) |>
     pivot_longer (cols = c (blank_R, blank_src, comment_R, comment_src)) |>
     ggplot (aes (x = year, y = value, colour = name)) +
         geom_line () +
+        geom_line (data = x1_cran, lty = 2, show.legend = FALSE) +
         ggtitle ("A: Blank & comment lines") +
         ylab ("Proportion") +
         theme (legend.title = element_blank(),
@@ -53,8 +72,14 @@ coeff_fig11_p2 <- max (x2$indentation) / max (x2$tabs)
 colours_fig11_p2 <- c ("rel_space" = "red",
                        "tabs" = "blue",
                        "indentation" = "green")
+x2_cran <- x2 |>
+    filter (what == "cran_by_year") |>
+    select (year, rel_space_R, tabs, indentation) |>
+    rename (rel_space = rel_space_R) |>
+    mutate (rel_space = rel_space * 4)
 
 p2 <- x2 |>
+    filter (what == "annual") |>
     select (year, rel_space_R, tabs, indentation) |>
     rename (rel_space = rel_space_R) |>
     mutate (rel_space = rel_space * 4) |>
@@ -62,6 +87,9 @@ p2 <- x2 |>
     geom_line (aes (y = rel_space, col = "rel_space")) +
     geom_line (aes (y = tabs, col = "tabs")) +
     geom_line (aes (y = indentation / coeff_fig11_p2, col = "indentation")) +
+    geom_line (data = x2_cran, aes (y = rel_space, col = "rel_space"), lty = 2) +
+    geom_line (data = x2_cran, aes (y = tabs, col = "tabs"), lty = 2) +
+    geom_line (data = x2_cran, aes (y = indentation / coeff_fig11_p2, col = "indentation"), lty = 2) +
     ylab ("space (x4) | tabs") +
     scale_y_continuous (
         sec.axis = sec_axis (~.*coeff_fig11_p2, name = "Indentation")) +

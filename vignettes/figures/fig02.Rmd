@@ -1,114 +1,121 @@
 
-```{r fig2-precalc}
+```{r fig2-prepro}
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
-f_fig2_aut_ctb <- file.path (v_data_dir, "fig02-aut-ctb.Rds")
-calc_fig2_aut_ctb <- !file.exists (f_fig2_aut_ctb)
-f_fig2_lic <- file.path (v_data_dir, "fig02-lic.Rds")
-calc_fig2_lic <- !file.exists (f_fig2_lic)
+f_fig2_top10 <- file.path (v_data_dir, "fig02-top10.Rds")
+f_fig2_tr <- file.path (v_data_dir, "fig02-tr.Rds")
+fig2_calc_top10_data <- !file.exists (f_fig2_top10)
+fig2_calc_tr_data <- !file.exists (f_fig2_tr)
+
 ```
 
-```{r fig2-aut-ctb, eval = calc_fig2_aut_ctb}
+```{r fig2_top10_data, eval = fig2_calc_top10_data}
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
-do1 <- function (x, year = 2018) {
-    xy <- x |>
-        filter (year <= !!year) |>
-        group_by (package) |>
-        slice_max (date)
-    c (year = year,
-       n_aut = mean (xy$desc_n_aut),
-       n_ctb = mean (xy$desc_n_ctb),
-       se_aut = sd (xy$desc_n_aut) / sqrt (nrow (xy)),
-       se_ctb = sd (xy$desc_n_ctb) / sqrt (nrow (xy)))
-}
-years <- sort (unique (x$year))
-n <- vapply (years, function (y) do1 (x, y), numeric (5))
-n <- data.frame (t (n))
+x <- lapply (split (x, f = as.factor (x$year)), function (i) {
+                 urls <- unlist (strsplit (i$urls, ",|;|\\n|\\s"))
+                 urls <- gsub ("^(\\s*?)http(s?)\\:\\/\\/", "", urls [!is.na (urls)])
+                 urls <- table (gsub ("\\/.*$", "", urls))
+                 urls <- sort (urls, decreasing = TRUE)
+                 data.frame (year = rep (i$year [1], length (urls)),
+                             url = names (urls),
+                             n = as.integer (urls))
+                  })
+x <- do.call (rbind, x)
+x <- x [which (!x$url == ""), ]
+rownames (x) <- NULL
+x$year <- lubridate::year (paste0 (x$year, "-01-01"))
 
-# Then values for actual years
-xy <- x |>
-    group_by (year) |>
-    summarise (
-               n_aut = mean (desc_n_aut),
-               n_ctb = mean (desc_n_ctb),
-               se_aut = sd (desc_n_aut) / sqrt (length (desc_n_aut)),
-               se_ctb = sd (desc_n_ctb) / sqrt (length (desc_n_aut)))
-n$what <- "cran_by_year"
-xy$what <- "annual"
-n <- rbind (n, xy)
-saveRDS (n, f_fig2_aut_ctb)
+top10 <- x |>
+    group_by (url) |>
+    summarise (n = sum (n)) |>
+    arrange (desc (n))
+top10 <- top10 [-grep ("^(cran|www\\.r-project)", top10$url), ]
+
+x_top10 <- x [which (x$url %in% top10$url [1:10]), ]
+x_top10$n [x_top10$url == "github.com"] <-
+    x_top10$n [x_top10$url == "github.com"] / 20
+
+saveRDS (x_top10, f_fig2_top10)
 ```
 
-```{r fig2-lic, eval = calc_fig2_lic}
+```{r fig2_tr_data, eval = fig2_calc_tr_data}
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
-do1 <- function (x, year = 2018) {
-    xy <- x |>
-        filter (year <= !!year) |>
-        group_by (package) |>
-        slice_max (date)
-    lic <- unlist (strsplit (xy$license, "\\|"))
-    lic <- unique (gsub ("^\\s*|\\s*$", "", lic))
-    c (year = year, n = length (lic))
+x$translations [x$translations == "NA"] <- NA_character_
+
+tr <- lapply (split (x, f = as.factor (x$year)), function (i) {
+                  tr <- unlist (strsplit (i$translations, ","))
+                  tr <- gsub ("^\\s*|\\s*$", "", tr [which (!is.na (tr))])
+                  tab <- sort (table (tr), decreasing = TRUE)
+                  data.frame (translation = names (tab),
+                              n = as.integer (tab)) })
+tr <- tr [which (vapply (tr, nrow, integer (1)) > 0)]
+for (i in seq_along (tr)) {
+    tr [[i]]$year <- names (tr) [i]
 }
-years <- sort (unique (x$year))
-nlic <- vapply (years, function (y) do1 (x, y), numeric (2))
-nlic <- data.frame (t (nlic))
-nlic$what <- "cran_by_year"
+tr <- do.call (rbind, tr)
+rownames (tr) <- NULL
+tr$year <- lubridate::year (paste0 (tr$year, "-01-01"))
 
-x_y <- x |>
-    group_by (year) |>
-    summarise (n = length (unique (gsub ("^\\s*|\\s*$", "", unlist (strsplit (license, "\\|"))))))
-x_y$what <- "annual"
+tr_summary <- tr |> group_by (translation) |>
+    summarise (n = sum (n)) |>
+    arrange (desc (n))
+top10 <- tr_summary$translation [1:10]
+tr_top10 <- tr [which (tr$translation %in% top10), ]
 
-nlic <- rbind (nlic, x_y)
-saveRDS (nlic, f_fig2_lic)
+saveRDS (tr_top10, f_fig2_tr)
 ```
 
 
 
-```{r fig2-num_aut_ctb, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 3.5, fig.cap = "**Figure 2.**"}
 
-dat <- readRDS (f_fig2_aut_ctb)
-lo <- dat |>
-    mutate (aut_lo = n_aut - se_aut,
-            ctb_lo = n_ctb - se_ctb) |>
-    select (year, aut_lo, ctb_lo, what) |>
-    pivot_longer (c (aut_lo, ctb_lo))
-hi <- dat |>
-    mutate (aut_hi = n_aut + se_aut,
-            ctb_hi = n_ctb + se_ctb) |>
-    select (year, aut_hi, ctb_hi, what) |>
-    pivot_longer (c (aut_hi, ctb_hi))
-fig2_dat <- dat |>
-    rename (aut = n_aut, ctb = n_ctb) |>
-    select (year, aut, ctb, what) |>
-    pivot_longer (cols = c (aut, ctb))
-fig2_dat$lo <- lo$value
-fig2_dat$hi <- hi$value
+```{r fig2, echo = FALSE, message = FALSE, fig.width = 7, fig.height = 7, fig.cap = "**Figure 2.** (A) Annual frequencies of the top 10 translations. (B) Annual frequencies of the top 10 primary URL domains, with frequencies for GitHub divided by 20."}
 
-dat_annual <- fig2_dat [fig2_dat$what == "annual", ]
-fig2_dat <- fig2_dat [fig2_dat$what == "cran_by_year", ]
+tr <- readRDS (f_fig2_tr)
+tr_total <- tr |>
+    group_by (year) |>
+    summarise (n = sum (n)) |>
+    mutate (translation = "ALL")
+tr_total$n <- tr_total$n * max (tr$n) / max (tr_total$n)
 
-p1 <- fig2_dat |>
-    ggplot (aes (x = year, y = value, colour = name)) +
-    #geom_ribbon (aes (ymin = lo, ymax = hi, fill = name, colour = NULL),
-    #             alpha = 0.15, show.legend = FALSE) +
+tr_vals <- c (sort (unique (tr$translation)), "ALL")
+
+tr <- bind_rows (tr, tr_total)
+
+# colours from `ggplot_build(p1)$data`:
+#tr |>
+#    ggplot (aes (x = year, y = n, color = translation)) +
+#    geom_line () -> p1
+#dat <- ggplot_build (p1)$data [[1]]
+#unique (dat$colour)
+
+cols <- c ("de" = "#F8766D",
+           "en@quot" = "#D89000",
+           "es" = "#A3A500",
+           "fr" = "#39B600",
+           "it" = "#00BF7D",
+           "ja" = "#00BFC4",
+           "ko" = "#00B0F6",
+           "pl" = "#9590FF",
+           "pt_BR" = "#E76BF3",
+           "ru" = "#FF62BC",
+           "ALL" = "#111111")
+
+# But don't plot "ALL" because it doesn't add much
+tr <- tr |> filter (translation != "ALL")
+
+tr |>
+    ggplot (aes (x = year, y = n, color = translation)) +
     geom_line () +
-    #geom_ribbon (data = dat_annual,
-    #             aes (ymin = lo, ymax = hi, fill = name, colour = NULL),
-    #             alpha = 0.15, show.legend = FALSE) +
-    geom_line (data = dat_annual, lty = 2) +
-    ggtitle ("A: Numbers of authors and contributors") +
-    theme (legend.title = element_blank(),
-           legend.position = c (0.2, 0.4),
-           legend.background = element_rect(fill='transparent', colour='transparent'))
+    scale_colour_manual (values = cols) +
+    ggtitle ("A: Top 10 translations") +
+    guides (color = guide_legend (ncol = 2)) -> p1
 
-p2 <- readRDS (f_fig2_lic) |>
-    mutate (lty = (what == "cran_by_year")) |>
-    ggplot (aes (x = year, y = n, lty = lty)) +
+readRDS (f_fig2_top10) |>
+     ggplot (aes (x = year, y = n, color = url)) +
     geom_line () +
-    theme (legend.position = "none") +
-    ylab ("Number of distinct licenses") +
-    ggtitle ("B: Numbers of licenses")
+    ggtitle ("B: Top 10 URLs") +
+    #theme (legend.position = c (0.2, 0.7),
+    #       legend.background = element_rect(fill='transparent', colour='transparent')) +
+    guides (color = guide_legend (ncol = 2)) -> p2
 
-p1 | p2
+p1 / p2
 ```

@@ -206,13 +206,13 @@ where $\bar{E}$ is a model parameter calculated from,
 The relatively regulated process of CRAN submissions [@seven-pkg-networks-2019]
 is reflected in more regulated meta-data able to be extracted from package
 'DESCRIPTION' files. Numbers of both authors and contributors have increased
-over time (Fig. 2A), with contributors having been rarely acknowledged at all
+over time (Fig. 1A), with contributors having been rarely acknowledged at all
 prior to 2010 (two years after the launch of GitHub), increasing to an average
 of one acknowledged contributor per package in 2021. Numbers of unique licenses
 manifest an opposite tendency, decreasing notably
-over time (Fig. 2B, resulting in the values shown in Table 1.
+over time (Fig. 1B, resulting in the values shown in Table 1.
 
-```{r fig02, child = "figures/fig02.Rmd", eval = TRUE, echo = FALSE}
+```{r fig01, child = "figures/fig01.Rmd", eval = TRUE, echo = FALSE}
 ```
 
 ```{r licenses, echo = FALSE}
@@ -225,20 +225,27 @@ lic <- data.frame (license = names (lic),
 knitr::kable (lic, caption = "**Table 1.**")
 ```
 
-```{r fig03, child = "figures/fig03.Rmd", eval = TRUE, echo = FALSE}
+```{r fig02, child = "figures/fig02.Rmd", eval = TRUE, echo = FALSE}
 ```
 
 
 Numbers of translations peaked broadly in the 2010's, and have declined notably
 since around 2015, suggesting a pronounced increased acceptance since that time
 of English as a globally standard language, and a concomitant decrease in
-active acknowledgement of other languages (Fig. 3A). Finally, analyses of URLs
-provided in package 'DESCRIPTION' files clearly reveals an abrupt break after
-around 2010 with the advent of online code repositories. GitHub has always
-dominated, while r-forge has declined progressively since around 2015. The most
-notable increase has been the emergence of rOpenSci as provider of the only URL
-to come close to within 1/20th of the popularity of GitHub over the past few
-years.
+active acknowledgement of other languages (Fig. 2A). (The `en@quot` translation
+entry is described in the [*R Installation and Administration
+Manual](https://cran.r-project.org/doc/manuals/R-admin.html#Localization-of-messages)
+as a translation which,
+
+> which can be used in a UTF-8 locale to have American error messages with
+> pairs of single quotes translated to Unicode directional quotes.
+
+Finally, analyses of URLs provided in package 'DESCRIPTION' files clearly
+reveals an abrupt break after around 2010 with the advent of online code
+repositories. GitHub has always dominated, while r-forge has declined
+progressively since around 2015. The most notable increase has been the
+emergence of rOpenSci as provider of the only URL to come close to within
+1/20th of the popularity of GitHub over the past few years.
 
 
 ## Package Structure and Content
@@ -246,10 +253,10 @@ years.
 ### File Structure
 
 The temporal development of numbers of files manifest several notable
-characteristics (Figure 4). Unsurprisingly, R packages have always been
+characteristics (Figure 3). Unsurprisingly, R packages have always been
 dominated by files in the `R/` directory, numbers of which increased considerably
 up to around 2010, after which they are generally stabilised at a mean value of
-around 20 files (Fig. 4A). The `src` and `data` directories are the only places
+around 20 files (Fig. 3A). The `src` and `data` directories are the only places
 within an R package in which numbers of files have remained relatively constant
 over the preceding 20+ years. Packages generally had very few files in the
 `inst` directory prior to 2010, after which they have notably increased. The
@@ -258,10 +265,10 @@ are `vignettes` and `tests`, clearly indicating that packages have become both
 better documented and better tested, especially since 2010.
 
 
-```{r fig04, child = "figures/fig04.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
+```{r fig03, child = "figures/fig03.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
-Figure 4B shows equivalent relative changes within individual packages across
+Figure 3B shows equivalent relative changes within individual packages across
 successive releases. The changes there are proportional changes in numbers of
 files in each of the nominated directories, starting with the change between
 the second and first release (a "Release sequence" of 2). Although numbers of
@@ -271,7 +278,9 @@ releases.  <!-- if this is the case, you should plot the trend out to 20 release
 
 ### Function Number, Type and Size
 
-Figure 7 shows the temporal evolution of a number of code metrics. These figures distinguish between the two primary kinds of R functions, exported and non-exported, and also between the main sub-directories of R packages:
+Figure 7 shows the temporal evolution of a number of code metrics. These
+figures distinguish between the two primary kinds of R functions, exported and
+non-exported, and also between the main sub-directories of R packages:
 
 - The `R` directory holding all source files in the `R` language;
 - The `src` directory holding all code in other languages which needs to be compiled on package installation;
@@ -306,7 +315,7 @@ amount to less than six `R` functions and just over 8 `src` functions per file
 ## Dependency Networks
 
 Like the "standard" libraries for the python language, R has a core set of
-"base" and "recommended" packages. Figure 5A shows the change in the relative
+"base" and "recommended" packages. Figure 4A shows the change in the relative
 use of these compared with "contributed", or externally user-generated
 packages, over time. The use of recommended packages has remained relatively
 constant over time, representing around 15-20% of all function calls. Calls to
@@ -316,10 +325,10 @@ This reduction has been offset by a concomitantly pronounced increase in calls
 to functions from contributed packages.
 
 
-```{r fig05, child = "figures/fig05.Rmd", eval = TRUE, echo = FALSE}
+```{r fig04, child = "figures/fig04.Rmd", eval = TRUE, echo = FALSE}
 ```
 
-Figure 5B shows the "coupling instability" of packages over time. This is the
+Figure 4B shows the "coupling instability" of packages over time. This is the
 proportion of *afferent* to total couplings, where afferent couplings are
 numbers of (unique) calls that a package makes to dependent functions defined
 in other packages. Total couplings include *efferent* couplings, or calls from
@@ -336,7 +345,7 @@ after which it has progressively increased, from around 50% to almost 80%. This
 latter figure means that packages make on average eight calls to other packages
 for every two calls made to that package.
 
-Figure 5C depicts changes in numbers of unique function calls from each package
+Figure 4C depicts changes in numbers of unique function calls from each package
 to the top ten contributed packages, defined as the ten packages with the
 largest total number of unique function calls from all packages throughout the
 history of CRAN. Numbers of function calls are shown on a logarithmic scale,
@@ -345,7 +354,7 @@ around 2013. The top two packages of {ggplot2} and {dplyr} account for
 `r prop_top2`% of all function calls from all contributed packages over the
 time shown.
 
-Figure 6 shows results equivalent to Figs 5A-B, but for changes with
+Figure 5 shows results equivalent to Figs 4A-B, but for changes with
 progressive releases of each package. The first panel (Fig. 5A) shows changes
 in the proportion of calls to the base and recommended packages for each
 sequential release, averaged over all packages. (Equivalent proportions of
@@ -361,7 +370,7 @@ to base R functions with each release. Beyond around 15 releases, relative
 rates of change also approach the stable level of 1, as for calls to
 recommended packages, with no further calls being added.
 
-Figure 6B shows the average trajectory of coupling instability for individual
+Figure 5B shows the average trajectory of coupling instability for individual
 packages across the depicted numbers of sequential releases. While decreases in
 coupling instability should be expected as packages mature and are imported by
 increasing numbers of other packages (that is, afferent coupling should
@@ -374,7 +383,7 @@ both of increasing dependence of other packages on any given package, and
 decreasing dependence of packages on functionality provided by external
 packages.
 
-Finally, Fig. 6C shows progressions of packages being imported into other
+Finally, Fig. 5C shows progressions of packages being imported into other
 packages as a function of release sequence. The number of packages importing
 a package increases progressively with numbers of releases. Packages with less
 than ten releases are, on average, imported by very few other packages, while
@@ -384,12 +393,12 @@ functions actually used by other packages increase above one after around ten
 releases, yet always remain below two on average, even for packages with 50 or
 more releases.
 
-```{r fig06, child = "figures/fig06.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
+```{r fig05, child = "figures/fig05.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
 ## Temporal Development #3: Code Metrics
 
-Figure 7 shows the temporal evolution of a number of code metrics. These figures distinguish between the two primary kinds of R functions, exported and non-exported, and also between the main sub-directories of R packages:
+Figure 6 shows the temporal evolution of a number of code metrics. These figures distinguish between the two primary kinds of R functions, exported and non-exported, and also between the main sub-directories of R packages:
 
 - The `R` directory holding all source files in the `R` language;
 - The `src` directory holding all code in other languages which needs to be compiled on package installation;
@@ -402,26 +411,26 @@ Figure 7 shows the temporal evolution of a number of code metrics. These figures
 Lines of Code ("LoC") in the primary `R` and `src` directories broadly
 increased up to around 2010 or slightly later, after which time LoC in these
 directories has progressively decreased. These follow similar trends in LoC per
-function (Fig. 7B), excepting the early years of CRAN, during which functions
+function (Fig. 6B), excepting the early years of CRAN, during which functions
 often had well over 100 lines each, especially `src` functions defined in other
 languages.
 
 Total numbers of R functions initially increased until around 2007, peaking at
-just under 50 exported and 75-80 non-exported functions per package (Fig. 7C).
+just under 50 exported and 75-80 non-exported functions per package (Fig. 6C).
 Numbers of exported R functions have decreased since then to around 27
 functions per package in 2021. In contrast, numbers of functions defined in
 `src` directories have progressively increased, and now total just over 150
 functions. In both `R` and `src` directories, numbers of functions per source
 file have nevertheless progressively decreased since the early 2000's to now
 amount to less than six `R` functions and just over 8 `src` functions per file
-(Fig. 7D).
+(Fig. 6D).
 
-```{r fig07, child = "figures/fig07.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
+```{r fig06, child = "figures/fig06.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
 ## Intra-package Developments
 
-Figure 8 shows results equivalent to Fig. 7, but for the development of the
+Figure 7 shows results equivalent to Fig. 6, but for the development of the
 respective metrics with each sequential release of a package, rather than being
 averaged over all packages for each year. Lines of code generally increase as
 packages mature, with mean numbers of lines in the `R` directory increasing
@@ -431,7 +440,7 @@ clear, yet the dominance of `R` code nevertheless produced an overall increase
 in LoC out to the 100th release of packages of around 12 times.
 
 These increases in LoC nevertheless corresponded to an equivalent decrease in
-LoC per function with increasing numbers of releases (Fig. 8B). Similar to the
+LoC per function with increasing numbers of releases (Fig. 7B). Similar to the
 aggregate LoC measures of panel A, LoC per function in `src` directories
 remained broadly stable over releases, while LoC per `R` function decreased
 notably, and more so for exported than non-exported functions. Exported
@@ -440,7 +449,7 @@ releases average just under 60 LoC.
 
 The increasing total measures of LoC of panel A combined with decreasing LoC
 per function of panel B must mean that more functions are added as packages
-mature, which is precisely what Fig. 8C reveals. Packages initially contain
+mature, which is precisely what Fig. 7C reveals. Packages initially contain
 around 20 exported functions on average, yet this increases almost 13-fold to
 over 250 by the 100th release. Non-exported functions increase by a similar
 10-fold proportion over the first 100 releases, while packages start with more
@@ -449,21 +458,59 @@ as packages mature. Finally, numbers of functions per file show no clear trend
 for `src` code, while approximately doubling in `R` code over the first 100
 releases of a package, from around 7 to 15.
 
-```{r fig08, child = "figures/fig08.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
+```{r fig07, child = "figures/fig07.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
+
+The inverse-square "law" of software evolution merely posits that rates of
+development increase as software matures. Development is quantified in terms of
+numbers of abstract "modules", which in R code could be interpreted as
+functions. The models of @Turski96 and @Turski02 describe how numbers of
+functions increase between each release.
+
+```{r turski, echo = FALSE, eval = FALSE}
+datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
+x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
+        group_by (package) |>
+        mutate (seq = seq_along (package))
+x$loc_R [which (is.na (x$loc_R))] <- 0L
+x$loc_src [which (is.na (x$loc_src))] <- 0L
+x$loc_inst [which (is.na (x$loc_inst))] <- 0L
+x$loc_total <- x$loc_R + x$loc_src + x$loc_inst
+
+x_rel <- x |>
+    group_by (seq) |>
+    filter (seq <= 100) |>
+    summarise (
+        n = mean (n_fns_r_exported + n_fns_r_not_exported, na.rm = TRUE))
+
+s_inv <- cumsum (1 / x_rel$n ^ 2)
+E <- mean ((x_rel$n - x_rel$n [1]) / s_inv)
+fit <- rep (x_rel$n [1], nrow (x_rel))
+for (i in seq (nrow (x_rel)) [-1]) {
+    fit [i] <- fit [i - 1] + E / (fit [i - 1] ^ 2)
+}
+x_rel$fit <- fit
+x_rel <- pivot_longer (x_rel, c (n, fit))
+
+ggplot (x_rel, aes (x = seq, y = value, colour = name)) +
+    geom_line ()
+    #geom_smooth (method = "loess", formula = "y ~ x")
+```
+
+
 
 ## Network metrics
 
-```{r fig09, child = "figures/fig09.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
+```{r fig08, child = "figures/fig08.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
-```{r fig10, child = "figures/fig10.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
+```{r fig09, child = "figures/fig09.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
 ## Code formatting
 
 
-```{r fig11, child = "figures/fig11.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
+```{r fig10, child = "figures/fig10.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
 # References

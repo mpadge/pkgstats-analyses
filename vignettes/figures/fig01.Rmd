@@ -1,0 +1,114 @@
+
+```{r fig1-precalc}
+datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
+f_fig1_aut_ctb <- file.path (v_data_dir, "fig01-aut-ctb.Rds")
+calc_fig1_aut_ctb <- !file.exists (f_fig1_aut_ctb)
+f_fig1_lic <- file.path (v_data_dir, "fig01-lic.Rds")
+calc_fig1_lic <- !file.exists (f_fig1_lic)
+```
+
+```{r fig1-aut-ctb, eval = calc_fig1_aut_ctb}
+x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
+do1 <- function (x, year = 2018) {
+    xy <- x |>
+        filter (year <= !!year) |>
+        group_by (package) |>
+        slice_max (date)
+    c (year = year,
+       n_aut = mean (xy$desc_n_aut),
+       n_ctb = mean (xy$desc_n_ctb),
+       se_aut = sd (xy$desc_n_aut) / sqrt (nrow (xy)),
+       se_ctb = sd (xy$desc_n_ctb) / sqrt (nrow (xy)))
+}
+years <- sort (unique (x$year))
+n <- vapply (years, function (y) do1 (x, y), numeric (5))
+n <- data.frame (t (n))
+
+# Then values for actual years
+xy <- x |>
+    group_by (year) |>
+    summarise (
+               n_aut = mean (desc_n_aut),
+               n_ctb = mean (desc_n_ctb),
+               se_aut = sd (desc_n_aut) / sqrt (length (desc_n_aut)),
+               se_ctb = sd (desc_n_ctb) / sqrt (length (desc_n_aut)))
+n$what <- "cran_by_year"
+xy$what <- "annual"
+n <- rbind (n, xy)
+saveRDS (n, f_fig1_aut_ctb)
+```
+
+```{r fig1-lic, eval = calc_fig1_lic}
+x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
+do1 <- function (x, year = 2018) {
+    xy <- x |>
+        filter (year <= !!year) |>
+        group_by (package) |>
+        slice_max (date)
+    lic <- unlist (strsplit (xy$license, "\\|"))
+    lic <- unique (gsub ("^\\s*|\\s*$", "", lic))
+    c (year = year, n = length (lic))
+}
+years <- sort (unique (x$year))
+nlic <- vapply (years, function (y) do1 (x, y), numeric (2))
+nlic <- data.frame (t (nlic))
+nlic$what <- "cran_by_year"
+
+x_y <- x |>
+    group_by (year) |>
+    summarise (n = length (unique (gsub ("^\\s*|\\s*$", "", unlist (strsplit (license, "\\|"))))))
+x_y$what <- "annual"
+
+nlic <- rbind (nlic, x_y)
+saveRDS (nlic, f_fig1_lic)
+```
+
+
+
+```{r fig1-num_aut_ctb, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 3.5, fig.cap = "**Figure 1.**"}
+
+dat <- readRDS (f_fig1_aut_ctb)
+lo <- dat |>
+    mutate (aut_lo = n_aut - se_aut,
+            ctb_lo = n_ctb - se_ctb) |>
+    select (year, aut_lo, ctb_lo, what) |>
+    pivot_longer (c (aut_lo, ctb_lo))
+hi <- dat |>
+    mutate (aut_hi = n_aut + se_aut,
+            ctb_hi = n_ctb + se_ctb) |>
+    select (year, aut_hi, ctb_hi, what) |>
+    pivot_longer (c (aut_hi, ctb_hi))
+fig1_dat <- dat |>
+    rename (aut = n_aut, ctb = n_ctb) |>
+    select (year, aut, ctb, what) |>
+    pivot_longer (cols = c (aut, ctb))
+fig1_dat$lo <- lo$value
+fig1_dat$hi <- hi$value
+
+dat_annual <- fig1_dat [fig1_dat$what == "annual", ]
+fig1_dat <- fig1_dat [fig1_dat$what == "cran_by_year", ]
+
+p1 <- fig1_dat |>
+    ggplot (aes (x = year, y = value, colour = name)) +
+    #geom_ribbon (aes (ymin = lo, ymax = hi, fill = name, colour = NULL),
+    #             alpha = 0.15, show.legend = FALSE) +
+    geom_line () +
+    #geom_ribbon (data = dat_annual,
+    #             aes (ymin = lo, ymax = hi, fill = name, colour = NULL),
+    #             alpha = 0.15, show.legend = FALSE) +
+    geom_line (data = dat_annual, lty = 2) +
+    ggtitle ("A: Numbers of authors and contributors") +
+    theme (legend.title = element_blank(),
+           legend.position = c (0.2, 0.4),
+           legend.background = element_rect(fill='transparent', colour='transparent'))
+
+p2 <- readRDS (f_fig1_lic) |>
+    mutate (lty = (what == "cran_by_year")) |>
+    ggplot (aes (x = year, y = n, lty = lty)) +
+    geom_line () +
+    theme (legend.position = "none") +
+    ylab ("Number of distinct licenses") +
+    ggtitle ("B: Numbers of licenses")
+
+p1 | p2
+```

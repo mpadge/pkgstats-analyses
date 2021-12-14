@@ -86,7 +86,7 @@ deps_p2 <- deps_p2 |>
     group_by (seq) |>
     summarise (instability = logmean (instability_unique, na.rm = TRUE),
                efferent = logmean (efferent_unique, na.rm = TRUE))
-coeff_p2 <- max (deps_p2$efferent, na.rm = TRUE) / max (deps_p2$instability)
+coeff_p2 <- max (deps_p2$efferent, na.rm = TRUE) / max (deps_p2$instability, na.rm = TRUE)
 colours_p2 <- c ("instability" = "#F8766D",
                  "efferent" = "#00BFC4")
 deps_p2 |>

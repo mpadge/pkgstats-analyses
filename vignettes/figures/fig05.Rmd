@@ -21,21 +21,20 @@ saveRDS (x, f_fig5_exdat)
 x <- readRDS (f_fig5_exdat)
 ```
 ```{r fig5-deps-data-file}
-f_fig5_deps1 <- file.path (v_data_dir, "fig5-deps1.Rds")
-f_fig5_deps2 <- file.path (v_data_dir, "fig5-deps2.Rds")
-calc_fig5_deps <- !file.exists(f_fig5_deps1)
+f_fig5_deps <- file.path (v_data_dir, "fig5-deps.Rds")
+calc_fig5_deps <- !file.exists(f_fig5_deps)
 ```
 
 ```{r fig5-deps-calc, eval = calc_fig5_deps}
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
 deps1 <- dependencies (x, cran_by_year = TRUE)
-saveRDS (deps1, f_fig5_deps1)
+deps1$what <- "cran_by_year"
 deps2 <- dependencies (x, cran_by_year = FALSE)
-saveRDS (deps2, f_fig5_deps2)
+deps2$what <- "annual"
+deps <- rbind (deps1, deps2)
+saveRDS (deps, f_fig5_deps)
 ```
 ```{r fig5-prepro}
-deps1 <- readRDS (f_fig5_deps1)
-deps2 <- readRDS (f_fig5_deps2)
 recommended <- recommended_pkgs ()
 cp_dat_file <- file.path (v_data_dir, "coupling-data.Rds")
 cp_dat_exists <- file.exists (cp_dat_file)
@@ -55,16 +54,18 @@ saveRDS (cp_dat, cp_dat_file)
 
 
 ```{r fig5-plot-base-rcmd-ctb}
+deps <- readRDS (f_fig5_deps)
+deps <- deps [deps$category == "unique", ]
+deps_cran <- deps [deps$what == "cran_by_year", ]
+deps <- deps [deps$what == "annual", ]
 
-deps1 <- deps1 [deps1$category == "unique", ]
-deps2 <- deps2 [deps2$category == "unique", ]
-
-p1 <- ggplot (deps2, aes (x = year, y = proportion, color = type)) +
+p1 <- ggplot (deps, aes (x = year, y = proportion, colour = type)) +
     geom_line () +
-    geom_line (data = deps1, lty = 2) +
+    geom_line (data = deps_cran, show.legend = FALSE, lty = 2) +
     ggtitle ("A: Proportion of function calls") +
     theme (legend.position = c (0.3, 0.7),
            legend.background = element_rect(fill='transparent', colour='transparent'))
+p1
 ```
 
 ```{r fig5-top10-file}
@@ -118,6 +119,28 @@ top10 <- deps [deps$package %in% top$package [1:10], ]
 saveRDS (top10, f_top10)
 ```
 
+```{r fig5-coupling-instability}
+# Values for total and unique are almost identical, so only show unique
+cp_dat <- readRDS (cp_dat_file) |>
+    select (-c (total_median, unique_median)) |>
+    rename (total = total_mean,
+            unique = unique_mean) |>
+    mutate (lo = total - total_se,
+            hi = total + total_se) |>
+    #pivot_longer (cols = c (total, unique)) |>
+    #rename (instability = value, type = name)
+    rename (instability = total)
+cp_dat$lty <- cp_dat$what == "annual"
+cp_dat$year <- as.integer (cp_dat$year)
+
+p2 <- ggplot (cp_dat, aes (x = year, y = instability, colour = what, lty = lty)) +
+    geom_ribbon (aes (ymin = lo, ymax = hi, fill = what, colour = NULL),
+                 alpha = 0.15, show.legend = FALSE) +
+    geom_line () +
+    theme (legend.position = "none") +
+    ggtitle ("B: Coupling Instability")
+```
+
 ```{r fig5-deps-p2}
 top <- readRDS (f_top10)
 prop_top2 <- sum (top$n [1:2]) / sum (top$n [-(1:2)])
@@ -132,32 +155,9 @@ top |>
     theme (legend.title = element_blank(),
            legend.position = c (0.20, 0.67),
            legend.background = element_rect(fill='transparent', colour='transparent')) +
-    guides (color = guide_legend (ncol = 3)) -> p2
-```
-
-```{r fig5-coupling-instability}
-# Values for total and unique are almost identical, so only show unique
-cp_dat <- readRDS (cp_dat_file) |>
-    select (-c (total_median, unique_median)) |>
-    rename (total = total_mean,
-            unique = unique_mean) |>
-    mutate (lo = total - total_se,
-            hi = total + total_se) |>
-    #pivot_longer (cols = c (total, unique)) |>
-    #rename (instability = value, type = name)
-    rename (instability = total)
-cp_dat$lty <- cp_dat$what == "cran_by_year"
-cp_dat$year <- as.integer (cp_dat$year)
-
-p3 <- ggplot (cp_dat, aes (x = year, y = instability, colour = what, lty = lty)) +
-    geom_ribbon (aes (ymin = lo, ymax = hi, fill = what, colour = NULL),
-                 alpha = 0.15, show.legend = FALSE) +
-    geom_line () +
-    theme (legend.position = "none") +
-    ggtitle ("B: Coupling Instability")
-p3
+    guides (color = guide_legend (ncol = 3)) -> p3
 ```
 
 ```{r fig5-assemble, fig.width = 7, fig.height = 7, fig.cap = "**Fig. 5**"}
-(p1 | p3) / p2
+(p1 | p2) / p3
 ```

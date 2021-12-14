@@ -27,7 +27,8 @@ n <- vapply (years, function (i) lang_one_year (x, i),
 dat <- data.frame (year = years, n = n)
 saveRDS (dat, f)
 ```
-```{r fig7A}
+```{r fig7A, eval = FALSE}
+# Not used!
 readRDS (f) |>
     rename (num_languages = n) |>
     ggplot (aes (x = year, y = num_languages)) +
@@ -35,7 +36,7 @@ readRDS (f) |>
 ```
 
 ```{r fig7-fns-per-year-file}
-f <- file.path (here, "data-raw", "fns-per-year.Rds")
+f <- file.path (v_data_dir, "fig07-fns-per-year.Rds")
 fns_per_year_exists <- file.exists (f)
 ```
 ```{r fig7-nfns-per-year, eval = !fns_per_year_exists}
@@ -83,11 +84,61 @@ fns_per_year <- function (x, year = 2015) {
 years <- sort (unique (x$year))
 dat <- lapply (years, function (i) fns_per_year (x, i))
 dat <- data.frame (do.call (rbind, dat))
-saveRDS (dat, f)
+dat$what <- "cran_by_year"
+
+x$loc_R [which (is.na (x$loc_R))] <- 0L
+x$loc_src [which (is.na (x$loc_src))] <- 0L
+x$loc_inst [which (is.na (x$loc_inst))] <- 0L
+x$loc_total <- x$loc_R + x$loc_src + x$loc_inst
+
+xs <- x |>
+    group_by (year) |>
+    summarise (
+        loc = mean (loc_total),
+        loc_R = mean (loc_R, na.rm = TRUE),
+        loc_src = mean (loc_src, na.rm = TRUE),
+        loc_inst = mean (loc_inst, na.rm = TRUE),
+        loc_vignettes = mean (loc_vignettes, na.rm = TRUE),
+        loc_tests = mean (loc_tests, na.rm = TRUE),
+        n_fns_r_exported = mean (n_fns_r_exported, na.rm = TRUE),
+        n_fns_r_not_exported = mean (n_fns_r_not_exported, na.rm = TRUE),
+        n_fns_src = mean (n_fns_src, na.rm = TRUE),
+        n_fns_per_file_r = mean (n_fns_per_file_r, na.rm = TRUE),
+        n_fns_per_file_src = mean (n_fns_per_file_src, na.rm = TRUE),
+        npars_exported_mn = mean (npars_exported_mn, na.rm = TRUE),
+        npars_exported_md = mean (npars_exported_md, na.rm = TRUE),
+        loc_per_fn_r_mn = mean (loc_per_fn_r_mn, na.rm = TRUE),
+        loc_per_fn_r_md = mean (loc_per_fn_r_md, na.rm = TRUE),
+        loc_per_fn_r_exp_mn = mean (loc_per_fn_r_exp_mn, na.rm = TRUE),
+        loc_per_fn_r_exp_md = mean (loc_per_fn_r_exp_md, na.rm = TRUE),
+        loc_per_fn_r_not_exp_mn = mean (loc_per_fn_r_not_exp_mn, na.rm = TRUE),
+        loc_per_fn_r_not_exp_md = mean (loc_per_fn_r_not_exp_md, na.rm = TRUE),
+        loc_per_fn_src_mn = mean (loc_per_fn_src_mn, na.rm = TRUE),
+        loc_per_fn_src_md = mean (loc_per_fn_src_md, na.rm = TRUE),
+        doclines_per_fn_exp_mn = mean (doclines_per_fn_exp_mn, na.rm = TRUE),
+        doclines_per_fn_exp_md = mean (doclines_per_fn_exp_md, na.rm = TRUE),
+        doclines_per_fn_not_exp_mn = mean (doclines_per_fn_not_exp_mn, na.rm = TRUE),
+        doclines_per_fn_not_exp_md = mean (doclines_per_fn_not_exp_md, na.rm = TRUE),
+        docchars_per_par_exp_mn = mean (docchars_per_par_exp_mn, na.rm = TRUE),
+        docchars_per_par_exp_md = mean (docchars_per_par_exp_md, na.rm = TRUE))
+xs$what <- "annual"
+
+saveRDS (rbind (dat, xs), f)
 ```
 
 ```{r fig7A-loc-per-year-plot}
-readRDS (f) |>
+loc <- readRDS (f)
+loc_cran <- loc |>
+    filter (what == "cran_by_year") |>
+    select (c (year, loc, loc_R, loc_src, loc_inst)) |>
+    rename (total = loc,
+            R = loc_R,
+            src = loc_src,
+            inst = loc_inst) |>
+    pivot_longer (c (total, R, src, inst)) |>
+    rename (type = name, number = value)
+loc |>
+    filter (what == "annual") |>
     select (c (year, loc, loc_R, loc_src, loc_inst)) |>
     rename (total = loc,
             R = loc_R,
@@ -98,8 +149,9 @@ readRDS (f) |>
     rename (type = name, number = value) |>
     ggplot (aes (x = year, y = number, colour = type)) +
         geom_line () +
+        #geom_line (data = loc_cran, show.legend = FALSE, lty = 2) +
         theme (legend.title = element_blank(),
-               legend.position = c (0.5, 0.45),
+               legend.position = c (0.2, 0.85),
                legend.background = element_rect(fill='transparent', colour='transparent')) +
         ylab ("Lines of Code") +
         guides (color = guide_legend (ncol = 2)) +
@@ -107,7 +159,17 @@ readRDS (f) |>
 ```
 
 ```{r fig7B-loc-per-fn}
+loc_cran <- loc |>
+    filter (what == "cran_by_year") |>
+    select (c (year, loc_per_fn_r_exp_mn, loc_per_fn_r_not_exp_mn,
+               loc_per_fn_src_mn)) |>
+    rename (R_exp = loc_per_fn_r_exp_mn,
+            R_non = loc_per_fn_r_not_exp_mn,
+            src = loc_per_fn_src_mn) |>
+    pivot_longer (c (R_exp, R_non, src)) |>
+    rename (type = name, number = value)
 x <- readRDS (f) |>
+    filter (what == "annual") |>
     select (c (year, loc_per_fn_r_exp_mn, loc_per_fn_r_not_exp_mn,
                loc_per_fn_src_mn)) |>
     rename (R_exp = loc_per_fn_r_exp_mn,
@@ -117,6 +179,7 @@ x <- readRDS (f) |>
     rename (type = name, number = value) |>
     ggplot (aes (x = year, y = number, colour = type)) +
         geom_line () +
+        #geom_line (data = loc_cran, show.legend = FALSE, lty = 2) +
         theme (legend.title = element_blank(),
                legend.position = c (0.8, 0.8),
                legend.background = element_rect(fill='transparent', colour='transparent')) +
@@ -125,7 +188,16 @@ x <- readRDS (f) |>
 ```
 
 ```{r fig7C-fns-per-year-plot}
+nfns_cran <- readRDS (f) |>
+    filter (what == "cran_by_year") |>
+    select (c (year, n_fns_r_exported, n_fns_r_not_exported, n_fns_src)) |>
+    rename (r_exp = n_fns_r_exported,
+            r_non = n_fns_r_not_exported,
+            src = n_fns_src) |>
+    pivot_longer (c (r_exp, r_non, src)) |>
+    rename (type = name, number = value)
 readRDS (f) |>
+    filter (what == "annual") |>
     select (c (year, n_fns_r_exported, n_fns_r_not_exported, n_fns_src)) |>
     rename (r_exp = n_fns_r_exported,
             r_non = n_fns_r_not_exported,
@@ -134,6 +206,7 @@ readRDS (f) |>
     rename (type = name, number = value) |>
     ggplot (aes (x = year, y = number, colour = type)) +
         geom_line () +
+        #geom_line (data = nfns_cran, show.legend = FALSE, lty = 2) +
         theme (legend.title = element_blank(),
                legend.position = c (0.15, 0.85),
                legend.background = element_rect(fill='transparent', colour='transparent')) +
@@ -142,7 +215,15 @@ readRDS (f) |>
 ```
 
 ```{r Fig7D-fns-per-file}
+nfns_cran <- readRDS (f) |>
+    filter (what == "cran_by_year") |>
+    select (c (year, n_fns_per_file_r, n_fns_per_file_src)) |>
+    rename (R = n_fns_per_file_r,
+            src = n_fns_per_file_src) |>
+    pivot_longer (c (R, src)) |>
+    rename (type = name, number = value)
 readRDS (f) |>
+    filter (what == "annual") |>
     select (c (year, n_fns_per_file_r, n_fns_per_file_src)) |>
     rename (R = n_fns_per_file_r,
             src = n_fns_per_file_src) |>
@@ -150,6 +231,7 @@ readRDS (f) |>
     rename (type = name, number = value) |>
     ggplot (aes (x = year, y = number, colour = type)) +
         geom_line () +
+        #geom_line (data = nfns_cran, show.legend = FALSE, lty = 2) +
         theme (legend.title = element_blank(),
                legend.position = c (0.85, 0.9),
                legend.background = element_rect(fill='transparent', colour='transparent')) +

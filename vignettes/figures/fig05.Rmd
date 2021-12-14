@@ -4,7 +4,7 @@ datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
 ```
 
 ```{r fig5-external-calls-data-file}
-f_fig5_exdat <- file.path (v_data_dir, "fig5-ext-calls.Rds")
+f_fig5_exdat <- file.path (v_data_dir, "fig05-ext-calls.Rds")
 calc_ext_calls_dat <- !file.exists (f_fig5_exdat)
 ```
 
@@ -21,7 +21,7 @@ saveRDS (x, f_fig5_exdat)
 x <- readRDS (f_fig5_exdat)
 ```
 ```{r fig5-deps-data-file}
-f_fig5_deps <- file.path (v_data_dir, "fig5-deps.Rds")
+f_fig5_deps <- file.path (v_data_dir, "fig05-deps.Rds")
 calc_fig5_deps <- !file.exists(f_fig5_deps)
 ```
 
@@ -36,7 +36,7 @@ saveRDS (deps, f_fig5_deps)
 ```
 ```{r fig5-prepro}
 recommended <- recommended_pkgs ()
-cp_dat_file <- file.path (v_data_dir, "coupling-data.Rds")
+cp_dat_file <- file.path (v_data_dir, "fig05-coupling-data.Rds")
 cp_dat_exists <- file.exists (cp_dat_file)
 ```
 
@@ -68,7 +68,7 @@ p1 <- ggplot (deps, aes (x = year, y = proportion, colour = type)) +
 ```
 
 ```{r fig5-top10-file}
-f_top10 <- file.path (v_data_dir, "top10-pkgs.Rds")
+f_top10 <- file.path (v_data_dir, "fig05-top10-pkgs.Rds")
 calc_top10 <- !file.exists (f_top10)
 ```
 

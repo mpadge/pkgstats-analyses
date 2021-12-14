@@ -8,8 +8,8 @@
 
 ```{r fig9-precalc}
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
-graph_data_file <- file.path (v_data_dir, "Fig09-graph-metrics.Rds")
-graph_intern_data_file <- file.path (v_data_dir, "Fig09-graph-metrics-intern.Rds")
+graph_data_file <- file.path (v_data_dir, "fig09-graph-metrics.Rds")
+graph_intern_data_file <- file.path (v_data_dir, "fig09-graph-metrics-intern.Rds")
 calc_graph_data <- !file.exists (graph_data_file)
 calc_graph_data_intern <- !file.exists (graph_intern_data_file)
 ```

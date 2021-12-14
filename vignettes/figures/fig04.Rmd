@@ -1,6 +1,6 @@
 
 ```{r fig4-n-files-data-load}
-n_files_file <- file.path (v_data_dir, "n-files-data.Rds")
+n_files_file <- file.path (v_data_dir, "fig04-n-files-data.Rds")
 n_files_exists <- file.exists (n_files_file)
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
 ```
@@ -48,7 +48,7 @@ saveRDS (dat, n_files_file)
 ```
 
 ```{r fig4-pkg-level-n-filename}
-f_fig4_pkg_level <- file.path (v_data_dir, "fig4-pkg-n-files.Rds")
+f_fig4_pkg_level <- file.path (v_data_dir, "fig04-pkg-n-files.Rds")
 do_fig4_pkg_n_files <- !file.exists (f_fig4_pkg_level)
 ```
 

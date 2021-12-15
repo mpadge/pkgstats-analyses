@@ -48,7 +48,8 @@ saveRDS (rbind (n1, n2), f_fig10)
 ```
 
 
-```{r fig10, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 3.5, fig.cap = "**Figure 10.**"}
+
+```{r fig10-p1-p2}
 
 x1_cran <- readRDS (f_fig10) |>
     filter (what == "cran_by_year") |>
@@ -98,5 +99,75 @@ p2 <- x2 |>
                legend.position = c (0.2, 0.2),
                legend.background = element_rect(fill='transparent', colour='transparent'))
 
-p1 | p2
+```
+
+```{r fig10-p3}
+f <- file.path (v_data_dir, "fig06-fns-per-year.Rds")
+dat10c_cran <- readRDS (f) |>
+    filter (what == "cran_by_year") |>
+    select (c (year, npars_exported_mn, doclines_per_fn_exp_mn,
+               docchars_per_par_exp_mn)) |>
+    rename (npars = npars_exported_mn,
+            doclines = doclines_per_fn_exp_mn,
+            chars_per_par = docchars_per_par_exp_mn)
+
+scale_10c <- max (dat10c_cran$npars) / max (dat10c_cran$chars_per_par)
+colours_fig10_p3 <- c ("npars" = "red",
+                       "doclines" = "blue",
+                       "chars_per_par" = "green")
+
+readRDS (f) |>
+    filter (what == "annual") |>
+    select (c (year, npars_exported_mn, doclines_per_fn_exp_mn,
+               docchars_per_par_exp_mn)) |>
+    rename (npars = npars_exported_mn,
+            doclines = doclines_per_fn_exp_mn,
+            chars_per_par = docchars_per_par_exp_mn) |>
+    ggplot (aes (x = year)) +
+        geom_line (data = dat10c_cran, aes (y = doclines, col = "doclines"), lty = 2) +
+        geom_line (data = dat10c_cran, aes (y = chars_per_par, col = "chars_per_par"), lty = 2) +
+        geom_line (data = dat10c_cran, aes (y = npars / scale_10c, col = "npars"), lty = 2) +
+        geom_line (aes (y = doclines, col = "doclines")) +
+        geom_line (aes (y = chars_per_par, col = "chars_per_par")) +
+        geom_line (aes (y = npars / scale_10c, col = "npars")) +
+        theme (legend.position = "none") +
+        #theme (legend.title = element_blank(),
+        #       legend.position = c (0.85, 0.9),
+        #       legend.background = element_rect(fill='transparent', colour='transparent')) +
+        ylab ("Documentation characters / lines") +
+        scale_y_continuous (
+            sec.axis = sec_axis (~.*scale_10c, name = "Num. pars.")) +
+        ggtitle ("C: Params & Documentation") -> p3
+```
+
+```{r fig10-p4}
+dat_10d <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
+    group_by (package) |>
+    mutate (seq = seq_along (package)) |>
+    group_by (seq) |>
+    summarise (
+       npars = logmean (npars_exported_mn, na.rm = TRUE),
+       doclines = logmean (doclines_per_fn_exp_mn, na.rm = TRUE),
+       chars_per_par = logmean (docchars_per_par_exp_mn, na.rm = TRUE)) |>
+    filter (seq <= 100)
+scale_10d <- max (dat_10d$npars) / max (dat_10d$chars_per_par)
+colours_fig10_p4 <- c ("npars" = "red",
+                       "doclines" = "blue",
+                       "chars_per_par" = "green")
+dat_10d |>
+    ggplot (aes (x = seq)) +
+        geom_line (aes (y = doclines, col = "doclines")) +
+        geom_line (aes (y = chars_per_par, col = "chars_per_par")) +
+        geom_line (aes (y = npars / scale_10d, col = "npars")) +
+        theme (legend.title = element_blank(),
+               legend.position = c (0.7, 0.2),
+               legend.background = element_rect(fill='transparent', colour='transparent')) +
+        ylab ("Documentation characters / lines") +
+        scale_y_continuous (
+            sec.axis = sec_axis (~.*scale_10d, name = "Num. pars.")) +
+        ggtitle ("D: Params & Documentation") -> p4
+```
+
+```{r fig10-assemble, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 7, fig.cap = "**Figure 10.**"}
+(p1 | p2) / (p3 + p4)
 ```

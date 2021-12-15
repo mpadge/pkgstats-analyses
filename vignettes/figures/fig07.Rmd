@@ -8,6 +8,7 @@ x$loc_R [which (is.na (x$loc_R))] <- 0L
 x$loc_src [which (is.na (x$loc_src))] <- 0L
 x$loc_inst [which (is.na (x$loc_inst))] <- 0L
 x$loc_total <- x$loc_R + x$loc_src + x$loc_inst
+x$doclines_per_fn_exp_mn [which (!is.finite (x$doclines_per_fn_exp_mn))] <- NA
 ```
 
 ```{r fig7-nfns-per-release}

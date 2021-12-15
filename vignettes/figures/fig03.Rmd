@@ -37,7 +37,7 @@ xy <- x |>
                inst = logmean (files_inst),
                vignettes = logmean (files_vignettes),
                tests = logmean (files_tests),
-               data = logmean (num_data_file))
+               data = logmean (num_data_files))
 
 dat$what <- "cran_by_year"
 xy$what <- "annual"

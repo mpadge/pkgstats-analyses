@@ -8,6 +8,10 @@ summarise_coupling_data(x, cran_by_year = TRUE)
 }
 \arguments{
 \item{x}{Result of \link{load_pkgstats_data}.}
+
+\item{cran_by_year}{If \code{TRUE}, implement annual analyses as CRAN would have
+existed at each year; otherwise annual analyses are only for packages
+uploaded in that year alone.}
 }
 \value{
 A \code{data.frame} of annual summary statistics on coupling instability.

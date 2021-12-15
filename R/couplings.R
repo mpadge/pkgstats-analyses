@@ -158,6 +158,9 @@ couplings <- function (x, year = 2015, summarise = TRUE) {
 #' Return post-processed summary of coupling data
 #'
 #' @inheritParams couplings
+#' @param cran_by_year If `TRUE`, implement annual analyses as CRAN would have
+#' existed at each year; otherwise annual analyses are only for packages
+#' uploaded in that year alone.
 #' @return A `data.frame` of annual summary statistics on coupling instability.
 #' @export
 summarise_coupling_data <- function (x, cran_by_year = TRUE) {

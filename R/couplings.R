@@ -9,6 +9,10 @@
 #' @export
 couplings <- function (x, year = 2015, summarise = TRUE) {
 
+    # suppress no visible binding notes:
+    package <- from <- n_total <- n_unique <- to <- from <- 
+        instability_total <- instability_unique <- NULL
+
     cran_by_year <- !is.na (year)
 
     if (cran_by_year) {
@@ -128,10 +132,10 @@ couplings <- function (x, year = 2015, summarise = TRUE) {
                 year = year,
                 tot_med = stats::median (deps$instability_total),
                 tot_mean = mean (deps$instability_total),
-                tot_se = sd (deps$instability_total) / nrow (deps),
+                tot_se = stats::sd (deps$instability_total) / nrow (deps),
                 un_med = stats::median (deps$instability_unique),
                 un_mean = mean (deps$instability_unique),
-                un_se = sd (deps$instability_unique) / nrow (deps)
+                un_se = stats::sd (deps$instability_unique) / nrow (deps)
                 )
         } else {
 
@@ -140,10 +144,10 @@ couplings <- function (x, year = 2015, summarise = TRUE) {
                 dplyr::summarise (
                     tot_med = stats::median (instability_total),
                     tot_mean = mean (instability_total),
-                    tot_se = sd (instability_total) / length (instability_total),
+                    tot_se = stats::sd (instability_total) / length (instability_total),
                     un_med = stats::median (instability_unique),
                     un_mean = mean (instability_unique),
-                    un_se = sd (instability_unique) / length (instability_total))
+                    un_se = stats::sd (instability_unique) / length (instability_total))
 
         }
     }
@@ -195,6 +199,8 @@ m_coupling_summary_internal <- memoise::memoise (coupling_summary_internal)
 #' @inheritParams couplings
 #' @export
 couplings_releases <- function (x) {
+
+    from <- NULL # no visible binding
 
     deps <- coupling_dependencies (x)
 

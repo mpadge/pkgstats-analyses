@@ -51,6 +51,12 @@ dependencies <- function (x, cran_by_year = TRUE) {
 #' @noRd
 dependencies_one_year <- function (x, recommended, year = 2018, cran_by_year = TRUE) {
 
+    # suppress no visible binding notes:
+    package <- n_total_base <- n_total_rmcd <- n_total_ctb <-
+        n_unique <- base_total <- recommended_total <-
+        base_unique <- recommended_unique <- contributed_unique <-
+        n_unique_base <- n_unique_ctb <- contributed_total <- NULL
+
     if (cran_by_year) {
         x_y <- x |>
             dplyr::filter (year <= !!year) |>

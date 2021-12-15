@@ -4,7 +4,7 @@
 \alias{summarise_coupling_data}
 \title{Return post-processed summary of coupling data}
 \usage{
-summarise_coupling_data(x)
+summarise_coupling_data(x, cran_by_year = TRUE)
 }
 \arguments{
 \item{x}{Result of \link{load_pkgstats_data}.}

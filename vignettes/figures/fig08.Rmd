@@ -109,6 +109,9 @@ dat_one_year <- function (xraw, year = 2015) {
        n_edges = logmean (x$n_edges, na.rm = TRUE),
        n_edges_r = logmean (x$n_edges_r, na.rm = TRUE),
        n_edges_src = logmean (x$n_edges_src, na.rm = TRUE),
+       n_edges_rel = logmean (x$n_edges / (x$n_fns_r + x$n_fns_src), na.rm = TRUE),
+       n_edges_rel_r = logmean (x$n_edges_r / x$n_fns_r, na.rm = TRUE),
+       n_edges_rel_src = logmean (x$n_edges_src / x$n_fns_src, na.rm = TRUE),
        n_clusters = logmean (x$n_clusters, na.rm = TRUE),
        centr_dir_mn = logmean (x$centrality_dir_mn, na.rm = TRUE),
        centr_dir_md = logmean (x$centrality_dir_md, na.rm = TRUE),
@@ -135,6 +138,9 @@ xs <- xraw |>
         n_edges = logmean (n_edges, na.rm = TRUE),
         n_edges_r = logmean (n_edges_r, na.rm = TRUE),
         n_edges_src = logmean (n_edges_src, na.rm = TRUE),
+        n_edges_rel = logmean (n_edges / (n_fns_r + n_fns_src), na.rm = TRUE),
+        n_edges_rel_r = logmean (n_edges_r / n_fns_r, na.rm = TRUE),
+        n_edges_rel_src = logmean (n_edges_src / n_fns_src, na.rm = TRUE),
         n_clusters = logmean (n_clusters, na.rm = TRUE),
         centr_dir_mn = logmean (centrality_dir_mn, na.rm = TRUE),
         centr_dir_md = logmean (centrality_dir_md, na.rm = TRUE),
@@ -201,35 +207,28 @@ dat <- readRDS (graph_intern_data_file)
 dat_cran <- dat |>
     filter (what == "cran_by_year") |>
     select (year, starts_with ("n_")) |>
-    rename (total = n_edges, R = n_edges_r, src = n_edges_src)
-coeff_fig8_p3 <- max (dat$n_clusters) / max (dat$n_edges)
-colours_fig8_p3 <- c ("total" = "red",
-                      "R" = "green",
-                      "src" = "blue",
-                      "n_clusters" = "orange")
+    rename (total = n_edges_rel, R = n_edges_rel_r, src = n_edges_rel_src) |>
+    select (year, total, R, src, n_clusters) |>
+    mutate (R = 10 * R, total = 10 * total) |>
+    pivot_longer (c (total, R, src, n_clusters))
 fig8_p3 <- dat |>
     filter (what == "annual") |>
     select (year, starts_with ("n_")) |>
-    rename (total = n_edges, R = n_edges_r, src = n_edges_src) |>
-    ggplot (aes (x = year)) +
-        geom_line (aes (y = total, col = "total")) +
-        geom_line (aes (y = R, col = "R")) +
-        geom_line (aes (y = src, col = "src")) +
-        geom_line (aes (y = n_clusters / coeff_fig8_p3, col = "n_clusters")) +
-        #geom_line (data = dat_cran, aes (y = total, col = "total"), lty = 2) +
-        #geom_line (data = dat_cran, aes (y = R, col = "R"), lty = 2) +
-        #geom_line (data = dat_cran, aes (y = src, col = "src"), lty = 2) +
-        #geom_line (data = dat_cran, aes (y = n_clusters / coeff_fig8_p3, col = "n_clusters"), lty = 2) +
-        #scale_colour_manual (values = colours_fig8_p3) +
+    rename (total = n_edges_rel, R = n_edges_rel_r, src = n_edges_rel_src) |>
+    select (year, total, R, src, n_clusters) |>
+    mutate (R = 10 * R, total = 10 * total) |>
+    pivot_longer (c (total, R, src, n_clusters)) |>
+    ggplot (aes (x = year, y = value, colour = name)) +
+        geom_line () +
+        #geom_line (data = dat_cran, lty = 2) +
         ylab ("Num. edges") +
-        scale_y_continuous (
-            sec.axis = sec_axis (~.*coeff_fig8_p3, name = "Num. clusters")) +
         ggtitle ("C: pkg edges and clusters") +
         guides (color = guide_legend (ncol = 2)) +
         theme (legend.title = element_blank (),
                legend.position = c (0.5, 0.15),
                legend.background = element_rect(fill='transparent', colour='transparent'))
 ```
+
 
 ```{r fig8-network-internal2}
 dat <- readRDS (graph_intern_data_file)

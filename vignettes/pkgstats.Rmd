@@ -102,15 +102,21 @@ content (or numbers of functions). Those laws of growth themselves derive from
 @Turski96, who posited an inverse-square law for software growth, later
 formalised in @Turski02.
 
-These "laws" of software evolution have been frequently used and cited (see
-overview in @Mens2008, and references therein), although overwhelmingly for
-considerations of individual software packages. They have been widely adopted
-in a burgeoning field of what might be referred to as "Software Mining and
-Analytics", to elucidate useful predictors of software
-quality. A useful overview of the
-field was
-provided by @mining-repos-2013, who usefully identified a number of categories,
-including that of "code statistics" examined here.
+This inverse-square "law" was nevertheless an empirical fitting exercise only,
+and merely posits the arguably simplest form for a process in which the rate of
+growth of a system decreases as the system grows. There is no theoretical
+reasons why software evolution should follow such a trajectory, nor do there
+appear to have been either any examinations of alternative models of growth, or
+of plausible theoretical foundations for any particular model.
+
+These "laws" of software evolution have nevertheless been frequently used and
+cited (see overview in @Mens2008, and references therein), although
+overwhelmingly for considerations of individual software packages. They have
+been widely adopted in a burgeoning field of what might be referred to as
+"Software Mining and Analytics", to elucidate useful predictors of software
+quality. A useful overview of the field was provided by @mining-repos-2013, who
+usefully identified a number of categories, including that of "code statistics"
+examined here.
 
 More detailed considerations of package dependency networks have been developed
 in more restricted, and thus more manageable, contexts, such as the analysis of
@@ -152,9 +158,7 @@ and database.
 
 # Methods
 
-## The `pkgstats` package
-
-<!-- This secion should be way longer. It shoule
+<!-- This section should be way longer. It shoule
 - described pkgstats package in more detail, to the point of basic usage
 - describe the different metrics collected - if not a full list, then at least
   categories and a reference to a full list
@@ -163,43 +167,259 @@ and database.
   it
 -->
 
-Most of the methodology used in this study derives from [the `pkgstats`
-package](https://docs.ropensci.org/pkgstats/), which we developed to quantify
-the structure and content of R packages using static code analysis techniques.
-Data for the present analyses were derived from [a function within the package,
+Most of the methodology used in this study derives from [the R package,
+`pkgstats`](https://docs.ropensci.org/pkgstats/), which we developed to
+quantify the structure and content of R packages using static code analysis
+techniques. Data for the present analyses were derived from [a function within
+the package,
 `pkgstats_from_archive`](https://docs.ropensci.org/pkgstats/reference/pkgstats_from_archive.html),
 which can be applied to a local mirror of the CRAN archive to collate
-statistics from all packages.
+statistics from all packages. The static analyses within this package rely in
+turn on two open-source libraries for "code tagging" which are described below,
+followed by an overview of `pkgstats` functionality. Before describing those
+aspects, we begin with a methodological description of the data sources
+themselves.
 
-<!-- Then, a brief description of analytical methods, referencing exact variables -->
+## R packages and the CRAN server
 
-To describe the evolution of development practices for CRAN packages over time,
-we analyze a subset of these metrics. We examine authorship (`field_name`), ....
-We calculate changes in amount and distribution of code amongst the different
-functional directories in R packages (`R`, `src`, etc.), ....
+All R packages accord with the structure defined in the ["*Writing R
+Extensions*"
+Manual](https://cran.r-project.org/doc/manuals/R-exts.html#Linking-to-native-routines-in-other-packages)).
+These analyses were applied to different components of R packages, in
+particular the following main sub-directories:
 
-## Inverse-Square Law of Software Evolution
+- The `R` directory which holds all source files in the `R` language;
+- The `src` directory which holds all code in other languages which needs to be compiled on package installation;
+- The `inst` directory which generally holds bundles of external code, but may
+  also include code used for cross-linking in compilation, including of other
+  packages. Cross-linked code must be in an `inst/include` sub-directory (as
+  explained in [this section of the "*Writing R Extensions*"
+  Manual](https://cran.r-project.org/doc/manuals/R-exts.html#Linking-to-native-routines-in-other-packages)).
+  All of the following analyses only consider the `inst/include` directory, and
+  all references to the `inst` directory imply this sub-directory only.
+  Analyses excluded all other sub-directories within the `inst` directory.
+- The `vignettes` directory which includes extended documentation. (Such
+  documentation may also be placed in an `inst/doc` folder, but this was
+  ignored here.)
+- The `tests` directory containing test files.
 
-<!-- I don't think it makes sense to put this in the methods section unless you plan to actually do some goodness-of-fit analysis. -->
+The `R` language itself is defined by a single "package" referred to as "base
+R". By default, all installations of `R` also [include a suite of "recommended"
+packages](https://github.com/wch/r-source/tree/trunk/src/library). All other
+packages are referred to as "Contributed Packages", for which the
+"Comprehensive R Archive Network" or CRAN is the centralised distribution
+system. A number of the following results distinguish between base,
+recommended, and contributed code or packages.
 
-One of our aims was to examine the applicability of the inverse-square law of
-software evolution [@Turski96; @software-evolution-97; @Turski02]. This law
-describes increases in numbers of software "modules" which translate in the
-context of R packages to functions. Increases over time in these numbers, $s$,
-are posited to follow the inverse square law,
+CRAN currently holds close to 19,000 contributed packages, and also maintains a
+complete archive of all previous versions of all packages, including of
+archived packages no longer available on CRAN. The data analysed here were
+generated from a local mirror of the entire CRAN repository, including all
+current and archived packages, and amounting to around 105,000 packages (for an
+average of slightly over 5 releases per package). The raw data for these
+analyses are the contributed packages themselves. While relationships to
+objects in the base and contributed packages are considered, the code of those
+packages is not analysed here.
 
-\begin{equation}
-    s_i = s_{i - 1} + \bar{E} / s_{i - 1} ^ 2,
-\end{equation}
-where $\bar{E}$ is a model parameter calculated from,
-\begin{equation}
-    E_i = (s_i - s_1) / (\sum_{k=1}^{i-1} 1 / s_k^2).
-\end{equation}
+
+## Code tagging with "ctags" and "gtags"
+
+Static code analysis tools generally work by constructing parse trees which
+relate a grammar describing one or more computer languages to each expression
+encountered by tracing the code. An important first step is to "tag" each
+expression, identifying the kind of expression and its scope (generally its
+membership either of some component of the underlying grammar, or some more
+local scope such as definitions within locally-sourced files).
+
+The `pkgstats` package uses two libraries for code tagging and parse tree
+construction: "ctags" and "gtags". The original "ctags" library is no longer
+maintained, and these analyses used a maintained version called ["Universal
+ctags"](https://ctags.io) which,
+
+> generates an index (or tag) file of language objects found in source files
+> for programming languages.
+
+This library was used here to tag each expression in the `R`, `src`, and
+`inst/include` directories, providing the following data for each tagged item:
+
+1. The tag itself, such as the name of a function, variable, or other object;
+2. The name of the corresponding file;
+3. The full content of the expression in which that tag was used (as a text string);
+4. The kind of object (in `R` files, generally a `function`, `functionVar` or
+   variable defined within a function, `globalVar` for global variables, or
+   other objects defined by the `R` language; kinds of objects can be
+   arbitrarily diverse in other languages);
+5. The computer language in which that object arose; and
+6. The start and end line numbers of the file in which that object is defined
+   or referenced.
+
+The "ctags" data for `R` files were also used to construct an "external call
+network" of references to all functions in all packages, including the package
+being analysed, the base and recommended packages, and all other contributed
+packages imported by each package. Attribution of a function to a package in
+cases where a function of a given name is defined in multiple packages
+(so-called "namespace conflicts"). Namespace conflicts most commonly arise in
+re-definitions of functions initially defined in base or recommended packages,
+and in all such cases we attributed a function to the external or contributed
+package over origin base or recommended definitions.
+
+The "gtags" library, itself part of the [GNU Global
+library](https://www.gnu.org/software/global/), generates entries for every
+expression, with the "tag" itself defining the environment for that expression.
+This enables mappings to be made between every expression and its corresponding
+tag. We used "gtags" to construct object reference networks across all computer
+languages used in R packages (such as C, C++, or Python), to enable the
+construction of "function call networks". While the terms "functions" and
+"calls" may not be appropriate for all computer languages and/or classes or
+types of objects, they nevertheless reflect the functionality of R code, and so
+are preferred here, even when referring to other object relationships such as
+class inheritance mechanisms.
+
+It is possible to cross-compile "gtags" with "ctags", to enable "gtags" to use
+the more expansive language parsing abilities of "ctags", and to greatly extend
+the range of languages able to be parsed by "gtags". In particular, "gtags"
+does not not by default parse R code, yet does so when cross-compiled with
+Universal "ctags". Cross-compiled installations of "gtags" are, however,
+several times slower than simpler installations, and so these analyses did not
+use a cross-compiled version. While this meant restricting analyses to a
+smaller subset of potential languages, the output of "ctags" itself
+nevertheless describes tags in all possible languages, with "gtags" only used
+to map function call networks in languages other than R. Function-call networks
+within R were extracted from the "ctags" output as described above, and one
+additional function was written to link calls within R code and defined in
+"ctags" output to external objects defined in other languages and specified in
+"gtags" output. This enabled full function-call networks to be constructed
+within and between different languages used in R packages. Several properties
+of these networks were analysed as described below.
+
+
+
+## The `pkgstats` package
+
+Many of the results that follow extend directly from the functions in the
+`pkgstats` package which extract the output of "ctags" and "gtags". This
+sub-section describes those aspects of additional data generated by `pkgstats`
+which are analysed here. The full list of all data generated by the package is
+given in [the online documentation](https://docs.ropensci.org/pkgstats/).
+
+### 'DESCRIPTION' files
+
+All R packages must include a [Debian Control
+File](https://www.debian.org/doc/debian-policy/ch-controlfields.html) ("DCF")
+called "DESCRIPTION" which contains a subset of standard DCF fields, including
+[a number of standardised and mandatory
+fields](https://cran.r-project.org/doc/manuals/R-exts.html#The-DESCRIPTION-file)
+able to be analysed here. We extract:
+
+- Numbers of authors (as individuals with a specified role of "aut");
+- Numbers of contributors (as individuals with a specified role of "ctb");
+- Full entries of the "License" field specifying the type of license under
+  which the software is released; and
+- Entries in the "URL" field specifying one or more URLs for the package.
+
+### Translations and data files
+
+R packages may include [files used to translate all messages issued by code into
+other (human)
+languages](https://cran.r-project.org/doc/manuals/R-exts.html#Preparing-translations).
+These files are placed in a dedicated `/po` sub-directory, with file names
+prefixed with standard prefixes (generally, but not necessarily, [ISO 639-1
+codes](https://en.wikipedia.org/wiki/ISO_639-1)). This format enables
+translations to be readily identified and extracted.
+
+One additional sub-directory analysed here is a `/data` directory which is used
+to hold data used by a package. The following results include analyses of
+numbers of files in each directory, including this `/data` directory.
+
+### Lines of Code (LoC)
+
+The `pkgstats` package includes its own internal tool for analysing
+Lines-of-Code (Loc). This tool (coded in C++) produces output similar to many
+common LoC tools, yet with additional data on:
+
+1. Total numbers of code, comment, and blank lines;
+2. Total numbers of characters in code lines, along with total numbers of
+   white-space characters, to enable metrics of proportional white space; and
+3. Code indentation, including identification of tab-indentation.
+
+### Function-level analyses
+
+The "ctags" and "gtags" output described above provides data on the start and
+end points of each function definition, along with names of associated files.
+These data were used to provide estimates of average LoC per function, and
+numbers of function definitions per file. (Where, as explained above,
+"function" is used here as generic label for any object in any language, such
+as class definitions.)
+
+Each exported function in an R package must have a corresponding documentation
+file in the `/man` directory of the package with the suffix, `.Rd` for "R
+documentation". `pkgstats` also statically parses these files with [the
+`parse_Rd` function of the recommended `tools`
+package](https://stat.ethz.ch/R-manual/R-devel/library/tools/html/parse_Rd.html).
+For the present analyses, this enabled identification of the number of
+parameters for each function, and the number of documentation characters for
+each parameter. Total length of documentation for each function was also
+quantified as the length of the output produced by converting the result of
+`parse_Rd` to text (via the `tools::Rd2txt` function).
+
 
 ## Network Analyses
 
-- [ ] Describe / quantify effect of GitHub founding in 2008, as many results
-  manifest distinct changes from around 2010 onwards.
+Two distinct kinds of network analysis were performed here: *inter-package*
+analyses of dependency networks between packages (akin to
+@seven-pkg-networks-2019), and *intra-package* analyses of the function call
+networks extracted from the "ctags" and "gtags" data described above.
+
+### Inter-Package Network Analyses
+
+The 'DESCRIPTION' files of R packages must specify all external packages which
+a package imports. These data can be used to construct a full dependency
+network of all packages. The results below present the following measures
+derived from package dependency networks:
+
+1. Numbers of packages which are not imported by any others; 
+2. Average "in-degree" of network vertices, or average numbers of times each
+   package is imported by others;
+3. The average *betweenness centrality* of each edge, which is the number of
+   times that edge is traversed in connecting every package to every other
+   package in the network;
+4. The network-level *degree centrality*, which is a measure of vertex degree
+   standardised to the overall size and structure of the network
+   (@network-centrality-79).
+5. A measure of the overall "size" of the graph as the average distance from
+   any one node to all other nodes.
+
+Clusters or local network communities were not considered here, as the
+dependency networks of CRAN packages are almost always so highly connected that
+the largest connected cluster represents over 99% of the network.
+
+### Intra-Package Network Analyses
+
+Intra-package networks were constructed from the function call networks
+described above, and included overall package networks coupling code in all
+sub-directories, as well as network analyses of only those components
+representing individual sub-directories, in this case constrained to network
+analyses of both `/R` and `/src` code. Intra-package analyses considered the
+following metrics:
+
+1. Numbers of edges of 
+
+
+Function call networks within individual packages are commonly structured in
+several distinct clusters, and thus numbers of clusters provided an important
+first metric for intra-package analyses.
+
+## Coupling Instability
+
+## Annual Analyses
+
+## Statistical Analyses
+
+Almost all statistics described above were approximately log-normally
+distributed. References in any of the following results to mean values thus
+imply values calculated as `10^mean(log10(x))`. The use of direct mean values
+did not generally alter any of the qualitative conclusions which follow, yet
+resulted in many cases in less distinct or smooth trajectories or results.
 
 # Results
 

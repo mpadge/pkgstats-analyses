@@ -1,249 +1,165 @@
 
-```{r fig6-pre}
+```{r fig6-datafile}
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
+```
+
+```{r fig6-external-calls-data-file}
+f_fig6_exdat <- file.path (v_data_dir, "fig06-ext-calls.Rds")
+calc_ext_calls_dat <- !file.exists (f_fig6_exdat)
+```
+
+```{r fig6-external-calls-data, eval = calc_ext_calls_dat}
+# select latest packages only
+x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
+    group_by (package) |>
+    slice_max (date)
+x <- x [which (!(is.na (x$external_calls) | x$external_calls == "")), ]
+saveRDS (x, f_fig6_exdat)
+```
+
+```{r fig6-load-exdat}
+x <- readRDS (f_fig6_exdat)
+```
+```{r fig6-deps-data-file}
+f_fig6_deps <- file.path (v_data_dir, "fig06-deps.Rds")
+calc_fig6_deps <- !file.exists(f_fig6_deps)
+```
+
+```{r fig6-deps-calc, eval = calc_fig6_deps}
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
-x$num_languages <- vapply (strsplit (x$languages, ","), length,
-                           integer (1))
-x$doclines_per_fn_exp_mn [which (!is.finite (x$doclines_per_fn_exp_mn))] <- NA
+deps1 <- dependencies (x, cran_by_year = TRUE)
+deps1$what <- "cran_by_year"
+deps2 <- dependencies (x, cran_by_year = FALSE)
+deps2$what <- "annual"
+deps <- rbind (deps1, deps2)
+saveRDS (deps, f_fig6_deps)
+```
+```{r fig6-prepro}
+recommended <- recommended_pkgs ()
+cp_dat_file <- file.path (v_data_dir, "fig06-coupling-data.Rds")
+cp_dat_exists <- file.exists (cp_dat_file)
 ```
 
-```{r fig6-lang-file}
-f <- file.path (here, "data-raw", "languages.Rds")
-langs_exists <- file.exists (f)
+```{r fig6-coupling-data-generate, eval = !cp_dat_exists}
+cp_dat1 <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
+    summarise_coupling_data (cran_by_year = TRUE)
+cp_dat2 <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
+    summarise_coupling_data (cran_by_year = FALSE)
+cp_dat1$what <- "cran_by_year"
+cp_dat2$what <- "annual"
+cp_dat <- rbind (cp_dat1, cp_dat2)
+saveRDS (cp_dat, cp_dat_file)
 ```
 
-```{r fig6-languages, eval = !langs_exists}
-lang_one_year <- function (x, year = 2015) {
-    x1 <- x |>
-        filter (year <= !!year) |>
-        group_by (package) |>
-        slice_max (date) |>
-        mutate (nlangs = mean (num_languages))
 
-    return (mean (x1$nlangs))
-}
-years <- sort (unique (x$year))
-n <- vapply (years, function (i) lang_one_year (x, i),
-             numeric (1))
-dat <- data.frame (year = years, n = n)
-saveRDS (dat, f)
-```
-```{r fig6A, eval = FALSE}
-# Not used!
-readRDS (f) |>
-    rename (num_languages = n) |>
-    ggplot (aes (x = year, y = num_languages)) +
-        geom_line () -> p1
+
+```{r fig6-plot-base-rcmd-ctb}
+deps <- readRDS (f_fig6_deps)
+deps <- deps [deps$category == "unique", ]
+deps_cran <- deps [deps$what == "cran_by_year", ]
+deps <- deps [deps$what == "annual", ]
+
+p1 <- ggplot (deps, aes (x = year, y = proportion, colour = type)) +
+    geom_line () +
+    geom_line (data = deps_cran, show.legend = FALSE, lty = 2) +
+    ggtitle ("A: Proportion of function calls") +
+    theme (legend.position = c (0.3, 0.7),
+           legend.background = element_rect(fill='transparent', colour='transparent'))
 ```
 
-```{r fig6-fns-per-year-file}
-f <- file.path (v_data_dir, "fig06-fns-per-year.Rds")
-fns_per_year_exists <- file.exists (f)
-```
-```{r fig6-nfns-per-year, eval = !fns_per_year_exists}
-fns_per_year <- function (x, year = 2015) {
-
-    x1 <- x |>
-        filter (year <= !!year) |>
-        group_by (package) |>
-        slice_max (date)
-
-    x1$loc_R [which (is.na (x1$loc_R))] <- 0L
-    x1$loc_src [which (is.na (x1$loc_src))] <- 0L
-    x1$loc_inst [which (is.na (x1$loc_inst))] <- 0L
-    loc <- x1$loc_R + x1$loc_src + x1$loc_inst
-
-    c (year = year,
-       loc = logmean (loc),
-       loc_R = logmean (x1$loc_R, na.rm = TRUE),
-       loc_src = logmean (x1$loc_src, na.rm = TRUE),
-       loc_inst = logmean (x1$loc_inst, na.rm = TRUE),
-       loc_vignettes = logmean (x1$loc_vignettes, na.rm = TRUE),
-       loc_tests = logmean (x1$loc_tests, na.rm = TRUE),
-       n_fns_r_exported = logmean (x1$n_fns_r_exported, na.rm = TRUE),
-       n_fns_r_not_exported = logmean (x1$n_fns_r_not_exported, na.rm = TRUE),
-       n_fns_src = logmean (x1$n_fns_src, na.rm = TRUE),
-       n_fns_per_file_r = logmean (x1$n_fns_per_file_r, na.rm = TRUE),
-       n_fns_per_file_src = logmean (x1$n_fns_per_file_src, na.rm = TRUE),
-       npars_exported_mn = logmean (x1$npars_exported_mn, na.rm = TRUE),
-       npars_exported_md = logmean (x1$npars_exported_md, na.rm = TRUE),
-       loc_per_fn_r_mn = logmean (x1$loc_per_fn_r_mn, na.rm = TRUE),
-       loc_per_fn_r_md = logmean (x1$loc_per_fn_r_md, na.rm = TRUE),
-       loc_per_fn_r_exp_mn = logmean (x1$loc_per_fn_r_exp_mn, na.rm = TRUE),
-       loc_per_fn_r_exp_md = logmean (x1$loc_per_fn_r_exp_md, na.rm = TRUE),
-       loc_per_fn_r_not_exp_mn = logmean (x1$loc_per_fn_r_not_exp_mn, na.rm = TRUE),
-       loc_per_fn_r_not_exp_md = logmean (x1$loc_per_fn_r_not_exp_md, na.rm = TRUE),
-       loc_per_fn_src_mn = logmean (x1$loc_per_fn_src_mn, na.rm = TRUE),
-       loc_per_fn_src_md = logmean (x1$loc_per_fn_src_md, na.rm = TRUE),
-       doclines_per_fn_exp_mn = logmean (x1$doclines_per_fn_exp_mn, na.rm = TRUE),
-       doclines_per_fn_exp_md = logmean (x1$doclines_per_fn_exp_md, na.rm = TRUE),
-       doclines_per_fn_not_exp_mn = logmean (x1$doclines_per_fn_not_exp_mn, na.rm = TRUE),
-       doclines_per_fn_not_exp_md = logmean (x1$doclines_per_fn_not_exp_md, na.rm = TRUE),
-       docchars_per_par_exp_mn = logmean (x1$docchars_per_par_exp_mn, na.rm = TRUE),
-       docchars_per_par_exp_md = logmean (x1$docchars_per_par_exp_md, na.rm = TRUE))
-}
-years <- sort (unique (x$year))
-dat <- lapply (years, function (i) fns_per_year (x, i))
-dat <- data.frame (do.call (rbind, dat))
-dat$what <- "cran_by_year"
-
-dat$loc_inst [which (!is.finite (dat$loc_inst))] <- NA
-
-x$loc_R [which (is.na (x$loc_R))] <- 0L
-x$loc_src [which (is.na (x$loc_src))] <- 0L
-x$loc_inst [which (is.na (x$loc_inst))] <- 0L
-x$loc_total <- x$loc_R + x$loc_src + x$loc_inst
-
-xs <- x |>
-    group_by (year) |>
-    summarise (
-        loc = logmean (loc_total),
-        loc_R = logmean (loc_R, na.rm = TRUE),
-        loc_src = logmean (loc_src, na.rm = TRUE),
-        loc_inst = logmean (loc_inst, na.rm = TRUE),
-        loc_vignettes = logmean (loc_vignettes, na.rm = TRUE),
-        loc_tests = logmean (loc_tests, na.rm = TRUE),
-        n_fns_r_exported = logmean (n_fns_r_exported, na.rm = TRUE),
-        n_fns_r_not_exported = logmean (n_fns_r_not_exported, na.rm = TRUE),
-        n_fns_src = logmean (n_fns_src, na.rm = TRUE),
-        n_fns_per_file_r = logmean (n_fns_per_file_r, na.rm = TRUE),
-        n_fns_per_file_src = logmean (n_fns_per_file_src, na.rm = TRUE),
-        npars_exported_mn = logmean (npars_exported_mn, na.rm = TRUE),
-        npars_exported_md = logmean (npars_exported_md, na.rm = TRUE),
-        loc_per_fn_r_mn = logmean (loc_per_fn_r_mn, na.rm = TRUE),
-        loc_per_fn_r_md = logmean (loc_per_fn_r_md, na.rm = TRUE),
-        loc_per_fn_r_exp_mn = logmean (loc_per_fn_r_exp_mn, na.rm = TRUE),
-        loc_per_fn_r_exp_md = logmean (loc_per_fn_r_exp_md, na.rm = TRUE),
-        loc_per_fn_r_not_exp_mn = logmean (loc_per_fn_r_not_exp_mn, na.rm = TRUE),
-        loc_per_fn_r_not_exp_md = logmean (loc_per_fn_r_not_exp_md, na.rm = TRUE),
-        loc_per_fn_src_mn = logmean (loc_per_fn_src_mn, na.rm = TRUE),
-        loc_per_fn_src_md = logmean (loc_per_fn_src_md, na.rm = TRUE),
-        doclines_per_fn_exp_mn = logmean (doclines_per_fn_exp_mn, na.rm = TRUE),
-        doclines_per_fn_exp_md = logmean (doclines_per_fn_exp_md, na.rm = TRUE),
-        doclines_per_fn_not_exp_mn = logmean (doclines_per_fn_not_exp_mn, na.rm = TRUE),
-        doclines_per_fn_not_exp_md = logmean (doclines_per_fn_not_exp_md, na.rm = TRUE),
-        docchars_per_par_exp_mn = logmean (docchars_per_par_exp_mn, na.rm = TRUE),
-        docchars_per_par_exp_md = logmean (docchars_per_par_exp_md, na.rm = TRUE))
-xs$what <- "annual"
-
-saveRDS (rbind (dat, xs), f)
+```{r fig6-top10-file}
+f_top10 <- file.path (v_data_dir, "fig06-top10-pkgs.Rds")
+calc_top10 <- !file.exists (f_top10)
 ```
 
-```{r fig6A-loc-per-year-plot}
-loc <- readRDS (f)
-loc_cran <- loc |>
-    filter (what == "cran_by_year") |>
-    select (c (year, loc, loc_R, loc_src, loc_inst)) |>
-    rename (total = loc,
-            R = loc_R,
-            src = loc_src,
-            inst = loc_inst) |>
-    pivot_longer (c (total, R, src, inst)) |>
-    rename (type = name, number = value)
-loc |>
-    filter (what == "annual") |>
-    select (c (year, loc, loc_R, loc_src, loc_inst)) |>
-    rename (total = loc,
-            R = loc_R,
-            src = loc_src,
-            inst = loc_inst) |>
-    #mutate (total = total * max (inst, na.rm = TRUE) / max (total, na.rm = TRUE)) |>
-    pivot_longer (c (total, R, src, inst)) |>
-    rename (type = name, number = value) |>
-    ggplot (aes (x = year, y = number, colour = type)) +
-        geom_line () +
-        #geom_line (data = loc_cran, show.legend = FALSE, lty = 2) +
-        theme (legend.title = element_blank(),
-               legend.position = c (0.2, 0.85),
-               legend.background = element_rect(fill='transparent', colour='transparent')) +
-        ylab ("Lines of Code") +
-        guides (color = guide_legend (ncol = 2)) +
-        ggtitle ("A: Lines of Code") -> p1
+
+```{r fig6-dep-pkg-calls, eval = calc_top10}
+x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
+    filter (!is.na (external_calls)) |>
+    filter (external_calls != "")
+deps <- lapply (seq (nrow (x)), function (i) {
+                    # a few have rogue colons at start:
+                    ex <- gsub ("^\\:", "", x$external_calls [i])
+                    out <- strsplit (strsplit (ex, ",") [[1]], "\\:")
+                    lens <- vapply (out, length, integer (1))
+                    out <- do.call (rbind, out [which (lens == 3)])
+                    
+                    this_pkg <- x$package [i]
+                    out <- out [which (out [, 1] != this_pkg), , drop = FALSE]
+
+                    out <- cbind (out, rep (x$month [i], nrow (out)))
+
+                    return (out)
+           })
+
+deps <- do.call (rbind, deps)
+
+# manual cleaning until https://github.com/ropensci-review-tools/pkgstats/issues/33
+# '\' is punct, but 'n' is not, so first get rid of '\n':
+deps [, 1] <- gsub ("^\\\\\\\\n", "", deps [, 1])
+deps [, 1] <- gsub ("^[[:punct:]]*", "", deps [, 1])
+deps <- deps [which (deps [, 1] != ""), ]
+
+deps <- data.frame (package = deps [, 1],
+                    date =  lubridate::as_date (as.integer (deps [, 4])),
+                    n_total = as.integer (deps [, 2]),
+                    n_unique = as.integer (deps [, 3]))
+
+deps <- deps |>
+    mutate (year = lubridate::year (date)) |>
+    group_by (year, package) |>
+    summarise (n = sum (n_unique), .groups = "keep")
+
+top <- deps |>
+    group_by (package) |>
+    summarise (n = sum (n)) |>
+    arrange (desc (n)) |>
+    filter (!package %in% c ("base", recommended))
+
+top10 <- deps [deps$package %in% top$package [1:10], ]
+
+saveRDS (top10, f_top10)
 ```
 
-```{r fig6B-loc-per-fn}
-loc_cran <- readRDS (f) |>
-    filter (what == "cran_by_year") |>
-    select (c (year, loc_per_fn_r_exp_mn, loc_per_fn_r_not_exp_mn,
-               loc_per_fn_src_mn)) |>
-    rename (R_exp = loc_per_fn_r_exp_mn,
-            R_non = loc_per_fn_r_not_exp_mn,
-            src = loc_per_fn_src_mn) |>
-    pivot_longer (c (R_exp, R_non, src)) |>
-    rename (type = name, number = value)
-x <- readRDS (f) |>
-    filter (what == "annual") |>
-    select (c (year, loc_per_fn_r_exp_mn, loc_per_fn_r_not_exp_mn,
-               loc_per_fn_src_mn)) |>
-    rename (R_exp = loc_per_fn_r_exp_mn,
-            R_non = loc_per_fn_r_not_exp_mn,
-            src = loc_per_fn_src_mn) |>
-    pivot_longer (c (R_exp, R_non, src)) |>
-    rename (type = name, number = value) |>
-    ggplot (aes (x = year, y = number, colour = type)) +
-        geom_line () +
-        #geom_line (data = loc_cran, show.legend = FALSE, lty = 2) +
-        theme (legend.title = element_blank(),
-               legend.position = c (0.8, 0.8),
-               legend.background = element_rect(fill='transparent', colour='transparent')) +
-        ylab ("Lines of Code") +
-        scale_y_log10 () +
-        ggtitle ("B: LoC per fn") -> p2
+```{r fig6-coupling-instability}
+# Values for total and unique are almost identical, so only show unique
+cp_dat <- readRDS (cp_dat_file) |>
+    select (-c (total_median, unique_median)) |>
+    rename (total = total_mean,
+            unique = unique_mean) |>
+    mutate (lo = total - total_se,
+            hi = total + total_se) |>
+    #pivot_longer (cols = c (total, unique)) |>
+    #rename (instability = value, type = name)
+    rename (instability = total)
+cp_dat$lty <- cp_dat$what == "annual"
+cp_dat$year <- as.integer (cp_dat$year)
+
+p2 <- ggplot (cp_dat, aes (x = year, y = instability, colour = what, lty = lty)) +
+    geom_ribbon (aes (ymin = lo, ymax = hi, fill = what, colour = NULL),
+                 alpha = 0.15, show.legend = FALSE) +
+    geom_line () +
+    theme (legend.position = "none") +
+    ggtitle ("B: Coupling Instability")
 ```
 
-```{r fig6C-fns-per-year-plot}
-nfns_cran <- readRDS (f) |>
-    filter (what == "cran_by_year") |>
-    select (c (year, n_fns_r_exported, n_fns_r_not_exported, n_fns_src)) |>
-    rename (r_exp = n_fns_r_exported,
-            r_non = n_fns_r_not_exported,
-            src = n_fns_src) |>
-    pivot_longer (c (r_exp, r_non, src)) |>
-    rename (type = name, number = value)
-readRDS (f) |>
-    filter (what == "annual") |>
-    select (c (year, n_fns_r_exported, n_fns_r_not_exported, n_fns_src)) |>
-    rename (r_exp = n_fns_r_exported,
-            r_non = n_fns_r_not_exported,
-            src = n_fns_src) |>
-    pivot_longer (c (r_exp, r_non, src)) |>
-    rename (type = name, number = value) |>
-    ggplot (aes (x = year, y = number, colour = type)) +
-        geom_line () +
-        #geom_line (data = nfns_cran, show.legend = FALSE, lty = 2) +
-        theme (legend.title = element_blank(),
-               legend.position = c (0.15, 0.85),
-               legend.background = element_rect(fill='transparent', colour='transparent')) +
-        ylab ("Numbers of functions") +
-        ggtitle ("C: Total functions") -> p3
-```
+```{r fig6-deps-p2}
+top <- readRDS (f_top10)
+prop_top2 <- sum (top$n [1:2]) / sum (top$n [-(1:2)])
+prop_top2 <- round (100 * prop_top2, digits = 1)
 
-```{r fig6D-fns-per-file}
-nfns_cran <- readRDS (f) |>
-    filter (what == "cran_by_year") |>
-    select (c (year, n_fns_per_file_r, n_fns_per_file_src)) |>
-    rename (R = n_fns_per_file_r,
-            src = n_fns_per_file_src) |>
-    pivot_longer (c (R, src)) |>
-    rename (type = name, number = value)
-readRDS (f) |>
-    filter (what == "annual") |>
-    select (c (year, n_fns_per_file_r, n_fns_per_file_src)) |>
-    rename (R = n_fns_per_file_r,
-            src = n_fns_per_file_src) |>
-    pivot_longer (c (R, src)) |>
-    rename (type = name, number = value) |>
-    ggplot (aes (x = year, y = number, colour = type)) +
-        geom_line () +
-        #geom_line (data = nfns_cran, show.legend = FALSE, lty = 2) +
-        theme (legend.title = element_blank(),
-               legend.position = c (0.85, 0.9),
-               legend.background = element_rect(fill='transparent', colour='transparent')) +
-        ylab ("Numbers of functions") +
-        ggtitle ("D: Functions per file") -> p4
+top |>
+    ggplot (aes (x = year, y = n, colour = package)) +
+    geom_line () +
+    ggtitle ("C: Calls to top 10 packages") +
+    ylab ("Number of calls") +
+    scale_y_log10 () +
+    theme (legend.title = element_blank(),
+           legend.position = c (0.20, 0.75),
+           legend.background = element_rect(fill='transparent', colour='transparent')) +
+    guides (color = guide_legend (ncol = 3)) -> p3
 ```
-
 
 ```{r fig6-assemble, fig.width = 7, fig.height = 7, fig.cap = "**Fig. 6**"}
-(p1 + p2) / (p3 + p4)
+(p1 | p2) / p3
 ```

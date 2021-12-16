@@ -612,9 +612,8 @@ relatively constant over the preceding 20+ years. Packages generally had very
 few files in the `inst` directory prior to 2010, after which they increased
 until around 2015, before decreasing again more recently. The two
 sub-directories in which numbers of files have increased most significantly are
-`src` and `tests`, with the increase in the latter particularly distinct,
-clearly indicating that packages have become both progressively better better
-tested.
+`src` and `tests`, with the latter increase particularly distinct, clearly
+indicating that packages have become progressively better tested.
 
 
 ```{r fig03, child = "figures/fig03.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
@@ -633,118 +632,39 @@ on average (Fig. 2A), but that individual packages tend to become better tested
 with each successive release.
 
 
-## Dependency Networks
-
-Like the "standard" libraries for the python language, R has a core set of
-"base" and "recommended" packages. Figure 4A shows the change in the relative
-use of these compared with "contributed", or externally user-generated
-packages, over time. The use of recommended packages has remained relatively
-constant over time, representing around 15-20% of all function calls. Calls to
-base R functions represented over 80% of all function calls in the early 2000s,
-yet have declined in recent years to below 70% (for unique function calls).
-This reduction has been offset by a concomitantly pronounced increase in calls
-to functions from contributed packages.
-
-
-```{r fig04, child = "figures/fig04.Rmd", eval = TRUE, echo = FALSE}
-```
-
-Figure 4B shows the "coupling instability" of packages over time. This is the
-proportion of *afferent* to total couplings, where afferent couplings are
-numbers of (unique) calls that a package makes to dependent functions defined
-in other packages. Total couplings include *efferent* couplings, or calls from
-other packages to functions of a given package. This measure of instability is
-thus a measure of the relative dependence of a package on external
-functionality compared with the observe dependence of other packages on that
-package. Packages which depend on many external functions, yet on which no
-other package depends are thus "unstable", whereas packages with little or not
-dependence on external packages, yet upon which many other packages depend, are
-comparably "stable".
-
-This result reveals that instability remained broadly stable until around 2012,
-after which it has progressively increased, from around 50% to almost 80%. This
-latter figure means that packages make on average eight calls to other packages
-for every two calls made to that package.
-
-Figure 4C depicts changes in numbers of unique function calls from each package
-to the top ten contributed packages, defined as the ten packages with the
-largest total number of unique function calls from all packages throughout the
-history of CRAN. Numbers of function calls are shown on a logarithmic scale,
-with numbers of calls to each of these packages increasing exponentially since
-around 2013. The top two packages of {ggplot2} and {dplyr} account for
-`r prop_top2`% of all function calls from all contributed packages over the
-time shown.
-
-Figure 5 shows results equivalent to Figs 4A-B, but for changes with
-progressive releases of each package. The first panel (Fig. 5A) shows changes
-in the proportion of calls to the base and recommended packages for each
-sequential release, averaged over all packages. (Equivalent proportions of
-calls to recommended packages stay broadly constant, albeit with marked
-variability, and are not shown.) Relative changes generally remain above 1,
-indicating that packages make progressively more calls to base and recommended
-packages as they mature, with rates of calls to recommended packages
-progressively decreasing, and approaching stability after around 30 releases.
-
-Calls to the base R package initially increase with each release out to around
-10-15 releases, indicating that packages incorporate progressively more calls
-to base R functions with each release. Beyond around 15 releases, relative
-rates of change also approach the stable level of 1, as for calls to
-recommended packages, with no further calls being added.
-
-Figure 5B shows the average trajectory of coupling instability for individual
-packages across the depicted numbers of sequential releases. While decreases in
-coupling instability should be expected as packages mature and are imported by
-increasing numbers of other packages (that is, afferent coupling should
-generally increase), that figure also shows that mean numbers of efferent calls
-tend to decrease with each sequential release. Numbers of afferent calls (that
-is, inward calls from other packages to a given package) also naturally
-increase with sequential releases, as increasing numbers of packages depend on
-a given package. The observed decrease in instability reflects this combination
-both of increasing dependence of other packages on any given package, and
-decreasing dependence of packages on functionality provided by external
-packages.
-
-Finally, Fig. 5C shows progressions of packages being imported into other
-packages as a function of release sequence. The number of packages importing
-a package increases progressively with numbers of releases. Packages with less
-than ten releases are, on average, imported by very few other packages, while
-packages with 30 or more releases are imported by ten other packages on
-average. The second line on that figure nevertheless reveals that numbers of
-functions actually used by other packages increase above one after around ten
-releases, yet always remain below two on average, even for packages with 50 or
-more releases.
-
-```{r fig05, child = "figures/fig05.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
-```
 
 ## Code Metrics
 
-Figure 6 shows the temporal evolution of a number of code metrics. These
+Figure 4 shows the temporal evolution of a number of code metrics. These
 figures distinguish between the two primary kinds of R functions, exported and
 non-exported, and also between the main sub-directories of R packages described
 at the outset. Lines of Code ("LoC") in the primary `R` and `src` directories
 broadly increased up to around 2010 or slightly later, after which time LoC in
 these directories has progressively decreased. These follow similar trends in
-LoC per function (Fig. 6B), excepting the early years of CRAN, during which
+LoC per function (Fig. 4B), excepting the early years of CRAN, during which
 functions often had well over 100 lines each, especially `src` functions
-defined in other languages.
+defined in other languages. LoC per function have remained broadly stable for
+almost 20 years, at around 30 lines for all function types and languages. The
+slight decrease discernible since around 2015 amounts to one LoC less for
+exported, non-exported, and `/src` functions every 3.4, 8.5, and 1.5 years,
+respectively.
 
 Total numbers of R functions initially increased until around 2007, peaking at
-just under 50 exported and 75-80 non-exported functions per package (Fig. 6C).
+just under 50 exported and 75-80 non-exported functions per package (Fig. 4C).
 Numbers of exported R functions have decreased since then to around 27
 functions per package in 2021. In contrast, numbers of functions defined in
 `src` directories have progressively increased, and now total just over 150
 functions. In both `R` and `src` directories, numbers of functions per source
 file have nevertheless progressively decreased since the early 2000's to now
 amount to less than six `R` functions and just over 8 `src` functions per file
-(Fig. 6D).
+(Fig. 4D).
 
-```{r fig06, child = "figures/fig06.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
+```{r fig04, child = "figures/fig04.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
 ## Intra-package Developments
 
-Figure 7 shows results equivalent to Fig. 6, but for the development of the
+Figure 5 shows results equivalent to Fig. 4, but for the development of the
 respective metrics with each sequential release of a package, rather than being
 averaged over all packages for each year. Lines of code generally increase as
 packages mature, with mean numbers of lines in the `R` directory increasing
@@ -754,7 +674,7 @@ clear, yet the dominance of `R` code nevertheless produced an overall increase
 in LoC out to the 100th release of packages of around 12 times.
 
 These increases in LoC nevertheless corresponded to an equivalent decrease in
-LoC per function with increasing numbers of releases (Fig. 7B). Similar to the
+LoC per function with increasing numbers of releases (Fig. 5B). Similar to the
 aggregate LoC measures of panel A, LoC per function in `src` directories
 remained broadly stable over releases, while LoC per `R` function decreased
 notably, and more so for exported than non-exported functions. Exported
@@ -763,7 +683,7 @@ releases average just under 60 LoC.
 
 The increasing total measures of LoC of panel A combined with decreasing LoC
 per function of panel B must mean that more functions are added as packages
-mature, which is precisely what Fig. 7C reveals. Packages initially contain
+mature, which is precisely what Fig. 5C reveals. Packages initially contain
 around 20 exported functions on average, yet this increases almost 13-fold to
 over 250 by the 100th release. Non-exported functions increase by a similar
 10-fold proportion over the first 100 releases, while packages start with more
@@ -772,7 +692,7 @@ as packages mature. Finally, numbers of functions per file show no clear trend
 for `src` code, while approximately doubling in `R` code over the first 100
 releases of a package, from around 7 to 15.
 
-```{r fig07, child = "figures/fig07.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
+```{r fig05, child = "figures/fig05.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
 The inverse-square "law" of software evolution merely posits that rates of
@@ -812,6 +732,89 @@ ggplot (x_rel, aes (x = seq, y = value, colour = name)) +
 ```
 
 
+## Dependency Networks
+
+Like the "standard" libraries for the python language, R has a core set of
+"base" and "recommended" packages. Figure 6A shows the change in the relative
+use of these compared with "contributed", or externally user-generated
+packages, over time. The use of recommended packages has remained relatively
+constant over time, representing around 15-20% of all function calls. Calls to
+base R functions represented over 80% of all function calls in the early 2000s,
+yet have declined in recent years to below 70% (for unique function calls).
+This reduction has been offset by a concomitantly pronounced increase in calls
+to functions from contributed packages.
+
+
+```{r fig06, child = "figures/fig06.Rmd", eval = TRUE, echo = FALSE}
+```
+
+Figure 6B shows the "coupling instability" of packages over time. This is the
+proportion of *afferent* to total couplings, where afferent couplings are
+numbers of (unique) calls that a package makes to dependent functions defined
+in other packages. Total couplings include *efferent* couplings, or calls from
+other packages to functions of a given package. This measure of instability is
+thus a measure of the relative dependence of a package on external
+functionality compared with the observe dependence of other packages on that
+package. Packages which depend on many external functions, yet on which no
+other package depends are thus "unstable", whereas packages with little or not
+dependence on external packages, yet upon which many other packages depend, are
+comparably "stable".
+
+This result reveals that instability remained broadly stable until around 2012,
+after which it has progressively increased, from around 50% to almost 80%. This
+latter figure means that packages make on average eight calls to other packages
+for every two calls made to that package.
+
+Figure 6C depicts changes in numbers of unique function calls from each package
+to the top ten contributed packages, defined as the ten packages with the
+largest total number of unique function calls from all packages throughout the
+history of CRAN. Numbers of function calls are shown on a logarithmic scale,
+with numbers of calls to each of these packages increasing exponentially since
+around 2013. The top two packages of {ggplot2} and {dplyr} account for
+`r prop_top2`% of all function calls from all contributed packages over the
+time shown.
+
+Figure 7 shows results equivalent to Figs 6A-B, but for changes with
+progressive releases of each package. The first panel (Fig. 7A) shows changes
+in the proportion of calls to the base and recommended packages for each
+sequential release, averaged over all packages. (Equivalent proportions of
+calls to recommended packages stay broadly constant, albeit with marked
+variability, and are not shown.) Relative changes generally remain above 1,
+indicating that packages make progressively more calls to base and recommended
+packages as they mature, with rates of calls to recommended packages
+progressively decreasing, and approaching stability after around 30 releases.
+
+Calls to the base R package initially increase with each release out to around
+10-15 releases, indicating that packages incorporate progressively more calls
+to base R functions with each release. Beyond around 15 releases, relative
+rates of change also approach the stable level of 1, as for calls to
+recommended packages, with no further calls being added.
+
+Figure 7B shows the average trajectory of coupling instability for individual
+packages across the depicted numbers of sequential releases. While decreases in
+coupling instability should be expected as packages mature and are imported by
+increasing numbers of other packages (that is, afferent coupling should
+generally increase), that figure also shows that mean numbers of efferent calls
+tend to decrease with each sequential release. Numbers of afferent calls (that
+is, inward calls from other packages to a given package) also naturally
+increase with sequential releases, as increasing numbers of packages depend on
+a given package. The observed decrease in instability reflects this combination
+both of increasing dependence of other packages on any given package, and
+decreasing dependence of packages on functionality provided by external
+packages.
+
+Finally, Fig. 7C shows progressions of packages being imported into other
+packages as a function of release sequence. The number of packages importing
+a package increases progressively with numbers of releases. Packages with less
+than ten releases are, on average, imported by very few other packages, while
+packages with 30 or more releases are imported by ten other packages on
+average. The second line on that figure nevertheless reveals that numbers of
+functions actually used by other packages increase above one after around ten
+releases, yet always remain below two on average, even for packages with 50 or
+more releases.
+
+```{r fig07, child = "figures/fig07.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
+```
 
 ## Network metrics
 

@@ -102,7 +102,7 @@ p2 <- x2 |>
 ```
 
 ```{r fig10-p3}
-f <- file.path (v_data_dir, "fig06-fns-per-year.Rds")
+f <- file.path (v_data_dir, "fig04-fns-per-year.Rds")
 dat10c_cran <- readRDS (f) |>
     filter (what == "cran_by_year") |>
     select (c (year, npars_exported_mn, doclines_per_fn_exp_mn,

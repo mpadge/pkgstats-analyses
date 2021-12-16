@@ -517,7 +517,9 @@ approaches, in which:
 
 Where no additional interpretations are given, solid lines in all of the
 results that follow represent annual values, while dashed lines represent
-results derived from CRAN shapshots.
+results derived from CRAN shapshots. See Fig. 1A immediately below, for an
+example. Where also not otherwise mentioned, all reported values refer to
+annual values, and not to values derived from CRAN snapshots.
 
 
 ### Distributional properties and mean values
@@ -538,9 +540,17 @@ is reflected in more regulated meta-data able to be extracted from package
 'DESCRIPTION' files. Numbers of both authors and contributors have increased
 over time (Fig. 1A), with contributors having been rarely acknowledged at all
 prior to 2010 (two years after the launch of GitHub), increasing to an average
-of one acknowledged contributor per package in 2021. Numbers of unique licenses
-manifest an opposite tendency, decreasing notably
-over time (Fig. 1B, resulting in the values shown in Table 1.
+of one acknowledged contributor per package in 2021.
+
+Numbers of unique licenses primarily reflect numbers of ways of declaring
+licenses, rather than actual numbers of licenses. Figure 1B shows a roughly
+linear increase in license declarations up to around 2007, followed by a
+pronounced drop and progression into a roughly stable range of somewhere over
+50 distinct entries. The different ways of specifying the three versions of GPL
+licenses have accounted for over 83% of all CRAN packages, with the second most
+common type license being MIT, at 9.6%, followed by BSD at 2.0%. One of these
+three licenses are used in 95% of all CRAN packages.
+
 
 ```{r fig01, child = "figures/fig01.Rmd", eval = TRUE, echo = FALSE}
 ```
@@ -551,24 +561,36 @@ x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
 index <- which (x$year > 2010)
 lic <- sort (table (x$license [index]), decreasing = TRUE)
 lic <- data.frame (license = names (lic),
-                   n = as.integer (lic)) [1:10, ]
-knitr::kable (lic, caption = "**Table 1.**")
+                   n = as.integer (lic))
+#knitr::kable (lic [1:10, ], caption = "**Table 1.**")
+
+index <- grep ("GPL|general\\spublic\\slic", lic$license)
+prop_gpl <- sum (lic$n [index]) / sum (lic$n)
+index <- grep ("BSD", lic$license)
+prop_bsd <- sum (lic$n [index]) / sum (lic$n)
+index <- grep ("MIT", lic$license)
+prop_mit <- sum (lic$n [index]) / sum (lic$n)
+prop3 <- prop_gpl + prop_bsd + prop_mit
 ```
+
+The practice of translating messages within R packages into other languages has
+steadily declined in recent years (Fig. 2A), suggesting a pronounced increase
+in acceptance over the last 15 or so years of English as a globally standard
+language, and a concomitant decrease in active acknowledgement of other
+languages. (The `en@quot` translation entry is described in the [*R
+Installation and Administration*
+Manual](https://cran.r-project.org/doc/manuals/R-admin.html#Localization-of-messages)
+as a translation which, "can be used in a UTF-8 locale to have American error
+messages with pairs of single quotes translated to Unicode directional
+quotes.") Rates of decrease since 2008 equate to 1.5% fewer packages per year
+including translations, from a total of just over 20% of all packages in 2008,
+to barely over 1% in 2021. While rates of decreased have slowed somewhat in
+recent years, extrapolation of the preceding five years nevertheless suggests
+that the practice of offering translations will entirely disappear by 2023.
 
 ```{r fig02, child = "figures/fig02.Rmd", eval = TRUE, echo = FALSE}
 ```
 
-
-Numbers of translations peaked broadly in the 2010's, and have declined notably
-since around 2015, suggesting a pronounced increased acceptance since that time
-of English as a globally standard language, and a concomitant decrease in
-active acknowledgement of other languages (Fig. 2A). (The `en@quot` translation
-entry is described in the [*R Installation and Administration
-Manual](https://cran.r-project.org/doc/manuals/R-admin.html#Localization-of-messages)
-as a translation which,
-
-> which can be used in a UTF-8 locale to have American error messages with
-> pairs of single quotes translated to Unicode directional quotes.
 
 Finally, analyses of URLs provided in package 'DESCRIPTION' files clearly
 reveals an abrupt break after around 2010 with the advent of online code

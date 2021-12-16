@@ -55,11 +55,26 @@ tr <- do.call (rbind, tr)
 rownames (tr) <- NULL
 tr$year <- lubridate::year (paste0 (tr$year, "-01-01"))
 
-tr_summary <- tr |> group_by (translation) |>
+# total numbers of packages for each year:
+n <- x |>
+    group_by (year) |>
+    summarise (n = length (unique (package)))
+tr$ntot <- n$n [match (tr$year, n$year)]
+
+tr_summary <- tr |>
+    group_by (translation) |>
     summarise (n = sum (n)) |>
     arrange (desc (n))
 top10 <- tr_summary$translation [1:10]
 tr_top10 <- tr [which (tr$translation %in% top10), ]
+
+tr_all <- tr |>
+    group_by (year) |>
+    summarise (n = sum (n),
+               ntot = head (ntot, 1))
+tr_all$translation <- "ALL"
+
+tr_top10 <- bind_rows (tr_top10, tr_all)
 
 saveRDS (tr_top10, f_fig2_tr)
 ```
@@ -70,15 +85,15 @@ saveRDS (tr_top10, f_fig2_tr)
 ```{r fig2, echo = FALSE, message = FALSE, fig.width = 7, fig.height = 7, fig.cap = "**Figure 2.** (A) Annual frequencies of the top 10 translations. (B) Annual frequencies of the top 10 primary URL domains, with frequencies for GitHub divided by 20."}
 
 tr <- readRDS (f_fig2_tr)
-tr_total <- tr |>
-    group_by (year) |>
-    summarise (n = sum (n)) |>
-    mutate (translation = "ALL")
-tr_total$n <- tr_total$n * max (tr$n) / max (tr_total$n)
+tr$proportion <- tr$n / tr$ntot
 
-tr_vals <- c (sort (unique (tr$translation)), "ALL")
-
-tr <- bind_rows (tr, tr_total)
+# Rate of decrease since 2015:
+decr_year <- function (tr, year = 2010) {
+    tmp <- tr [tr$year >= year & tr$translation == "ALL", ]
+    mod <- lm (proportion ~ year, data = tmp)
+    100 * mod$coefficients [2]
+}
+d <- c (decr_year (tr, 2008), decr_year (tr, 2010), decr_year (tr, 2015))
 
 # colours from `ggplot_build(p1)$data`:
 #tr |>
@@ -96,14 +111,14 @@ cols <- c ("de" = "#F8766D",
            "ko" = "#00B0F6",
            "pl" = "#9590FF",
            "pt_BR" = "#E76BF3",
-           "ru" = "#FF62BC",
-           "ALL" = "#111111")
+           "ru" = "#FF62BC")
+           #"ALL" = "#111111")
 
 # But don't plot "ALL" because it doesn't add much
 tr <- tr |> filter (translation != "ALL")
 
 tr |>
-    ggplot (aes (x = year, y = n, color = translation)) +
+    ggplot (aes (x = year, y = proportion, color = translation)) +
     geom_line () +
     scale_colour_manual (values = cols) +
     ggtitle ("A: Top 10 translations") +

@@ -98,7 +98,7 @@ dat_ann <- readRDS (n_files_file) |>
     rename (n_files = value, dir = name)
 p1 <- ggplot (dat, aes (x = year, y = n_files, color = dir)) +
     geom_line (lwd = 0.4, lty = 2) +
-    geom_smooth (method = "loess", formula = "y ~ x", se = FALSE) +
+    geom_smooth (method = "loess", formula = "y ~ x", se = FALSE, lwd = 0.5) +
     #geom_line (data = dat_ann, lty = 2) +
     ggtitle ("A: Numbers of files") +
     ylab ("#files") +
@@ -113,17 +113,20 @@ x_per_pkg <- readRDS (f_fig3_pkg_level)
 x_per_pkg$value [x_per_pkg$dir == "inst" & x_per_pkg$seq == 2] <- NA
 
 p2 <- x_per_pkg |>
-    filter (seq <= 10) |>
+    filter (seq <= 20) |>
     ggplot (aes (x = seq, y = value, colour = dir)) +
     geom_line (lwd = 0.4, lty = 2) +
-    geom_smooth (method = "lm", formula = "y ~ x", se = FALSE, span = 0.7) +
+    geom_smooth (method = "loess", formula = "y ~ x", se = FALSE, span = 0.7, lwd = 0.5) +
     xlab ("Release Sequence") +
     ylab ("Ratio of #files") + 
+    ylim (c (0.9, 1.3)) +
     ggtitle ("B: Ratio of #files / release") +
-    theme (legend.position = c (0.6, 0.8),
+    guides (color = guide_legend (ncol = 2)) +
+    theme (legend.title = element_blank(),
+           legend.position = c (0.3, 0.85),
            legend.background = element_rect(fill='transparent', colour='transparent'))
 ```
 
-```{r fig3, echo = FALSE, message = FALSE, fig.width = 7, fig.height = 3.5, fig.cap = "**Figure 3**"}
+```{r fig3, echo = FALSE, message = FALSE, fig.width = 7, fig.height = 3.5, fig.cap = "**Figure 3** (A) Number of files in different diretories per year (with legend in panel B). Solid lines represent loess-smoothed interpolations, while dashed lines are raw annual values (not CRAN snapshots). (B) Proportional increases in numbers of files per release."}
 p1 + p2
 ```

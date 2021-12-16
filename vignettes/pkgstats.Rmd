@@ -592,9 +592,9 @@ that the practice of offering translations will entirely disappear by 2023.
 ```
 
 
-Finally, analyses of URLs provided in package 'DESCRIPTION' files clearly
-reveals an abrupt break after around 2010 with the advent of online code
-repositories. GitHub has always dominated, while r-forge has declined
+Analyses of URLs provided in package 'DESCRIPTION' files clearly reveals an
+abrupt break after around 2010 with the advent of online code repositories
+(Fig. 2B). GitHub has always dominated, while r-forge has declined
 progressively since around 2015. The most notable increase has been the
 emergence of rOpenSci as provider of the only URL to come close to within
 1/20th of the popularity of GitHub over the past few years.
@@ -606,15 +606,17 @@ emergence of rOpenSci as provider of the only URL to come close to within
 
 The temporal development of numbers of files manifest several notable
 characteristics (Figure 3). Unsurprisingly, R packages have always been
-dominated by files in the `R/` directory, numbers of which increased considerably
-up to around 2010, after which they are generally stabilised at a mean value of
-around 20 files (Fig. 3A). The `src` and `data` directories are the only places
-within an R package in which numbers of files have remained relatively constant
-over the preceding 20+ years. Packages generally had very few files in the
-`inst` directory prior to 2010, after which they have notably increased. The
-two sub-directories in which numbers of files have increased most significantly
-are `vignettes` and `tests`, clearly indicating that packages have become both
-better documented and better tested, especially since 2010.
+dominated by files in the `R/` directory, numbers of which increased
+considerably up to around 2010, after which they are generally stabilised at a
+mean value of around 20 files (Fig. 3A). The `data` and `vignettes` directories
+are the only places within R packages in which numbers of files have remained
+relatively constant over the preceding 20+ years. Packages generally had very
+few files in the `inst` directory prior to 2010, after which they increased
+until around 2015, before decreasing again more recently. The two
+sub-directories in which numbers of files have increased most significantly are
+`src` and `tests`, with the increase in the latter particularly distinct,
+clearly indicating that packages have become both progressively better better
+tested.
 
 
 ```{r fig03, child = "figures/fig03.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
@@ -626,7 +628,7 @@ files in each of the nominated directories, starting with the change between
 the second and first release (a "Release sequence" of 2). Although numbers of
 files generally increase with each new release, *rates* of increase tend to
 slow down, with packages approaching stability (a ratio of 1) after around 20
-releases.  <!-- if this is the case, you should plot the trend out to 20 releases -->
+releases. 
 
 ### Function Number, Type and Size
 

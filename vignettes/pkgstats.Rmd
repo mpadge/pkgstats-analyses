@@ -782,44 +782,48 @@ ggplot (x_rel, aes (x = seq, y = value, colour = name)) +
 ## Dependency Networks
 
 Like the "standard" libraries for the python language, R has a core set of
-"base" and "recommended" packages. Figure 6A shows the change in the relative
-use of these compared with "contributed", or externally user-generated
-packages, over time. The use of recommended packages has remained relatively
-constant over time, representing around 15-20% of all function calls. Calls to
-base R functions represented over 80% of all function calls in the early 2000s,
-yet have declined in recent years to below 70% (for unique function calls).
-This reduction has been offset by a concomitantly pronounced increase in calls
-to functions from contributed packages.
+"base" and "recommended" packages. The function call networks extracted by
+`pkgstats` enable counting numbers of calls to each of these groups of
+packages, as well as to "contributed" packages hosted on CRAN.
 
+### Annual Developments
+
+Figure 6A shows the change over time in proportions of calls to these three
+groups of packages, revealing a recent tendency (since around 2015) of fewer
+calls to base R functions, from over 80% of all function calls in the early
+2000s, to below 70% in the previou two years. This decrease has been offset by
+greater numbers of calls to functions in contributed packages, while calls to
+recommended packages have remained generally stable at around 20%. Although
+calls to contributed packages have always represented the lowest proportion of
+these three groups, this recent increase nevertheless places them on almost
+equal proportion (at 12%) to calls to recommended packages (at 18%).
 
 ```{r fig06, child = "figures/fig06.Rmd", eval = TRUE, echo = FALSE}
 ```
 
-Figure 6B shows the "coupling instability" of packages over time. This is the
-proportion of *afferent* to total couplings, where afferent couplings are
-numbers of (unique) calls that a package makes to dependent functions defined
-in other packages. Total couplings include *efferent* couplings, or calls from
-other packages to functions of a given package. This measure of instability is
-thus a measure of the relative dependence of a package on external
-functionality compared with the observe dependence of other packages on that
-package. Packages which depend on many external functions, yet on which no
-other package depends are thus "unstable", whereas packages with little or not
-dependence on external packages, yet upon which many other packages depend, are
-comparably "stable".
-
-This result reveals that instability remained broadly stable until around 2012,
-after which it has progressively increased, from around 50% to almost 80%. This
-latter figure means that packages make on average eight calls to other packages
-for every two calls made to that package.
+Figure 6B shows the "coupling instability" of packages over time. As explained
+above, this is a measure of the extent to which packages depend on external
+functionality (efferent couplings) without other packages in turn depending on
+them (afferent couplings). Packages on CRAN were largely stable until around
+2010, at a coupling instability of around 0.5, meaning numbers of functions
+from each package which were imported by other packages were roughly equal to
+numbers of external functions each package imported. Instability has increased
+markedly since that time, indicating that packages have become increasingly
+dependent on external functionality, while the average package is less likely
+to provide functionality used by other packages. The coupling instability over
+the preceding two years of around 80% implies that packages make on average
+eight calls to other packages for every two calls made to that package.
 
 Figure 6C depicts changes in numbers of unique function calls from each package
 to the top ten contributed packages, defined as the ten packages with the
 largest total number of unique function calls from all packages throughout the
-history of CRAN. Numbers of function calls are shown on a logarithmic scale,
-with numbers of calls to each of these packages increasing exponentially since
-around 2013. The top two packages of {ggplot2} and {dplyr} account for
+history of CRAN. The top two packages of {ggplot2} and {dplyr} account for
 `r prop_top2`% of all function calls from all contributed packages over the
-time shown.
+time shown. Numbers of function calls are shown on a logarithmic scale, with
+numbers of calls to each of these packages increasing exponentially between
+2013 and 2018, before levelling off or even slightly decreasing.
+
+### Sequential Releases
 
 Figure 7 shows results equivalent to Figs 6A-B, but for changes with
 progressive releases of each package. The first panel (Fig. 7A) shows changes
@@ -863,7 +867,7 @@ more releases.
 ```{r fig07, child = "figures/fig07.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
-## Network metrics
+## Function Call Networks
 
 ```{r fig08, child = "figures/fig08.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```

@@ -110,15 +110,7 @@ deps <- deps |>
     group_by (year, package) |>
     summarise (n = sum (n_unique), .groups = "keep")
 
-top <- deps |>
-    group_by (package) |>
-    summarise (n = sum (n)) |>
-    arrange (desc (n)) |>
-    filter (!package %in% c ("base", recommended))
-
-top10 <- deps [deps$package %in% top$package [1:10], ]
-
-saveRDS (top10, f_top10)
+saveRDS (deps, f_top10)
 ```
 
 ```{r fig6-coupling-instability}
@@ -144,11 +136,20 @@ p2 <- ggplot (cp_dat, aes (x = year, y = instability, colour = what, lty = lty))
 ```
 
 ```{r fig6-deps-p2}
-top <- readRDS (f_top10)
-prop_top2 <- sum (top$n [1:2]) / sum (top$n [-(1:2)])
+deps <- readRDS (f_top10)
+top <- deps |>
+    group_by (package) |>
+    summarise (n = sum (n)) |>
+    arrange (desc (n)) |>
+    filter (!package %in% c ("base", recommended))
+
+top10 <- top [1:10, ]
+prop_top2 <- sum (top$n [1:2]) / sum (top$n)
 prop_top2 <- round (100 * prop_top2, digits = 1)
 
-top |>
+deps10 <- deps [deps$package %in% top10$package [1:10], ]
+
+deps10 |>
     ggplot (aes (x = year, y = n, colour = package)) +
     geom_line () +
     ggtitle ("C: Calls to top 10 packages") +
@@ -160,6 +161,6 @@ top |>
     guides (color = guide_legend (ncol = 3)) -> p3
 ```
 
-```{r fig6-assemble, fig.width = 7, fig.height = 7, fig.cap = "**Fig. 6**"}
+```{r fig6-assemble, fig.width = 7, fig.height = 7, fig.cap = "**Fig. 6** Dependency networks between packages over time."}
 (p1 | p2) / p3
 ```

@@ -54,7 +54,7 @@ x_rel |>
     rename (type = name, number = value) |>
     ggplot (aes (x = seq, y = number, colour = type)) +
         geom_line () +
-        geom_smooth (method = "loess", formula = "y ~ x", se = FALSE, lwd = 1) +
+        #geom_smooth (method = "loess", formula = "y ~ x", se = FALSE, lwd = 1) +
         theme (legend.title = element_blank(),
                legend.position = c (0.25, 0.85),
                legend.background = element_rect(fill='transparent', colour='transparent')) +
@@ -75,7 +75,7 @@ x_rel |>
     rename (type = name, number = value) |>
     ggplot (aes (x = seq, y = number, colour = type)) +
         geom_line () +
-        geom_smooth (method = "loess", formula = "y ~ x", se = FALSE) +
+        #geom_smooth (method = "loess", formula = "y ~ x", se = FALSE) +
         theme (legend.title = element_blank(),
                legend.position = c (0.7, 0.85),
                legend.background = element_rect(fill='transparent', colour='transparent')) +
@@ -95,7 +95,7 @@ x_rel |>
     rename (type = name, number = value) |>
     ggplot (aes (x = seq, y = number, colour = type)) +
         geom_line () +
-        geom_smooth (method = "loess", formula = "y ~ x", se = FALSE) +
+        #geom_smooth (method = "loess", formula = "y ~ x", se = FALSE) +
         theme (legend.title = element_blank(),
                legend.position = c (0.3, 0.85),
                legend.background = element_rect(fill='transparent', colour='transparent')) +
@@ -114,7 +114,7 @@ x_rel |>
     rename (type = name, number = value) |>
     ggplot (aes (x = seq, y = number, colour = type)) +
         geom_line () +
-        geom_smooth (method = "loess", formula = "y ~ x", se = FALSE) +
+        #geom_smooth (method = "loess", formula = "y ~ x", se = FALSE) +
         theme (legend.title = element_blank(),
                legend.position = c (0.5, 0.85),
                legend.background = element_rect(fill='transparent', colour='transparent')) +
@@ -124,6 +124,16 @@ x_rel |>
 ```
 
 
-```{r fig5-assemble, fig.width = 7, fig.height = 7, fig.cap = "**Fig. 5**"}
+```{r fig5-assemble, fig.width = 7, fig.height = 7, fig.cap = "**Fig. 5** Development of code metrics per release of each package."}
 (p1 + p2) / (p3 + p4)
+```
+
+```{r Fig5-slopes, eval = FALSE}
+x2 <- x_rel |>
+    filter (seq > 50 & seq <= 100) |>
+    select (seq, loc_per_fn_r_exp_mn, loc_per_fn_r_not_exp_mn, loc_per_fn_src_mn)
+s_r_exp <- lm (loc_per_fn_r_exp_mn ~ seq, data = x2)$coefficients [2]
+s_r_non <- lm (loc_per_fn_r_not_exp_mn ~ seq, data = x2)$coefficients [2]
+s_src <- lm (loc_per_fn_src_mn ~ seq, data = x2)$coefficients [2]
+#c (1 / s_r_exp, 1 / s_r_non, 1 / s_src)
 ```

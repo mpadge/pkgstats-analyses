@@ -497,6 +497,14 @@ in two main ways:
 1. As annual developments averaged over all packages; or
 2. As developments for individual packages over sequences of releases.
 
+Several of the following results are divided into the corresponding
+sub-sections of "Annual Developments" and "Sequential Releases," respectively
+referring to these two modes of analysis. Annual developments aggregate values
+over all packages for each year, while sequential developments aggregate values
+over each sequential release, so that the first versions of all packages are
+aggregated for a release sequence of one, second versions for release sequence
+two, and so on.
+
 For continuously updated repositories like CRAN, annual developments can be
 captured in the following two primary ways:
 
@@ -642,6 +650,8 @@ with each successive release.
 
 ## Code Metrics
 
+### Annual Developments
+
 Figure 4 shows the temporal evolution of a number of code metrics. These
 figures distinguish between the two primary kinds of R functions, exported and
 non-exported, and also between the main sub-directories of R packages described
@@ -671,44 +681,72 @@ early 2000's to now amount to less than four `/R` functions and just over five
 ```{r fig04, child = "figures/fig04.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
-## Intra-package Developments
+### Sequential Releases
 
 Figure 5 shows results equivalent to Fig. 4, but for the development of the
 respective metrics with each sequential release of a package, rather than being
 averaged over all packages for each year. Lines of code generally increase as
-packages mature, with mean numbers of lines in the `R` directory increasing
-tenfold from under 1000 for first releases to almost 10,000 in packages with
-100 or more releases. Changes in LoC in `src` and `inst` directories were less
-clear, yet the dominance of `R` code nevertheless produced an overall increase
-in LoC out to the 100th release of packages of around 12 times.
-
-These increases in LoC nevertheless corresponded to an equivalent decrease in
-LoC per function with increasing numbers of releases (Fig. 5B). Similar to the
-aggregate LoC measures of panel A, LoC per function in `src` directories
-remained broadly stable over releases, while LoC per `R` function decreased
-notably, and more so for exported than non-exported functions. Exported
-functions after 100 releases had just over 30 LoC per function, whereas initial
-releases average just under 60 LoC.
-
-The increasing total measures of LoC of panel A combined with decreasing LoC
-per function of panel B must mean that more functions are added as packages
-mature, which is precisely what Fig. 5C reveals. Packages initially contain
-around 20 exported functions on average, yet this increases almost 13-fold to
-over 250 by the 100th release. Non-exported functions increase by a similar
-10-fold proportion over the first 100 releases, while packages start with more
-many more `src` functions on initial releases, and so increases relatively less
-as packages mature. Finally, numbers of functions per file show no clear trend
-for `src` code, while approximately doubling in `R` code over the first 100
-releases of a package, from around 7 to 15.
+packages mature, with mean numbers of lines in the `/R` directory increasing
+tenfold from under 400 for first releases to over 5,000 in packages with
+100 or more releases. LoC in `/inst` directories also tend to increase as
+packages develop, although to a lesser extend, and only becoming notable after
+around 50 releases. Beyond the first few releases, there are always fewer LoC
+in `/src` directories than in `/R` directories. This contrasts with the annual
+aggregate results of Fig. 4A, which suggest more LoC in `/src` than `/R`
+directories until around 2007, and roughly equal numbers since then. This
+difference reflects the fact that most packages have only one or two releases
+(the distribution of numbers of releases is not shown here, but manifests a
+very smooth exponential decrease), so Fig. 4A is dominated by packages in a
+very early state of development, for which LoC in `/src` often exceed numbers
+in `/R`. The decrease in the later phases of package maturation, beyond around
+50 releases, may reflect restructuring code from the `/src` to the `/inst`
+directories, in order to allow cross-compilation by other packages. This clear
+peak in LoC in `/src` directories may suggest this is an approximate number of
+releases before other developers become aware of the functionality of package
+`/src` directories. The clearest result of Fig. 4A is manifest in total LoC,
+which increases in a strikingly linear manner even out to the 100th release of
+a package.
 
 ```{r fig05, child = "figures/fig05.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
-The inverse-square "law" of software evolution merely posits that rates of
-development increase as software matures. Development is quantified in terms of
-numbers of abstract "modules", which in R code could be interpreted as
-functions. The models of @Turski96 and @Turski02 describe how numbers of
-functions increase between each release.
+These increases in LoC nevertheless corresponded to general decreases in
+LoC per function with increasing numbers of releases (Fig. 5B). Similar to the
+aggregate LoC measures of panel A, `/src` directories represent the only
+location where LoC manifest a distinct peak as packages matured, with LoC per
+`/src` function peaking slightly earlier (after around 40 releases) than total
+LoC (slightly over 50). In all directories, LoC per function either slightly
+increased or remained generally stable over the first 50 or so releases, beyond
+which functions in all directories clearly become considerably more
+streamlined, and LoC decreases markedly out to the 100th release. These
+decreases are nevertheless relatively minor, and amount to removing one LoC per
+function for every 5, 7, or 18 releases for exported R, non-exported R, or
+source functions, respectively.
+
+The increasing total measures of LoC of panel A combined with decreasing LoC
+per function of panel B must mean that more functions are added as packages
+mature, which is precisely what Fig. 5C reveals. Packages initially contain
+around less than ten exported functions on average, yet this increases over 10-fold
+to over 130 by the 100th release. Numbers of `/src` functions are initially
+higher, at around 20, and increase relatively less, to around 100 after 100
+releases. Numbers of non-exported `/R` functions manifest the most pronounced
+increase, of over 15 times from 20 functions for initial releases, to well over
+300 for the 100th release. Finally, numbers of functions per file show no clear trend
+for `src` code, remaining broadly stable at around six functions per file (Fig.
+4D). In contrast, `/R` code files begin with 3-4 functions per file, and
+increase progressively to around eight functions per file after 100 releases,
+in the context of Figs. 4B-C clearly mostly due to breaking large non-exported
+functions down into multiple, smaller functions.
+
+Finally, the numbers of functions depicted in Fig. 4C actually counts any
+arbitrary code objects in all languages contained in `/src` directories, and so
+corresponds directly to the "modules" posited to increase according to the
+inverse-square "law" of software evolution
+[@Turski96;@software-evolution-97;@Turski02]. The defining qualitative feature
+of such inverse--square growth is an initially highly concave form, with rates
+decreasing notably as packages mature. The trajectories of Fig. 4C appear in
+contrast strikingly linear, all manifesting trajectories which would be very
+poorly described by such an inverse-square form.
 
 ```{r turski, echo = FALSE, eval = FALSE}
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
@@ -724,7 +762,7 @@ x_rel <- x |>
     group_by (seq) |>
     filter (seq <= 100) |>
     summarise (
-        n = mean (n_fns_r_exported + n_fns_r_not_exported, na.rm = TRUE))
+        n = logmean (n_fns_r_exported + n_fns_r_not_exported + n_fns_src, na.rm = TRUE))
 
 s_inv <- cumsum (1 / x_rel$n ^ 2)
 E <- mean ((x_rel$n - x_rel$n [1]) / s_inv)

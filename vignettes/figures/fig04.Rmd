@@ -252,6 +252,6 @@ readRDS (f) |>
 ```
 
 
-```{r fig4-assemble, fig.width = 7, fig.height = 7, fig.cap = "**Fig. 4**"}
+```{r fig4-assemble, fig.width = 7, fig.height = 7, fig.cap = "**Fig. 4** Development of code metrics per year."}
 (p1 + p2) / (p3 + p4)
 ```

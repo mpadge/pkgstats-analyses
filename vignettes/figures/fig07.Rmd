@@ -49,6 +49,34 @@ deps_p1 <- deps |>
 saveRDS (deps_p1, f)
 ```
 
+```{r fig7-alt-p1, eval = FALSE}
+deps_p1 <- deps |>
+    group_by (from) |>
+    mutate (seq = seq_along (from)) |>
+    group_by (seq) |>
+    summarise (n_base = sum (n_unique [to == "base"]),
+               n_recommended = sum (n_unique [to %in% recommended]),
+               n_contrib = sum (n_unique [!to %in% c ("base", recommended)]),
+               .groups = "keep") |>
+    mutate (n_total = n_base + n_recommended + n_contrib,
+            n_base = n_base / n_total,
+            n_recommended = n_recommended / n_total,
+            n_contrib = n_contrib / n_total)
+deps_p1 |>
+    pivot_longer (c (n_base, n_recommended, n_contrib)) |>
+    filter (seq <= 50) |>
+    ggplot (aes (x = seq, y = value, colour = name)) +
+        geom_line (lty = 2) +
+        geom_smooth (method = "loess", formula = "y ~ x", se = FALSE, lwd = 0.7) +
+        theme (legend.title = element_blank(),
+               legend.position = c (0.50, 0.9),
+               legend.background = element_rect(fill='transparent', colour='transparent')) +
+        xlab ("Release sequence") +
+        ylab ("Relative changes per release") +
+        ggtitle ("A: Change in calls") -> p1
+```
+
+
 
 
 ```{r fig7-p1}
@@ -56,7 +84,7 @@ readRDS (f) |>
     filter (seq <= 50 & name != "n_contrib") |>
     ggplot (aes (x = seq, y = value, colour = name)) +
         geom_line (lty = 2) +
-        geom_smooth (method = "loess", formula = "y ~ x", se = FALSE) +
+        geom_smooth (method = "loess", formula = "y ~ x", se = FALSE, lwd = 0.7) +
         theme (legend.title = element_blank(),
                legend.position = c (0.50, 0.9),
                legend.background = element_rect(fill='transparent', colour='transparent')) +
@@ -133,6 +161,25 @@ p3 <- ggplot (deps_p3, aes (x = seq)) +
 ```
 
 
-```{r fig7-assemble, fig.width = 7, fig.height = 7, fig.cap = "**Fig. 7**"}
+```{r fig7-assemble, fig.width = 7, fig.height = 7, fig.cap = "**Fig. 7** Dependency networks between packages over sequential releases. (A) Proportional change in numbers of calls to base and recommended packages between successive releases. Solid lines show loess-smoothed interpolations, while dashed lines show raw values (and not values from cran snapshots). (B) Coupling instability. (C) Average numbers of functions from each package imported by other packages, and averge numbers of times packages are imported by other packages."}
 (p1 | p2) / p3
+```
+
+```{r fig7-nfns-vs-nimports, eval = FALSE}
+cp <- readRDS (f) |>
+    group_by (seq) |>
+    slice_max (seq)
+x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
+    group_by (date) |>
+    slice_max (date) |>
+    ungroup () |>
+    select (package, n_fns_r_exported)
+cp <- left_join (cp, x, by = "package")
+tmp <- data.frame (aff = log10 (cp$afferent_unique),
+                   nfns = log10 (cp$n_fns_r_exported)) |>
+    filter (is.finite (aff) & is.finite (nfns))
+ggplot (tmp, aes (x = nfns, y = aff)) +
+    geom_hex () +
+    geom_smooth (method = "lm", formulat = "y ~ x")
+mod <- lm (aff ~ nfns, data = tmp)
 ```

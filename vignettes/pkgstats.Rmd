@@ -779,7 +779,7 @@ ggplot (x_rel, aes (x = seq, y = value, colour = name)) +
 ```
 
 
-## Dependency Networks
+## Package Imports and Exports
 
 Like the "standard" libraries for the python language, R has a core set of
 "base" and "recommended" packages. The function call networks extracted by
@@ -791,7 +791,7 @@ packages, as well as to "contributed" packages hosted on CRAN.
 Figure 6A shows the change over time in proportions of calls to these three
 groups of packages, revealing a recent tendency (since around 2015) of fewer
 calls to base R functions, from over 80% of all function calls in the early
-2000s, to below 70% in the previou two years. This decrease has been offset by
+2000s, to below 70% in the previous two years. This decrease has been offset by
 greater numbers of calls to functions in contributed packages, while calls to
 recommended packages have remained generally stable at around 20%. Although
 calls to contributed packages have always represented the lowest proportion of
@@ -825,52 +825,64 @@ numbers of calls to each of these packages increasing exponentially between
 
 ### Sequential Releases
 
-Figure 7 shows results equivalent to Figs 6A-B, but for changes with
-progressive releases of each package. The first panel (Fig. 7A) shows changes
-in the proportion of calls to the base and recommended packages for each
-sequential release, averaged over all packages. (Equivalent proportions of
-calls to recommended packages stay broadly constant, albeit with marked
-variability, and are not shown.) Relative changes generally remain above 1,
-indicating that packages make progressively more calls to base and recommended
-packages as they mature, with rates of calls to recommended packages
-progressively decreasing, and approaching stability after around 30 releases.
+The first two panels of Figure 7 show results equivalent to Figs 6A-B, but for changes with
+progressive releases of each package. Proportions of calls to the three
+categories of packages (Fig. 6A) stay very similar across releases, and so Fig.
+7A shows a slightly modified form quantifying proportional changes between
+successive releases. This reveals that values for both base and recommended
+packages remain above one out to around 30-40 releases, indicating that
+packages progressively decrease calls to contributed packages in favour of
+calls to base and recommended packages over the initial development phases.
+(Equivalent proportions of calls to recommended packages stay broadly constant,
+albeit with marked variability, and are not shown.) Beyond around 20-30
+releases, relative rates of change approach the stable level of 1, and
+proportions to these three categories of packages remain relatively stable.
 
-Calls to the base R package initially increase with each release out to around
-10-15 releases, indicating that packages incorporate progressively more calls
-to base R functions with each release. Beyond around 15 releases, relative
-rates of change also approach the stable level of 1, as for calls to
-recommended packages, with no further calls being added.
-
-Figure 7B shows the average trajectory of coupling instability for individual
-packages across the depicted numbers of sequential releases. While decreases in
-coupling instability should be expected as packages mature and are imported by
-increasing numbers of other packages (that is, afferent coupling should
-generally increase), that figure also shows that mean numbers of efferent calls
-tend to decrease with each sequential release. Numbers of afferent calls (that
-is, inward calls from other packages to a given package) also naturally
-increase with sequential releases, as increasing numbers of packages depend on
-a given package. The observed decrease in instability reflects this combination
-both of increasing dependence of other packages on any given package, and
-decreasing dependence of packages on functionality provided by external
-packages.
-
-Finally, Fig. 7C shows progressions of packages being imported into other
-packages as a function of release sequence. The number of packages importing
-a package increases progressively with numbers of releases. Packages with less
-than ten releases are, on average, imported by very few other packages, while
-packages with 30 or more releases are imported by ten other packages on
-average. The second line on that figure nevertheless reveals that numbers of
-functions actually used by other packages increase above one after around ten
-releases, yet always remain below two on average, even for packages with 50 or
-more releases.
 
 ```{r fig07, child = "figures/fig07.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
-## Function Call Networks
+Figure 7B shows the average trajectory of coupling instability for individual
+packages across the depicted numbers of sequential releases, which decreases
+very progressively as packages mature, as should be expected if packages are
+increasingly likely to be imported by other packages (that is, afferent
+coupling should generally increase). That figure also shows average numbers of
+efferent couplings, or numbers of outward calls from each package to other
+packages, which stay largely stable as packages develop. Increases in package
+stability thus arise as packages develop purely through being imported as
+dependencies by increasing numbers of other packages. This in turn suggests
+that the best way to counteract the increasing coupling instability of CRAN as
+a whole depicted in Fig. 6B would be to ensure that packages remain
+progressively developed, rather than abandoned after only a few releases.
+
+Finally, Fig. 7C shows progressions of both packages and individual functions
+being imported into other packages as a function of release sequence. The
+number of packages importing a package increases progressively with numbers of
+releases, as was already clear from Fig. 7B. Packages with less than ten
+releases are, on average, imported by very few other packages, while packages
+with 40 or more releases are imported by ten other packages on average. The
+second line on that figure nevertheless reveals that packages import on average
+only 1-2 functions from other packages, and that numbers of functions imported
+by other packages increase only marginally as packages mature.
+
+Coupled with the observed increases in numbers of exported functions as
+packages mature depicted in Fig. 5C, the slight increase in numbers of
+functions imported by other packages nevertheless suggests a relationship
+between total numbers of functions exported by a package, and numbers imported
+by other packages. Indeed, taking only the latest versions of all packages and
+relating these two values reveals that other packages are likely to import one
+additional function on average for every 2.8 additional functions exported by
+that package.
+
+## Network Analyses
+
+### Package Dependency Networks
 
 ```{r fig08, child = "figures/fig08.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
+
+
+### Function Call Networks
 
 ```{r fig09, child = "figures/fig09.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```

@@ -206,22 +206,29 @@ Manual](https://cran.r-project.org/doc/manuals/R-exts.html#Linking-to-native-rou
 Many aspects of the following analyses were applied to different components of
 R packages, in particular the following main sub-directories:
 
-- The `R` directory which holds all source files in the `R` language;
-- The `src` directory which holds all code in other languages which needs to be compiled on package installation;
-- The `inst` directory which generally holds bundles of external code, but may
+- The `/R` directory which holds all source files in the R language;
+- The `/src` directory which holds all code in other languages which needs to be compiled on package installation;
+- The `/inst` directory which generally holds bundles of external code, but may
   also include code used for cross-linking in compilation, including of other
-  packages. Cross-linked code must be in an `inst/include` sub-directory (as
+  packages. Cross-linked code must be in an `/inst/include` sub-directory (as
   explained in [this section of the "*Writing R Extensions*"
   Manual](https://cran.r-project.org/doc/manuals/R-exts.html#Linking-to-native-routines-in-other-packages)).
-  All of the following analyses only consider the `inst/include` directory, and
-  all references to the `inst` directory imply this sub-directory only.
-  Analyses excluded all other sub-directories within the `inst` directory.
-- The `vignettes` directory which includes extended documentation. (Such
-  documentation may also be placed in an `inst/doc` folder, but this was
+  All of the following analyses only consider the `/inst/include` directory, and
+  all references to the `/inst` directory imply this sub-directory only.
+  Analyses excluded all other sub-directories within the `/inst` directory.
+- The `/vignettes` directory which includes extended documentation. (Such
+  documentation may also be placed in an `/inst/doc` folder, but this was
   ignored here.)
-- The `tests` directory containing test files.
-- The `data` directory containing data files used to implement or demonstrate
+- The `/tests` directory containing test files.
+- The `/data` directory containing data files used to implement or demonstrate
   package functionality.
+
+The results which follow also distinguish between the two main kinds of R
+functions:
+
+- Exported functions intended to be called by users of a package.
+- Non-exported functions intended only to be called internally by other
+  functions of a package.
 
 
 ## Code tagging with "ctags" and "gtags"
@@ -463,15 +470,15 @@ and *efferent* couplings. For any given packages, these are defined as:
 *Afferent* couplings are numbers of *inbound* edges from all other packages to
 a given package, while *efferent* couplings are *outbound* edges coupling that
 package with all other packages. Respectively denoting afferent and efferent
-couplings by $n_a$ and $n_e$, the coupling instability, $I$, is then defined
-as $I = n_e / (n_e + n_a)$. Packages which depend on many external calls (high
+couplings by $n_a$ and $n_e$, the coupling instability, $I$, is then defined as
+$I = n_e / (n_e + n_a)$. Packages which depend on many external calls (high
 efferent couplings), yet upon which few other packages depend (low afferent
-couplings) thus has a high coupling instability, while packages upon which many
-other packages depend, yet which themselves depend on few other packages have a
-low coupling instability. The analyses below quantified coupling instability
-for each package from the dependency networks, using total numbers of function
-calls between all packages, in order to estimate the average coupling
-instability of the entire network.
+couplings) thus have a high coupling instability, while packages upon which
+many other packages depend, yet which themselves depend on few other packages
+have a low coupling instability. The analyses below quantified coupling
+instability for each package from the dependency networks, using total numbers
+of function calls between all packages, in order to estimate the average
+coupling instability of the entire network.
 
 ## Statistical Analyses
 
@@ -638,26 +645,28 @@ with each successive release.
 Figure 4 shows the temporal evolution of a number of code metrics. These
 figures distinguish between the two primary kinds of R functions, exported and
 non-exported, and also between the main sub-directories of R packages described
-at the outset. Lines of Code ("LoC") in the primary `R` and `src` directories
-broadly increased up to around 2010 or slightly later, after which time LoC in
-these directories has progressively decreased. These follow similar trends in
-LoC per function (Fig. 4B), excepting the early years of CRAN, during which
-functions often had well over 100 lines each, especially `src` functions
-defined in other languages. LoC per function have remained broadly stable for
-almost 20 years, at around 30 lines for all function types and languages. The
-slight decrease discernible since around 2015 amounts to one LoC less for
-exported, non-exported, and `/src` functions every 3.4, 8.5, and 1.5 years,
-respectively.
+at the outset. Lines of Code ("LoC") in the primary `/R` and `/src` directories
+broadly increased up to around 2005-2010, after which time LoC in these
+directories has slightly decreased, converging on just over 600 lines in both
+`/R` and `/src` directories. These trends are broadly reflected in LoC per
+function (Fig. 4B), excepting the early years of CRAN, during which functions
+often had well over 100 lines each, especially `src` functions defined in other
+languages (in those years, primarily Fortran and C). LoC per function have
+remained broadly stable for almost 20 years, at around 30 lines for all
+function types and languages. The slight decrease discernible since around 2015
+amounts to one LoC less for exported, non-exported, and `/src` functions every
+3.4, 8.5, and 1.5 years, respectively.
 
 Total numbers of R functions initially increased until around 2007, peaking at
-just under 50 exported and 75-80 non-exported functions per package (Fig. 4C).
-Numbers of exported R functions have decreased since then to around 27
-functions per package in 2021. In contrast, numbers of functions defined in
-`src` directories have progressively increased, and now total just over 150
-functions. In both `R` and `src` directories, numbers of functions per source
-file have nevertheless progressively decreased since the early 2000's to now
-amount to less than six `R` functions and just over 8 `src` functions per file
-(Fig. 4D).
+just under 30 exported and over 50 non-exported functions per package (Fig.
+4C). Numbers of exported R functions have decreased since then to around 17
+exported and 40-45 non-exported functions per package in 2021. Numbers of
+functions defined in `/src` directories have followed broadly similar
+trajectories to exported `/R` functions, slightly decreasing since the early
+2000's to between 30-40 functions. Numbers of functions per source file in both
+`/R` and `/src` directories have nevertheless progressively decreased since the
+early 2000's to now amount to less than four `/R` functions and just over five
+`/src` functions per file (Fig. 4D).
 
 ```{r fig04, child = "figures/fig04.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```

@@ -10,6 +10,7 @@ xraw <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
 
 x <- xraw |>
     group_by (package) |>
+    mutate (nfns_total = n_fns_r + n_fns_src) |>
     mutate (seq = seq_along (package)) |>
     group_by (seq) |>
     summarise (
@@ -17,23 +18,23 @@ x <- xraw |>
                #n_edges_r = mean (n_edges_r [which (!is.na (n_edges_r))]),
                #n_edges_src = mean (n_edges_src [which (!is.na (n_edges_src))]),
                #n_clusters = mean (n_clusters [which (!is.na (n_clusters))]),
-               n_edges = 10 ^ mean (log10 (n_edges [which (!is.na (n_edges) & n_edges > 0L)]), na.rm = TRUE),
-               n_edges_r = 10 ^ mean (log10 (n_edges_r [which (!is.na (n_edges_r) & n_edges_r > 0L)]), na.rm = TRUE),
-               n_edges_src = 10 ^ mean (log10 (n_edges_src [which (!is.na (n_edges_src) & n_edges_src > 0L)]), na.rm = TRUE),
-               n_clusters = 10 ^ mean (log10 (n_clusters [which (!is.na (n_clusters) & n_clusters > 0L)]), na.rm = TRUE),
-               centr_dir_mn = 10 ^ mean (log10 (centrality_dir_mn [which (!is.na (centrality_dir_mn) & centrality_dir_mn > 0L)])),
-               centr_dir_md = 10 ^ mean (log10 (centrality_dir_md [which (!is.na (centrality_dir_md))])),
-               centr_dir_mn_no0 = 10 ^ mean (log10 (centrality_dir_mn_no0 [which (!is.na (centrality_dir_mn_no0) & centrality_dir_mn_no0 > 0)])),
-               centr_dir_md_no0 = 10 ^ mean (log10 (centrality_dir_md_no0 [which (!is.na (centrality_dir_md_no0) & centrality_dir_md_no0 > 0)])),
-               centr_undir_mn = 10 ^ mean (log10 (centrality_undir_mn [which (!is.na (centrality_undir_mn) & centrality_undir_mn > 0)])),
-               centr_undir_md = 10 ^ mean (log10 (centrality_undir_md [which (!is.na (centrality_undir_md) & centrality_undir_md > 0)])),
-               centr_undir_mn_no0 = 10 ^ mean (log10 (centrality_undir_mn_no0 [which (!is.na (centrality_undir_mn_no0) & centrality_undir_mn_no0 > 0)])),
-                centr_undir_md_no0 = 10 ^ mean (log10 (centrality_undir_md_no0 [which (!is.na (centrality_undir_md_no0) & centrality_undir_md_no0 > 0)])),
-                central_edges_dir = mean (num_terminal_edges_dir [which (!is.na (num_terminal_edges_dir))]),
-                term_edges = 10 ^ mean (log10 (num_terminal_edges_undir [which (!is.na (num_terminal_edges_undir) & num_terminal_edges_undir > 0)])),
-                node_degree_mn = 10 ^ mean (log10 (node_degree_mn [which (!is.na (node_degree_mn) & node_degree_mn > 0)])),
-                node_degree_md = 10 ^ mean (log10 (node_degree_md [which (!is.na (node_degree_md) & node_degree_md > 0)])),
-                node_degree_max = 10 ^ mean (log10 (node_degree_max [which (!is.na (node_degree_max) & node_degree_max > 0)])))
+               n_edges = logmean (n_edges / nfns_total, na.rm = TRUE),
+               n_edges_r = logmean (n_edges_r / n_fns_r, na.rm = TRUE),
+               n_edges_src = logmean (n_edges_src / n_fns_src, na.rm = TRUE),
+               n_clusters = logmean (n_clusters, na.rm = TRUE),
+               centr_dir_mn = logmean (centrality_dir_mn, na.rm = TRUE),
+               centr_dir_md = logmean (centrality_dir_md, na.rm = TRUE),
+               centr_dir_mn_no0 = logmean (centrality_dir_mn_no0, na.rm = TRUE),
+               centr_dir_md_no0 = logmean (centrality_dir_md_no0, na.rm = TRUE),
+               centr_undir_mn = logmean (centrality_undir_mn, na.rm = TRUE),
+               centr_undir_md = logmean (centrality_undir_md, na.rm = TRUE),
+               centr_undir_mn_no0 = logmean (centrality_undir_mn_no0, na.rm = TRUE),
+                centr_undir_md_no0 = logmean (centrality_undir_md_no0, na.rm = TRUE),
+                central_edges_dir = mean (num_terminal_edges_dir, na.rm = TRUE),
+                term_edges = logmean (num_terminal_edges_undir, na.rm = TRUE),
+                node_degree_mn = logmean (node_degree_mn, na.rm = TRUE),
+                node_degree_md = logmean (node_degree_md, na.rm = TRUE),
+                node_degree_max = logmean (node_degree_max, na.rm = TRUE))
 ```
 
 
@@ -56,47 +57,47 @@ fig9_p1 <- x1 |>
         geom_line (aes (y = src, col = "src")) +
         geom_line (aes (y = n_clusters / coeff_fig9_p1, col = "n_clusters")) +
         #scale_colour_manual (values = colours_fig9_p1) +
-        ylab ("Num. edges") +
+        ylab ("Ratio edges/vertices") +
         scale_y_continuous (
             sec.axis = sec_axis (~.*coeff_fig9_p1, name = "Num. clusters")) +
-        ggtitle ("A: pkg network metrics") +
+        ggtitle ("A: Pkg edges and clusters") +
         guides (color = guide_legend (ncol = 2)) +
         theme (legend.title = element_blank (),
-               legend.position = c (0.45, 0.95),
+               legend.position = c (0.3, 0.9),
                legend.background = element_rect(fill='transparent', colour='transparent'))
+
+# slope:
+s <- lm (total ~ seq, data = x1)$coefficients [2]
 ```
 
 ```{r fig9-network-internal2}
 x2 <- x |>
-    select (seq, centr_undir_mn, centr_dir_mn, node_degree_mn, term_edges) |>
-    rename (centr_undir = centr_undir_mn,
-            centr_dir = centr_dir_mn,
+    select (seq, centr_dir_mn, node_degree_mn, term_edges) |>
+    rename (centr = centr_dir_mn,
             vert_degree = node_degree_mn)  |>
     mutate (vert_degree = vert_degree * 10) |>
-    filter (seq < 100) |>
-    mutate (centr_dir = centr_dir * max (centr_undir) / max (centr_dir))
+    filter (seq < 100)
 
-coeff_fig9_p2 <- max (x2$term_edges) / max (x2$centr_undir)
-colours_fig1e_p2 <- c ("centr_undir" = "red",
-                      "centr_dir" = "green",
-                      "vert_degree" = "blue",
-                      "term_edges" = "orange")
+coeff_fig9_p2 <- max (x2$centr) / max (x2$term_edges)
+colours_fig1e_p2 <- c ("centr" = "red",
+                      "vert_degree" = "green",
+                      "term_edges" = "blue")
 fig9_p2 <- x2 |>
     ggplot (aes (x = seq)) +
-        geom_line (aes (y = centr_undir, col = "centr_undir")) +
-        geom_line (aes (y = centr_dir, col = "centr_dir")) +
-        geom_line (aes (y = vert_degree / coeff_fig9_p2, col = "vert_degree")) +
-        geom_line (aes (y = term_edges / coeff_fig9_p2, col = "term_edges")) +
-        scale_y_continuous (
-            sec.axis = sec_axis (~.*coeff_fig9_p2, name = "Vert. degree / Term. edges")) +
+        geom_line (aes (y = centr / coeff_fig9_p2, col = "centr")) +
+        geom_line (aes (y = vert_degree, col = "vert_degree")) +
+        geom_line (aes (y = term_edges, col = "term_edges")) +
         ggtitle ("D: pkg centrality metrics") +
-        guides (color = guide_legend (ncol = 2)) +
+        ylab ("Vert degree (x10) / Term edges") +
+        scale_y_continuous (
+            sec.axis = sec_axis (~.*coeff_fig9_p2, name = "Centrality")) +
+        #guides (color = guide_legend (ncol = 2)) +
         theme (legend.title = element_blank (),
-               legend.position = c (0.44, 0.95),
+               legend.position = c (0.25, 0.87),
                legend.background = element_rect(fill='transparent', colour='transparent'))
 ```
 
 
-```{r fig9-assemble, echo = FALSE, message = FALSE, fig.height = 3.5, fig.cap = "**Figure 9** Network metrics"}
+```{r fig9-assemble, echo = FALSE, message = FALSE, fig.height = 3.5, fig.cap = "**Figure 9** Network metrics from function call networks as a function of release sequence."}
 fig9_p1 + fig9_p2
 ```

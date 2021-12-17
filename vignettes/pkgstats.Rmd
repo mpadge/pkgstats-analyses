@@ -925,8 +925,32 @@ which have decreased since around 2005 from around 12 per package to around 7.
 
 ### Sequential Releases
 
+Analyses of sequential releases can only meaningfully be applied to the
+function call networks of Figs. 8C-D, and so Fig. 9 depicts equivalent values
+only for those two panels. Fig. 9A reveals that function call networks tend to
+become more densely connected as packages mature, and more so in `/src` than in
+`/R` directories. The aggregate increase contrasts strikingly with the
+equivalent and generally decreasing average tendency over time of Fig. 8C. This
+contrast can again be explained by the fact that most packages only have one or
+two releases, and so packages on CRAN have on average become less internally
+connected over time as recently-released packages have increasingly dominated.
+The decrease in package connectivity over one year of Fig. 8C corresponds to an
+equivalent increase in Fig. 9A after 224 releases, indicating that decreases in
+internal connectivity through increasing dominance of recently-released
+packages far outweighs compensatory decreases through packages maturing.
+
 ```{r fig09, child = "figures/fig09.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
+
+Finally, centrality metrics change dramatically as packages mature (Fig. 9B),
+in stark contrast to the annual changes of Fig. 8D. Packages develop greater
+numbers of terminal edges, yet retain almost identical vertex degrees through
+becoming more centralised as they develop. One way such an effect could be
+achieved would be through transforming a package from having several distinct
+clusters, each internally highly connected yet only loosely coupled to other
+clusters, progressing towards having fewer numbers of more highly centralised
+clusters, with increasing numbers of single connections out to terminal
+vertices.
 
 ## Code formatting
 

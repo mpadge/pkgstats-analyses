@@ -138,7 +138,27 @@ readRDS (f) |>
         scale_y_continuous (
             sec.axis = sec_axis (~.*scale_10c, name = "Num. pars.")) +
         ggtitle ("C: Params & Documentation") -> p3
+
+# slope of npars:
+s <- readRDS (f) |>
+    filter (what == "annual", year >= 2005) |>
+    select (c (year, npars_exported_mn)) |>
+    rename (npars = npars_exported_mn)
+s <- lm (npars ~ year, data = s)$coefficients [2]
+#1 / s
+
 ```
+```{r fig10-release-intervals, eval = FALSE}
+# Average release intervals:
+x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
+    group_by (package) |>
+    arrange (date) |>
+    summarise (interval = mean (diff (date))) |>
+    filter (is.finite (interval)) |>
+    mutate (interval = as.double (interval))
+logmean (x$interval)
+```
+
 
 ```{r fig10-p4}
 dat_10d <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
@@ -166,8 +186,12 @@ dat_10d |>
         scale_y_continuous (
             sec.axis = sec_axis (~.*scale_10d, name = "Num. pars.")) +
         ggtitle ("D: Params & Documentation") -> p4
+
+# slope of npars:
+npars <- dat_10d |> filter (seq >= 50)
+s <- lm (npars ~ seq, data = npars)$coefficients [2]
 ```
 
-```{r fig10-assemble, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 7, fig.cap = "**Figure 10.**"}
+```{r fig10-assemble, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 7, fig.cap = "**Figure 10.** Code formatting and documentation."}
 (p1 | p2) / (p3 + p4)
 ```

@@ -876,13 +876,54 @@ that package.
 
 ## Network Analyses
 
-### Package Dependency Networks
+### Annual Developments
+
+The first two panels of Fig. 8 show the temporal development of the CRAN
+package dependency network, in both cases revealing that most network metrics
+have broadly stabilised over the preceding five or so years, and that
+variations were much more pronounced prior to around 2015. The proportion of
+terminal vertices, or packages not imported by any other packages, has remained
+broadly stable at around 55-60% of all packages. The mean vertex degree of the
+dependency network has nevertheless progressively increased, especially since
+2015, indicating that those packages which are imported by others have been
+imported by increasing numbers of other packages.
 
 ```{r fig08, child = "figures/fig08.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
+Such an increase in average numbers of imports must increase the overall
+connectivity of the dependency network, with Fig. 8B showing concomitant
+decreases in both centrality metrics over time. Average distances between each
+pair of packages in the network increased notably up to around 2013, after
+which time they have progressively decreased. Since numbers of terminal
+vertices have remained generally stable, while centrality has decreased, the
+initial increase in mean distance likely reflects terminal vertices becoming
+nevertheless further away, for example through the network evolving a number of
+distinct centres. The more recent decrease in mean distance may then reflect an
+equivalent centralisation of the dependency network.
 
-### Function Call Networks
+The lower two panels of Fig. 8 depict the evolution of function call networks
+within individual packages. Fig. 8A shows the ratio of numbers of edges to
+numbers of vertices, with higher values indicating more densely connected
+networks. Since around 2005, network connections within R functions, whether
+exported or not, have remained largely constant, with each function being
+called by around 5-6 other functions. Connections between functions in `/src`
+directories have in contrast decreased considerably, with each `/src` function
+(or object) now being "called" (or referenced, inherited, or any other method)
+by just over one other function. Ratios of edges to vertices in the full
+function call network extending between all directories (including `/inst`) has
+progressively declined from over 4 calls per function to less than 3 in recent
+years. Function call networks form on average around three distinct clusters
+for each package, peaking at over 3.5 in 2007 before more recently decreasing
+to just over 2.5 clusters.
+
+The final panel (Fig. 8D) shows average centrality metrics from function call
+networks, revealed a marked stability, except for numbers of terminal edges (in
+that context, meaning numbers of functions which call no other functions),
+which have decreased since around 2005 from around 12 per package to around 7.
+
+
+### Sequential Releases
 
 ```{r fig09, child = "figures/fig09.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```

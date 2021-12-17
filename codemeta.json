@@ -10,7 +10,7 @@
   "codeRepository": "https://github.com/mpadge/pkgstats-analyses",
   "issueTracker": "https://github.com/mpadge/pkgstats-analyses/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.0.1.85",
+  "version": "0.0.1.86",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -157,5 +157,5 @@
       "name": "tibble"
     }
   ],
-  "fileSize": "11269.087KB"
+  "fileSize": "11273.945KB"
 }

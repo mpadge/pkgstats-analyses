@@ -221,8 +221,8 @@ fig8_p3 <- dat |>
     ggplot (aes (x = year, y = value, colour = name)) +
         geom_line () +
         #geom_line (data = dat_cran, lty = 2) +
-        ylab ("Num. edges") +
-        ggtitle ("C: pkg edges and clusters") +
+        ylab ("Ratio edges/vertices") +
+        ggtitle ("C: Pkg edges and clusters") +
         guides (color = guide_legend (ncol = 2)) +
         theme (legend.title = element_blank (),
                legend.position = c (0.5, 0.15),
@@ -234,43 +234,41 @@ fig8_p3 <- dat |>
 dat <- readRDS (graph_intern_data_file)
 dat_cran <- dat |>
     filter (what == "cran_by_year") |>
-    select (year, centr_undir_mn, centr_dir_mn, node_degree_mn, term_edges) |>
-    rename (centr_undir = centr_undir_mn,
-            centr_dir = centr_dir_mn,
+    select (year, centr_dir_mn, node_degree_mn, term_edges) |>
+    rename (centr = centr_dir_mn,
             vert_degree = node_degree_mn) |>
     mutate (vert_degree = vert_degree * 10)
-coeff_fig8_p4 <- max (dat$term_edges) / max (dat$centr_undir_mn)
-colours_fig8_p4 <- c ("centr_undir" = "red",
-                      "centr_dir" = "green",
-                      "vert_degree" = "blue",
-                      "term_edges" = "orange")
+coeff_fig8_p4 <- max (dat$term_edges) / max (dat$centr_dir_mn)
+coeff_fig8_p4 <- max (dat$centr_dir_mn) / max (dat$term_edges)
+colours_fig8_p4 <- c ("centr" = "red",
+                      "vert_degree" = "green",
+                      "term_edges" = "blue")
 
 fig8_p4 <- dat |>
     filter (what == "annual") |>
-    select (year, centr_undir_mn, centr_dir_mn, node_degree_mn, term_edges) |>
-    rename (centr_undir = centr_undir_mn,
-            centr_dir = centr_dir_mn,
+    select (year, centr_dir_mn, node_degree_mn, term_edges) |>
+    rename (centr = centr_dir_mn,
             vert_degree = node_degree_mn) |>
-    mutate (vert_degree = vert_degree * 10) |>
+    mutate (vert_degree = vert_degree * 5) |>
     ggplot (aes (x = year)) +
-        geom_line (aes (y = centr_undir, col = "centr_undir")) +
-        geom_line (aes (y = centr_dir, col = "centr_dir")) +
-        geom_line (aes (y = vert_degree / coeff_fig8_p4, col = "vert_degree")) +
-        geom_line (aes (y = term_edges / coeff_fig8_p4, col = "term_edges")) +
+        geom_line (aes (y = centr / coeff_fig8_p4, col = "centr")) +
+        geom_line (aes (y = vert_degree, col = "vert_degree")) +
+        geom_line (aes (y = term_edges, col = "term_edges")) +
         #geom_line (data = dat_cran, aes (y = centr_undir, col = "centr_undir"), lty = 2) +
         #geom_line (data = dat_cran, aes (y = centr_dir, col = "centr_dir"), lty = 2) +
         #geom_line (data = dat_cran, aes (y = vert_degree / coeff_fig8_p4, col = "vert_degree"), lty = 2) +
         #geom_line (data = dat_cran, aes (y = term_edges / coeff_fig8_p4, col = "term_edges"), lty = 2) +
+        ylab ("Vert. degree (*5) / Term. edges") +
         scale_y_continuous (
-            sec.axis = sec_axis (~.*coeff_fig8_p4, name = "Vert. degree (*10) / Term. edges")) +
-        ggtitle ("D: pkg centrality metrics") +
+            sec.axis = sec_axis (~.*coeff_fig8_p4, name = "Centrality")) +
+        ggtitle ("D: Pkg centrality metrics") +
         guides (color = guide_legend (ncol = 2)) +
         theme (legend.title = element_blank (),
-               legend.position = c (0.5, 0.45),
+               legend.position = c (0.5, 0.37),
                legend.background = element_rect(fill='transparent', colour='transparent'))
 ```
 
 
-```{r fig8-assemble, echo = FALSE, message = FALSE, fig.width = 7, fig.height = 7, fig.cap = "**Figure 8** Network metrics"}
+```{r fig8-assemble, echo = FALSE, message = FALSE, fig.width = 7, fig.height = 7, fig.cap = "**Figure 8** Network metrics for (A-B) the CRAN dependency network, and (C-D) Function call networks within packages."}
 (fig8_p1 + fig8_p2) / (fig8_p3 + fig8_p4)
 ```

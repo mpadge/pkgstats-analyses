@@ -5,6 +5,14 @@
 #' @export
 recommended_pkgs <- function () {
 
+    if (!curl::has_internet ()) {
+
+        return (c ("compiler", "datasets", "grDevices",
+                   "graphics", "grid", "methods", "parallel",
+                   "profile", "splines", "stats", "stats4",
+                   "tcltk", "tools", "translations", "utils"))
+    }
+
     u <- "https://github.com/wch/r-source/tree/trunk/src/library"
     r <- rvest::read_html (u)
 

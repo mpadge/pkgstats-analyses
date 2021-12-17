@@ -1,6 +1,6 @@
 Package: pkgstatsAnalyses
 Title: Analyses of 'pkgstats' Results for all CRAN Packages
-Version: 0.0.1.079
+Version: 0.0.1.080
 Authors@R: 
     person("Mark", "Padgham", , "mark.padgham@email.com", role = c("aut", "cre"))
 Description: Analyses of 'pkgstats' Results for all CRAN Packages.
@@ -10,6 +10,7 @@ BugReports: https://github.com/mpadge/pkgstats-analyses/issues
 Depends: 
     R (>= 4.1.0)
 Imports:
+    curl,
     dplyr,
     future,
     future.apply,

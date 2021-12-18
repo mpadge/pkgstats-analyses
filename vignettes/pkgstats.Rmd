@@ -202,7 +202,7 @@ structure of the base and recommended packages is not analysed here.
 
 All R packages accord with the structure defined in the ["*Writing R
 Extensions*"
-Manual](https://cran.r-project.org/doc/manuals/R-exts.html#Linking-to-native-routines-in-other-packages)).
+Manual](https://cran.r-project.org/doc/manuals/R-exts.html#Linking-to-native-routines-in-other-packages).
 Many aspects of the following analyses were applied to different components of
 R packages, in particular the following main sub-directories:
 
@@ -599,7 +599,7 @@ as a translation which, "can be used in a UTF-8 locale to have American error
 messages with pairs of single quotes translated to Unicode directional
 quotes.") Rates of decrease since 2008 equate to 1.5% fewer packages per year
 including translations, from a total of just over 20% of all packages in 2008,
-to barely over 1% in 2021. While rates of decreased have slowed somewhat in
+to barely over 1% in 2021. While rates of decrease have slowed somewhat in
 recent years, extrapolation of the preceding five years nevertheless suggests
 that the practice of offering translations will entirely disappear by 2023.
 
@@ -607,7 +607,7 @@ that the practice of offering translations will entirely disappear by 2023.
 ```
 
 
-Analyses of URLs provided in package 'DESCRIPTION' files clearly reveals an
+Analyses of URLs provided in package 'DESCRIPTION' files clearly reveal an
 abrupt break after around 2010 with the advent of online code repositories
 (Fig. 2B). GitHub has always dominated, while r-forge has declined
 progressively since around 2015. The most notable increase has been the
@@ -620,7 +620,7 @@ emergence of rOpenSci as provider of the only URL to come close to within
 The temporal development of numbers of files manifest several notable
 characteristics (Figure 3). Unsurprisingly, R packages have always been
 dominated by files in the `R/` directory, numbers of which increased
-considerably up to around 2010, after which they are generally stabilised at a
+considerably up to around 2010, after which they have generally stabilised at a
 mean value of around 20 files (Fig. 3A). The `data` and `vignettes` directories
 are the only places within R packages in which numbers of files have remained
 relatively constant over the preceding 20+ years. Packages generally had very
@@ -687,25 +687,25 @@ Figure 5 shows results equivalent to Fig. 4, but for the development of the
 respective metrics with each sequential release of a package, rather than being
 averaged over all packages for each year. Lines of code generally increase as
 packages mature, with mean numbers of lines in the `/R` directory increasing
-tenfold from under 400 for first releases to over 5,000 in packages with
-100 or more releases. LoC in `/inst` directories also tend to increase as
-packages develop, although to a lesser extend, and only becoming notable after
-around 50 releases. Beyond the first few releases, there are always fewer LoC
-in `/src` directories than in `/R` directories. This contrasts with the annual
-aggregate results of Fig. 4A, which suggest more LoC in `/src` than `/R`
-directories until around 2007, and roughly equal numbers since then. This
-difference reflects the fact that most packages have only one or two releases
-(the distribution of numbers of releases is not shown here, but manifests a
-very smooth exponential decrease), so Fig. 4A is dominated by packages in a
-very early state of development, for which LoC in `/src` often exceed numbers
-in `/R`. The decrease in the later phases of package maturation, beyond around
-50 releases, may reflect restructuring code from the `/src` to the `/inst`
+tenfold from under 400 for first releases to over 5,000 in packages with 100 or
+more releases. LoC in `/inst` directories also tend to increase as packages
+develop, although to a lesser extent, and only becoming notable after around 50
+releases. Beyond the first few releases, there are always fewer LoC in `/src`
+directories than in `/R` directories. This contrasts with the annual aggregate
+results of Fig. 4A, which suggest more LoC in `/src` than `/R` directories
+until around 2007, and roughly equal numbers since then. This difference
+reflects the fact that most packages have only one or two releases (the
+distribution of numbers of releases is not shown here, but manifests a very
+smooth exponential decrease), so Fig. 4A is dominated by packages in a very
+early state of development, for which LoC in `/src` often exceed numbers in
+`/R`. The decrease in the later phases of package maturation, beyond around 50
+releases, may reflect restructuring code from the `/src` to the `/inst`
 directories, in order to allow cross-compilation by other packages. This clear
-peak in LoC in `/src` directories may suggest this is an approximate number of
-releases before other developers become aware of the functionality of package
-`/src` directories. The clearest result of Fig. 4A is manifest in total LoC,
-which increases in a strikingly linear manner even out to the 100th release of
-a package.
+peak in LoC in `/src` directories may in turn suggest this is an approximate
+number of releases before other developers become aware of the functionality of
+package `/src` directories. The clearest result of Fig. 4A is manifest in total
+LoC, which increases in a strikingly linear manner even out to the 100th
+release of a package.
 
 ```{r fig05, child = "figures/fig05.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
@@ -726,7 +726,7 @@ source functions, respectively.
 The increasing total measures of LoC of panel A combined with decreasing LoC
 per function of panel B must mean that more functions are added as packages
 mature, which is precisely what Fig. 5C reveals. Packages initially contain
-around less than ten exported functions on average, yet this increases over 10-fold
+less than ten exported functions on average, yet this increases over 10-fold
 to over 130 by the 100th release. Numbers of `/src` functions are initially
 higher, at around 20, and increase relatively less, to around 100 after 100
 releases. Numbers of non-exported `/R` functions manifest the most pronounced

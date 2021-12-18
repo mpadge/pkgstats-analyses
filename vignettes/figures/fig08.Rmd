@@ -7,6 +7,9 @@
 -->
 
 ```{r fig8-precalc}
+here <- here::here ()
+v_data_dir <- file.path (here, "vignettes", "data")
+
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
 graph_data_file <- file.path (v_data_dir, "fig08-graph-metrics.Rds")
 graph_intern_data_file <- file.path (v_data_dir, "fig08-graph-metrics-intern.Rds")

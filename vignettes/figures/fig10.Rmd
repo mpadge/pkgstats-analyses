@@ -1,5 +1,8 @@
 
 ```{r fig10-precalc}
+here <- here::here ()
+v_data_dir <- file.path (here, "vignettes", "data")
+
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
 f_fig10 <- file.path (v_data_dir, "fig10.Rds")
 calc_fig10 <- !file.exists (f_fig10)

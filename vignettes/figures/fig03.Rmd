@@ -1,5 +1,8 @@
 
 ```{r fig3-n-files-data-load}
+here <- here::here ()
+v_data_dir <- file.path (here, "vignettes", "data")
+
 n_files_file <- file.path (v_data_dir, "fig03-n-files-data.Rds")
 n_files_exists <- file.exists (n_files_file)
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")

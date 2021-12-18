@@ -4,6 +4,9 @@ Fig 9 but over package release instead of year
 -->
 
 ```{r fig9-calc-graph-data}
+here <- here::here ()
+v_data_dir <- file.path (here, "vignettes", "data")
+
 # graph metrics for inter-package dependency networks
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
 xraw <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)

@@ -7,6 +7,7 @@
 -->
 
 ```{r fig8-precalc}
+requireNamespace ("pkgstatsAnalyses")
 here <- here::here ()
 v_data_dir <- file.path (here, "vignettes", "data")
 

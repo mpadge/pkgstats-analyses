@@ -1,6 +1,7 @@
 
 
 ```{r fig7-pre-load}
+requireNamespace ("pkgstatsAnalyses")
 here <- here::here ()
 v_data_dir <- file.path (here, "vignettes", "data")
 

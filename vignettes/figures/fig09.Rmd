@@ -7,6 +7,9 @@ Fig 9 but over package release instead of year
 library ("pkgstatsAnalyses")
 here <- here::here ()
 v_data_dir <- file.path (here, "vignettes", "data")
+logmean <- function (x, ...) {
+    10 ^ mean (log10 (x [which (x > 0)]), na.rm = TRUE)
+}
 
 # graph metrics for inter-package dependency networks
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")

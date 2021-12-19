@@ -3,6 +3,9 @@
 library ("pkgstatsAnalyses")
 here <- here::here ()
 v_data_dir <- file.path (here, "vignettes", "data")
+logmean <- function (x, ...) {
+    10 ^ mean (log10 (x [which (x > 0)]), na.rm = TRUE)
+}
 
 n_files_file <- file.path (v_data_dir, "fig03-n-files-data.Rds")
 n_files_exists <- file.exists (n_files_file)

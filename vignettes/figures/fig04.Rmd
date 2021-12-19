@@ -3,6 +3,9 @@
 library ("pkgstatsAnalyses")
 here <- here::here ()
 v_data_dir <- file.path (here, "vignettes", "data")
+logmean <- function (x, ...) {
+    10 ^ mean (log10 (x [which (x > 0)]), na.rm = TRUE)
+}
 
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)

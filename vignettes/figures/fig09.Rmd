@@ -6,13 +6,17 @@ Fig 9 but over package release instead of year
 ```{r fig9-calc-graph-data}
 library ("pkgstatsAnalyses")
 here <- here::here ()
+datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
 v_data_dir <- file.path (here, "vignettes", "data")
 logmean <- function (x, ...) {
     10 ^ mean (log10 (x [which (x > 0)]), na.rm = TRUE)
 }
 
+fig09_png <- file.path (here, "vignettes", "figures", "fig09.png")
+```
+
+```{r fig09-prepro, eval = !file.exists (fig09_png)}
 # graph metrics for inter-package dependency networks
-datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
 xraw <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
 
 x <- xraw |>
@@ -45,7 +49,7 @@ x <- xraw |>
 ```
 
 
-```{r fig9-network-internal1}
+```{r fig9-network-internal1, eval = !file.exists (fig09_png)}
 x1 <- x |>
     select (seq, starts_with ("n_")) |>
     rename (total = n_edges, R = n_edges_r, src = n_edges_src) |>
@@ -77,7 +81,7 @@ fig9_p1 <- x1 |>
 s <- lm (total ~ seq, data = x1)$coefficients [2]
 ```
 
-```{r fig9-network-internal2}
+```{r fig9-network-internal2, eval = !file.exists (fig09_png)}
 x2 <- x |>
     select (seq, centr_dir_mn, node_degree_mn, term_edges) |>
     rename (centr = centr_dir_mn,
@@ -105,6 +109,12 @@ fig9_p2 <- x2 |>
 ```
 
 
-```{r fig9-assemble, echo = FALSE, message = FALSE, fig.height = 3.5, fig.cap = "**Figure 9** Network metrics from function call networks as a function of release sequence."}
+```{r fig9-assemble, echo = FALSE, eval = !file.exists (fig09_png)}
+png (fig09_png, width = 7, height = 3.5, units = "in", res = 300)
 fig9_p1 + fig9_p2
+graphics.off ()
+```
+
+```{r fig9-make, echo = FALSE, out.width = 700, fig.cap = "**Figure 9** Network metrics from function call networks as a function of release sequence."}
+knitr::include_graphics (fig09_png)
 ```

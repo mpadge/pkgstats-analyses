@@ -9,6 +9,8 @@ f_fig1_aut_ctb <- file.path (v_data_dir, "fig01-aut-ctb.Rds")
 calc_fig1_aut_ctb <- !file.exists (f_fig1_aut_ctb)
 f_fig1_lic <- file.path (v_data_dir, "fig01-lic.Rds")
 calc_fig1_lic <- !file.exists (f_fig1_lic)
+
+fig01_png <- file.path (here, "vignettes", "figures", "fig01.png")
 ```
 
 ```{r fig1-aut-ctb, eval = calc_fig1_aut_ctb}
@@ -69,7 +71,7 @@ saveRDS (nlic, f_fig1_lic)
 
 
 
-```{r fig1-num_aut_ctb, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 3.5, fig.cap = "**Figure 1.**"}
+```{r fig1-make, eval = !file.exists (fig01_png), fig.width = 7, fig.height = 3.5}
 
 dat <- readRDS (f_fig1_aut_ctb)
 lo <- dat |>
@@ -114,5 +116,12 @@ p2 <- readRDS (f_fig1_lic) |>
     ylab ("Number of distinct licenses") +
     ggtitle ("B: Numbers of licenses")
 
+png (file.path (here, "vignettes", "figures", "fig01.png"),
+     width = 7, height = 3.5, units = "in", res = 300)
 p1 | p2
+graphics.off ()
+```
+
+```{r fig1-num_aut_ctb2, echo = FALSE, out.width = 700, fig.cap = "**Figure 1.** second try"}
+knitr::include_graphics (fig01_png)
 ```

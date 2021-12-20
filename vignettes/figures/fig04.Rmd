@@ -261,7 +261,7 @@ readRDS (f) |>
 ```
 
 
-```{r fig4-assemble, echo = FALSE}
+```{r fig4-assemble, echo = FALSE, eval = !file.exists (fig04_png)}
 png (fig04_png, width = 7, height = 7, units = "in", res = 300)
 (p1 + p2) / (p3 + p4)
 graphics.off ()

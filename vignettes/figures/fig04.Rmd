@@ -12,6 +12,8 @@ x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
 x$num_languages <- vapply (strsplit (x$languages, ","), length,
                            integer (1))
 x$doclines_per_fn_exp_mn [which (!is.finite (x$doclines_per_fn_exp_mn))] <- NA
+
+fig04_png <- file.path (here, "vignettes", "figures", "fig04.png")
 ```
 
 ```{r fig4-lang-file}
@@ -259,6 +261,12 @@ readRDS (f) |>
 ```
 
 
-```{r fig4-assemble, fig.width = 7, fig.height = 7, fig.cap = "**Fig. 4** Development of code metrics per year."}
+```{r fig4-assemble, echo = FALSE}
+png (fig04_png, width = 7, height = 7, units = "in", res = 300)
 (p1 + p2) / (p3 + p4)
+graphics.off ()
+```
+
+```{r fig4-out, out.width = 700, fig.cap = "**Fig. 4** Development of code metrics per year."}
+knitr::include_graphics (fig04_png)
 ```

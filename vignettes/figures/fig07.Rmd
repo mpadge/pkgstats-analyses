@@ -11,6 +11,8 @@ logmean <- function (x, ...) {
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) 
 recommended <- recommended_pkgs ()
+
+fig07_png <- file.path (here, "vignettes", "figures", "fig07.png")
 ```
 
 ```{r fig7-call-coupling-deps}
@@ -86,7 +88,7 @@ deps_p1 |>
 
 
 
-```{r fig7-p1}
+```{r fig7-p1, eval = !file.exists (fig07_png)}
 readRDS (f) |>
     filter (seq <= 50 & name != "n_contrib") |>
     ggplot (aes (x = seq, y = value, colour = name)) +
@@ -113,7 +115,7 @@ if (!file.exists (f)) {
 }
 ```
 
-```{r fig7-couplings-releases}
+```{r fig7-couplings-releases, eval = !file.exists (fig07_png)}
 # unique & total instabilities are virtually identical
 deps_p2 <- readRDS (f)
 #deps_p2$efferent_unique [deps_p2$efferent_unique == 0L] <- NA_integer_
@@ -140,7 +142,7 @@ deps_p2 |>
         ggtitle ("B: Coupling instability") -> p2
 ```
 
-```{r fig7-afferent}
+```{r fig7-afferent, eval = !file.exists (fig07_png)}
 # afferent fn imports by other pkgs
 deps_p3 <- readRDS (f)
 deps_p3$afferent_fns_per_pkg [which (is.na (deps_p3$afferent_fns_per_pkg))] <- 0L
@@ -168,8 +170,14 @@ p3 <- ggplot (deps_p3, aes (x = seq)) +
 ```
 
 
-```{r fig7-assemble, fig.width = 7, fig.height = 7, fig.cap = "**Fig. 7** Dependency networks between packages over sequential releases. (A) Proportional change in numbers of calls to base and recommended packages between successive releases. Solid lines show loess-smoothed interpolations, while dashed lines show raw values (and not values from cran snapshots). (B) Coupling instability. (C) Average numbers of functions from each package imported by other packages, and averge numbers of times packages are imported by other packages."}
+```{r fig7-assemble, echo = FALSE, eval = !file.exists (fig07_png)}
+png (fig07_png, width = 7, height = 7, units = "in", res = 300)
 (p1 | p2) / p3
+graphics.off ()
+```
+
+```{r fig7-out, out.width = 700, fig.cap = "**Fig. 7** Dependency networks between packages over sequential releases. (A) Proportional change in numbers of calls to base and recommended packages between successive releases. Solid lines show loess-smoothed interpolations, while dashed lines show raw values (and not values from cran snapshots). (B) Coupling instability. (C) Average numbers of functions from each package imported by other packages, and averge numbers of times packages are imported by other packages."}
+knitr::include_graphics (fig07_png)
 ```
 
 ```{r fig7-nfns-vs-nimports, eval = FALSE}

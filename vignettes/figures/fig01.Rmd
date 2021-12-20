@@ -116,8 +116,7 @@ p2 <- readRDS (f_fig1_lic) |>
     ylab ("Number of distinct licenses") +
     ggtitle ("B: Numbers of licenses")
 
-png (file.path (here, "vignettes", "figures", "fig01.png"),
-     width = 7, height = 3.5, units = "in", res = 300)
+png (fig01_png, width = 7, height = 3.5, units = "in", res = 300)
 p1 | p2
 graphics.off ()
 ```

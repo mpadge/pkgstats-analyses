@@ -10,6 +10,7 @@ f_fig2_tr <- file.path (v_data_dir, "fig02-tr.Rds")
 fig2_calc_top10_data <- !file.exists (f_fig2_top10)
 fig2_calc_tr_data <- !file.exists (f_fig2_tr)
 
+fig02_png <- file.path (here, "vignettes", "figures", "fig02.png")
 ```
 
 ```{r fig2_top10_data, eval = fig2_calc_top10_data}
@@ -86,7 +87,7 @@ saveRDS (tr_top10, f_fig2_tr)
 
 
 
-```{r fig2, echo = FALSE, message = FALSE, fig.width = 7, fig.height = 7, fig.cap = "**Figure 2.** (A) Annual frequencies of the top 10 translations. (B) Annual frequencies of the top 10 primary URL domains, with frequencies for GitHub divided by 20."}
+```{r fig2-make, echo = FALSE, message = FALSE, eval = !file.exists (fig02_png)}
 
 tr <- readRDS (f_fig2_tr)
 tr$proportion <- tr$n / tr$ntot
@@ -136,5 +137,12 @@ readRDS (f_fig2_top10) |>
     #       legend.background = element_rect(fill='transparent', colour='transparent')) +
     guides (color = guide_legend (ncol = 2)) -> p2
 
+png (fig02_png, width = 7, height = 7, units = "in", res = 300)
 p1 / p2
+graphics.off ()
+```
+
+```{r fig2, echo = FALSE, message = FALSE, out.width = 700, fig.cap = "**Figure 2.** (A) Annual frequencies of the top 10 translations. (B) Annual frequencies of the top 10 primary URL domains, with frequencies for GitHub divided by 20."}
+
+knitr::include_graphics (fig02_png)
 ```

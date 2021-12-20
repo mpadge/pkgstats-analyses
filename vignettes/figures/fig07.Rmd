@@ -12,6 +12,9 @@ datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) 
 
 fig07_png <- file.path (here, "vignettes", "figures", "fig07.png")
+
+f <- file.path (v_data_dir, "fig07_deps_p1.Rds")
+calc_fig7_p1_deps <- !file.exists (f) & !file.exists (fig07_png)
 ```
 
 ```{r fig07-rmcd-pkgs, eval = !file.exists (fig07_png)}
@@ -28,10 +31,6 @@ if (!file.exists (f)) {
 deps <- readRDS (f)
 ```
 
-```{r fig7-p1-deps}
-f <- file.path (v_data_dir, "fig07_deps_p1.Rds")
-calc_fig7_p1_deps <- !file.exists (f)
-```
 
 ```{r fig7-p1-deps-calc, eval = calc_fig7_p1_deps}
 deps_p1 <- deps |>

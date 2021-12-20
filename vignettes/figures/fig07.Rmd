@@ -10,10 +10,14 @@ logmean <- function (x, ...) {
 
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) 
-recommended <- recommended_pkgs ()
 
 fig07_png <- file.path (here, "vignettes", "figures", "fig07.png")
 ```
+
+```{r fig07-rmcd-pkgs, eval = !file.exists (fig07_png)}
+recommended <- recommended_pkgs ()
+```
+
 
 ```{r fig7-call-coupling-deps}
 f <- file.path (v_data_dir, "fig07-coupling_deps.Rds")

@@ -10,6 +10,8 @@ logmean <- function (x, ...) {
 n_files_file <- file.path (v_data_dir, "fig03-n-files-data.Rds")
 n_files_exists <- file.exists (n_files_file)
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
+
+fig03_png <- file.path (here, "vignettes", "figures", "fig03.png")
 ```
 
 ```{r fig3-n-files-data, eval = !n_files_exists}
@@ -134,6 +136,13 @@ p2 <- x_per_pkg |>
            legend.background = element_rect(fill='transparent', colour='transparent'))
 ```
 
-```{r fig3, echo = FALSE, message = FALSE, fig.width = 7, fig.height = 3.5, fig.cap = "**Figure 3** (A) Number of files in different diretories per year (with legend in panel B). Solid lines represent loess-smoothed interpolations, while dashed lines are raw annual values (not CRAN snapshots). (B) Proportional increases in numbers of files per release."}
+```{r fig3-assemble, echo = FALSE, eval = !file.exists (fig03_png)}
+png (fig03_png, width = 7, height = 3.5, units = "in", res = 300)
 p1 + p2
+graphics.off ()
+```
+
+
+```{r fig3, echo = FALSE, message = FALSE, out.width = 700, fig.cap = "**Figure 3** (A) Number of files in different diretories per year (with legend in panel B). Solid lines represent loess-smoothed interpolations, while dashed lines are raw annual values (not CRAN snapshots). (B) Proportional increases in numbers of files per release."}
+knitr::include_graphics (fig03_png)
 ```

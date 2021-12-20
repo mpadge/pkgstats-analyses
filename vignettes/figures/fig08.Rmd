@@ -19,6 +19,8 @@ graph_data_file <- file.path (v_data_dir, "fig08-graph-metrics.Rds")
 graph_intern_data_file <- file.path (v_data_dir, "fig08-graph-metrics-intern.Rds")
 calc_graph_data <- !file.exists (graph_data_file)
 calc_graph_data_intern <- !file.exists (graph_intern_data_file)
+
+fig08_png <- file.path (here, "vignettes", "figures", "fig08.png")
 ```
 
 ```{r fig8-calc-graph-data, eval = calc_graph_data}
@@ -167,7 +169,7 @@ xs$what <- "annual"
 saveRDS (rbind (dat, xs), graph_intern_data_file)
 ```
 
-```{r fig8-construct, eval = TRUE}
+```{r fig8-construct, eval = !file.exists (fig08_png)}
 dat <- readRDS (graph_data_file)
 dat_cran <- dat |> filter (what == "cran_by_year")
 dat <- dat |> filter (what == "annual")
@@ -209,7 +211,7 @@ fig8_p2 <- ggplot (dat, aes (x = year)) +
                legend.background = element_rect(fill='transparent', colour='transparent'))
 ```
 
-```{r fig8-network-internal1}
+```{r fig8-network-internal1, eval = !file.exists (fig08_png)}
 dat <- readRDS (graph_intern_data_file)
 dat_cran <- dat |>
     filter (what == "cran_by_year") |>
@@ -243,7 +245,7 @@ s <- lm (n ~ year, data = s)$coefficients [2]
 ```
 
 
-```{r fig8-network-internal2}
+```{r fig8-network-internal2, eval = !file.exists (fig08_png)}
 dat <- readRDS (graph_intern_data_file)
 dat_cran <- dat |>
     filter (what == "cran_by_year") |>
@@ -282,6 +284,12 @@ fig8_p4 <- dat |>
 ```
 
 
-```{r fig8-assemble, echo = FALSE, message = FALSE, fig.width = 7, fig.height = 7, fig.cap = "**Figure 8** Network metrics for (A-B) the CRAN dependency network, and (C-D) Function call networks within packages."}
+```{r fig8-assemble, echo = FALSE, eval = !file.exists (fig08_png)}
+png (fig08_png, width = 7, height = 7, units = "in", res = 300)
 (fig8_p1 + fig8_p2) / (fig8_p3 + fig8_p4)
+graphics.off ()
+```
+
+```{r fig8-out, echo = FALSE, out.width = 700, fig.cap = "**Figure 8** Network metrics for (A-B) the CRAN dependency network, and (C-D) Function call networks within packages."}
+knitr::include_graphics (fig08_png)
 ```

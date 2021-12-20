@@ -5,11 +5,17 @@ here <- here::here ()
 v_data_dir <- file.path (here, "vignettes", "data")
 
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
+
+fig06_png <- file.path (here, "vignettes", "figures", "fig06.png")
 ```
 
 ```{r fig6-external-calls-data-file}
 f_fig6_exdat <- file.path (v_data_dir, "fig06-ext-calls.Rds")
 calc_ext_calls_dat <- !file.exists (f_fig6_exdat)
+cp_dat_file <- file.path (v_data_dir, "fig06-coupling-data.Rds")
+cp_dat_exists <- file.exists (cp_dat_file)
+f_fig6_deps <- file.path (v_data_dir, "fig06-deps.Rds")
+calc_fig6_deps <- !file.exists(f_fig6_deps)
 ```
 
 ```{r fig6-external-calls-data, eval = calc_ext_calls_dat}
@@ -21,13 +27,6 @@ x <- x [which (!(is.na (x$external_calls) | x$external_calls == "")), ]
 saveRDS (x, f_fig6_exdat)
 ```
 
-```{r fig6-load-exdat}
-x <- readRDS (f_fig6_exdat)
-```
-```{r fig6-deps-data-file}
-f_fig6_deps <- file.path (v_data_dir, "fig06-deps.Rds")
-calc_fig6_deps <- !file.exists(f_fig6_deps)
-```
 
 ```{r fig6-deps-calc, eval = calc_fig6_deps}
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
@@ -38,10 +37,8 @@ deps2$what <- "annual"
 deps <- rbind (deps1, deps2)
 saveRDS (deps, f_fig6_deps)
 ```
-```{r fig6-prepro}
+```{r fig6-prepro, eval = !file.exists (fig06_png)}
 recommended <- recommended_pkgs ()
-cp_dat_file <- file.path (v_data_dir, "fig06-coupling-data.Rds")
-cp_dat_exists <- file.exists (cp_dat_file)
 ```
 
 ```{r fig6-coupling-data-generate, eval = !cp_dat_exists}
@@ -57,7 +54,7 @@ saveRDS (cp_dat, cp_dat_file)
 
 
 
-```{r fig6-plot-base-rcmd-ctb}
+```{r fig6-plot-base-rcmd-ctb, eval = !file.exists (fig06_png)}
 deps <- readRDS (f_fig6_deps)
 deps <- deps [deps$category == "unique", ]
 deps_cran <- deps [deps$what == "cran_by_year", ]
@@ -77,7 +74,7 @@ calc_top10 <- !file.exists (f_top10)
 ```
 
 
-```{r fig6-dep-pkg-calls, eval = calc_top10}
+```{r fig6-dep-pkg-calls, eval = calc_top10 & !file.exists (fig06_png)}
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
     filter (!is.na (external_calls)) |>
     filter (external_calls != "")
@@ -117,7 +114,7 @@ deps <- deps |>
 saveRDS (deps, f_top10)
 ```
 
-```{r fig6-coupling-instability}
+```{r fig6-coupling-instability, eval = !file.exists (fig06_png)}
 # Values for total and unique are almost identical, so only show unique
 cp_dat <- readRDS (cp_dat_file) |>
     select (-c (total_median, unique_median)) |>
@@ -139,7 +136,7 @@ p2 <- ggplot (cp_dat, aes (x = year, y = instability, colour = what, lty = lty))
     ggtitle ("B: Coupling Instability")
 ```
 
-```{r fig6-deps-p2}
+```{r fig6-deps-p2, eval = !file.exists (fig06_png)}
 deps <- readRDS (f_top10)
 top <- deps |>
     group_by (package) |>
@@ -164,7 +161,17 @@ deps10 |>
            legend.background = element_rect(fill='transparent', colour='transparent')) +
     guides (color = guide_legend (ncol = 3)) -> p3
 ```
+```{r fig6-prop_top2, eval = file.exists (fig06_png)}
+prop_top2 <- 16.6
+```
 
-```{r fig6-assemble, fig.width = 7, fig.height = 7, fig.cap = "**Fig. 6** Dependency networks between packages over time."}
+
+```{r fig6-assemble, echo = FALSE, eval = !file.exists (fig06_png)}
+png (fig06_png, width = 7, height = 7, units = "in", res = 300)
 (p1 | p2) / p3
+graphics.off ()
+```
+
+```{r fig6-out, out.width = 700, fig.cap = "**Fig. 6** Dependency networks between packages over time."}
+knitr::include_graphics (fig06_png)
 ```

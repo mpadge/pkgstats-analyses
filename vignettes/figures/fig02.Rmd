@@ -11,6 +11,8 @@ fig2_calc_top10_data <- !file.exists (f_fig2_top10)
 fig2_calc_tr_data <- !file.exists (f_fig2_tr)
 
 fig02_png <- file.path (here, "vignettes", "figures", "fig02.png")
+fig2_calc_top10_data <- fig2_calc_top10_data & !file.exists (fig02_png)
+fig2_calc_tr_data <- fig2_tr_data & !file.exists (fig02_png)
 ```
 
 ```{r fig2_top10_data, eval = fig2_calc_top10_data}

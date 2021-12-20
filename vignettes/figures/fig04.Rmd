@@ -48,6 +48,7 @@ readRDS (f) |>
 ```{r fig4-fns-per-year-file}
 f <- file.path (v_data_dir, "fig04-fns-per-year.Rds")
 fns_per_year_exists <- file.exists (f)
+calcfns_per_year <- !fns_per_year_exists & !file.exists (fig04_png)
 ```
 ```{r fig4-nfns-per-year, eval = !fns_per_year_exists}
 fns_per_year <- function (x, year = 2015) {
@@ -138,7 +139,7 @@ xs$what <- "annual"
 saveRDS (rbind (dat, xs), f)
 ```
 
-```{r fig4A-loc-per-year-plot}
+```{r fig4A-loc-per-year-plot, eval = !file.exists (fig04_png)}
 loc <- readRDS (f)
 loc_cran <- loc |>
     filter (what == "cran_by_year") |>
@@ -170,7 +171,7 @@ loc |>
         ggtitle ("A: Lines of Code") -> p1
 ```
 
-```{r fig4B-loc-per-fn}
+```{r fig4B-loc-per-fn, eval = !file.exists (fig04_png)}
 loc_cran <- readRDS (f) |>
     filter (what == "cran_by_year") |>
     select (c (year, loc_per_fn_r_exp_mn, loc_per_fn_r_not_exp_mn,
@@ -208,7 +209,7 @@ slope_src <- lm (src ~ year, data = x15)$coefficients [2]
 #1 / slope_R_exp; 1 / slope_R_non; 1 / slope_src
 ```
 
-```{r fig4C-fns-per-year-plot}
+```{r fig4C-fns-per-year-plot, eval = !file.exists (fig04_png)}
 nfns_cran <- readRDS (f) |>
     filter (what == "cran_by_year") |>
     select (c (year, n_fns_r_exported, n_fns_r_not_exported, n_fns_src)) |>
@@ -235,7 +236,7 @@ readRDS (f) |>
         ggtitle ("C: Total functions") -> p3
 ```
 
-```{r fig4D-fns-per-file}
+```{r fig4D-fns-per-file, eval = !file.exists (fig04_png)}
 nfns_cran <- readRDS (f) |>
     filter (what == "cran_by_year") |>
     select (c (year, n_fns_per_file_r, n_fns_per_file_src)) |>

@@ -17,7 +17,7 @@ x$doclines_per_fn_exp_mn [which (!is.finite (x$doclines_per_fn_exp_mn))] <- NA
 fig05_png <- file.path (here, "vignettes", "figures", "fig05.png")
 ```
 
-```{r fig5-nfns-per-release}
+```{r fig5-nfns-per-release, eval = !file.exists (fig05_png)}
 x_rel <- x |>
     group_by (seq) |>
     summarise (
@@ -48,7 +48,7 @@ x_rel <- x |>
        docchars_per_par_exp_md = logmean (docchars_per_par_exp_md, na.rm = TRUE))
 ```
 
-```{r fig5A-loc-per-seq-plot}
+```{r fig5A-loc-per-seq-plot, eval = !file.exists (fig05_png)}
 x_rel |>
     select (c (seq, loc, loc_R, loc_src, loc_inst)) |>
     rename (total = loc,
@@ -69,7 +69,7 @@ x_rel |>
         ggtitle ("A: Lines of Code") -> p1
 ```
 
-```{r fig5B-loc-per-fn}
+```{r fig5B-loc-per-fn, eval = !file.exists (fig05_png)}
 x_rel |>
     select (c (seq, loc_per_fn_r_exp_mn, loc_per_fn_r_not_exp_mn,
                loc_per_fn_src_mn)) |>
@@ -90,7 +90,7 @@ x_rel |>
         ggtitle ("B: LoC per fn") -> p2
 ```
 
-```{r fig5C-fns-per-seq-plot}
+```{r fig5C-fns-per-seq-plot, eval = !file.exists (fig05_png)}
 x_rel |>
     select (c (seq, n_fns_r_exported, n_fns_r_not_exported, n_fns_src)) |>
     rename (r_exp = n_fns_r_exported,
@@ -110,7 +110,7 @@ x_rel |>
         ggtitle ("C: Total functions") -> p3
 ```
 
-```{r fig5D-fns-per-file}
+```{r fig5D-fns-per-file, eval = !file.exists (fig05_png)}
 x_rel |>
     select (c (seq, n_fns_per_file_r, n_fns_per_file_src)) |>
     rename (R = n_fns_per_file_r,

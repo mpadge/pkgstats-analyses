@@ -11,6 +11,8 @@ f_fig1_lic <- file.path (v_data_dir, "fig01-lic.Rds")
 calc_fig1_lic <- !file.exists (f_fig1_lic)
 
 fig01_png <- file.path (here, "vignettes", "figures", "fig01.png")
+calc_fig1_aut_ctb <- calc_fig1_aut_ctb & !file.exists (fig01_png)
+calc_fig1_lic <- !file.exists (f_fig1_lic) & !file.exists (fig01_png)
 ```
 
 ```{r fig1-aut-ctb, eval = calc_fig1_aut_ctb}

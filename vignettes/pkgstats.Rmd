@@ -620,14 +620,14 @@ emergence of rOpenSci as provider of the only URL to come close to within
 The temporal development of numbers of files manifest several notable
 characteristics (Figure 3). Unsurprisingly, R packages have always been
 dominated by files in the `R/` directory, numbers of which increased
-considerably up to around 2010, after which they have generally stabilised at a
-mean value of around 20 files (Fig. 3A). The `data` and `vignettes` directories
-are the only places within R packages in which numbers of files have remained
-relatively constant over the preceding 20+ years. Packages generally had very
-few files in the `inst` directory prior to 2010, after which they increased
-until around 2015, before decreasing again more recently. The two
-sub-directories in which numbers of files have increased most significantly are
-`src` and `tests`, with the latter increase particularly distinct, clearly
+considerably up to around 2010, after which they have generally stabilised at
+mean values of around 13-15 files (Fig. 3A). The `vignettes`
+directory is the only place within R packages in which numbers of files
+have remained relatively constant over the preceding 20+ years. Packages
+generally had very few files in the `inst` directory prior to 2010, after which
+they increased until around 2015, before decreasing again more recently. The
+two sub-directories in which numbers of files have increased most significantly
+are `src` and `tests`, with the latter increase particularly distinct, clearly
 indicating that packages have become progressively better tested.
 
 
@@ -635,7 +635,7 @@ indicating that packages have become progressively better tested.
 ```
 
 Figure 3B shows equivalent relative changes within individual packages across
-successive releases. The changes there are proportional changes in numbers of
+successive releases. That panel depicts proportional changes in numbers of
 files in each of the nominated directories, starting with the change between
 the second and first release (a "Release sequence" of 2). Although numbers of
 files generally increase with each new release, *rates* of increase tend to
@@ -978,8 +978,8 @@ years before more recently declining to well under 3 spaces.
 
 Each R function in 1998 had an average of six parameters, yet this declined
 very rapidly to under four within two years. Numbers of parameters have
-progressively increased since then, yet still barely exceeds an average of four
-parameters per function. Parameter documentation has followed an almost
+progressively increased since then, yet still barely exceeding an average of
+four parameters per function. Parameter documentation has followed an almost
 identical trend, increasing from under 70 characters per parameter to just over
 80. In contrast, total numbers of documentation lines per function initially
 increased until around 2010, at almost 60 lines, before decreasing more

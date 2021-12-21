@@ -51,6 +51,8 @@ dependencies <- function (x, cran_by_year = TRUE) {
         deps0 <- deps
         gini <- do.call (rbind, lapply (deps, function (i) i$gini))
         deps <- do.call (rbind, lapply (deps, function (i) i$deps))
+
+        deps <- list (deps = deps, gini = gini)
     } else {
         deps <- dependencies_one_year (x, recommended, cran_by_year = cran_by_year)
     }

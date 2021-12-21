@@ -24,6 +24,7 @@ repos:
           (.*/|)\.pre-commit-.*|
           .*\.[rR]|
           .*\.Rproj|
+          .*\.png|
           .*\.py|
           .*\.feather|
           .*\.rds|

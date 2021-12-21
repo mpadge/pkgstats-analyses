@@ -194,6 +194,6 @@ png (fig06_png, width = 7, height = 7, units = "in", res = 300)
 graphics.off ()
 ```
 
-```{r fig6-out, out.width = 700, fig.cap = "**Fig. 6** Dependency networks between packages over time."}
+```{r fig6-out, out.width = 700, fig.cap = "**Fig. 6** Dependency networks between packages over time. (A) Proportions of function calls to the three categories of packages. (B) Coupling instability from package funciton calls. (C) Gini coefficients from both package dependency networks, and numbers of funciton calls. (D) Aggregate numbers of calls makde to the top ten imported packages."}
 knitr::include_graphics (fig06_png)
 ```

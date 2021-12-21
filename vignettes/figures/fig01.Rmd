@@ -123,6 +123,6 @@ p1 | p2
 graphics.off ()
 ```
 
-```{r fig1-num_aut_ctb2, echo = FALSE, out.width = 700, fig.cap = "**Figure 1.** second try"}
+```{r fig1-num_aut_ctb2, echo = FALSE, out.width = 700, fig.cap = "**Figure 1.** Annual developments of metadata from package 'DESCRIPTION' files."}
 knitr::include_graphics (fig01_png)
 ```

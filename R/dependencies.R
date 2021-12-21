@@ -124,6 +124,17 @@ dependencies_one_year <- function (x, recommended, year = 2018, cran_by_year = T
                        n_total = n_total_base + n_total_rmcd + n_total_ctb,
                        n_unique = n_unique_base + n_unique_rmcd + n_unique_ctb)
 
+    gini_lin <- function (n) {
+        sum (abs (dist (n, method = "manhattan"))) /
+            (2 * length (n) ^ 2 * mean (n, na.rm = TRUE))
+    }
+    gini_log <- function (n) {
+        n <- log10 (n)
+        n <- n [which (is.finite (n))]
+        sum (abs (dist (n, method = "manhattan"))) /
+            (2 * length (n) ^ 2 * mean (n, na.rm = TRUE))
+    }
+
     if (!cran_by_year) {
 
         deps <- dplyr::group_by (deps, year) |>
@@ -132,7 +143,11 @@ dependencies_one_year <- function (x, recommended, year = 2018, cran_by_year = T
                               contributed_total = sum (n_total_ctb) / sum (n_total),
                               base_unique = sum (n_unique_base) / sum (n_unique),
                               recommended_unique = sum (n_unique_rmcd) / sum (n_unique),
-                              contributed_unique = sum (n_unique_ctb) / sum (n_unique))
+                              contributed_unique = sum (n_unique_ctb) / sum (n_unique),
+                              gini_lin_tot = gini_lin (n_total_ctb),
+                              gini_lin_unique = gini_lin (n_unique_ctb),
+                              gini_log_tot = gini_log (n_total_ctb),
+                              gini_log_unique = gini_log (n_unique_ctb))
     } else {
 
         deps <- deps |>
@@ -142,7 +157,11 @@ dependencies_one_year <- function (x, recommended, year = 2018, cran_by_year = T
                               contributed_total = sum (n_total_ctb) / sum (n_total),
                               base_unique = sum (n_unique_base) / sum (n_unique),
                               recommended_unique = sum (n_unique_rmcd) / sum (n_unique),
-                              contributed_unique = sum (n_unique_ctb) / sum (n_unique))
+                              contributed_unique = sum (n_unique_ctb) / sum (n_unique),
+                              gini_lin_tot = gini_lin (n_total_ctb),
+                              gini_lin_unique = gini_lin (n_unique_ctb),
+                              gini_log_tot = gini_log (n_total_ctb),
+                              gini_log_unique = gini_log (n_unique_ctb))
     }
 
     deps <- tidyr::pivot_longer (deps,

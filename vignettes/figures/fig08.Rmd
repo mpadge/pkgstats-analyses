@@ -1,6 +1,12 @@
 
 
-```{r fig8-pre-load}
+<!--
+
+# dependency networks over time
+
+-->
+
+```{r fig8-precalc}
 library ("pkgstatsAnalyses")
 here <- here::here ()
 v_data_dir <- file.path (here, "vignettes", "data")
@@ -9,195 +15,281 @@ logmean <- function (x, ...) {
 }
 
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
-x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) 
+graph_data_file <- file.path (v_data_dir, "fig08-graph-metrics.Rds")
+graph_intern_data_file <- file.path (v_data_dir, "fig08-graph-metrics-intern.Rds")
 
 fig08_png <- file.path (here, "vignettes", "figures", "fig08.png")
-
-f <- file.path (v_data_dir, "fig08_deps_p1.Rds")
-calc_fig8_p1_deps <- !file.exists (f) & !file.exists (fig08_png)
+calc_graph_data <- !file.exists (graph_data_file) & !file.exists (fig08_png)
+calc_graph_data_intern <- !file.exists (graph_intern_data_file) & !file.exists (fig08_png)
 ```
 
-```{r fig08-rmcd-pkgs, eval = !file.exists (fig08_png)}
-recommended <- recommended_pkgs ()
-```
+```{r fig8-calc-graph-data, eval = calc_graph_data}
+# graph metrics for inter-package dependency networks
+xraw <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
 
+graph_one_year <- function (xraw, year = 2015, cran_by_year = TRUE) {
 
-```{r fig8-call-coupling-deps, eval = !file.exists (fig08_png)}
-f <- file.path (v_data_dir, "fig08-coupling_deps.Rds")
-if (!file.exists (f)) {
-    deps <- coupling_dependencies (x)
-    saveRDS (deps, f)
+    if (cran_by_year) {
+        x <- xraw |>
+            filter (year <= !!year) |>
+            group_by (package) |>
+            slice_max (date)
+    } else {
+        x <- xraw |>
+            filter (year == !!year)
+    }
+
+    x <- x [which (!(is.na (x$external_calls) | x$external_calls == "")), ]
+    x <- x [which (!(x$imports == "NA" | nchar (x$imports) == 0L)), ]
+    if (nrow (x) == 0) {
+        return (NULL)
+    }
+
+    imports <- lapply (seq (nrow (x)), function (i)
+                          data.frame (to = x$package [i],
+                                      from = strsplit (x$imports [i], ",") [[1]]))
+    imports <- do.call (rbind, imports)
+    imports$from <- gsub ("^\\s*|\\s*$", "", imports$from)
+    imports$to <- gsub ("^\\s*|\\s*$", "", imports$to)
+    imports <- imports [which (!duplicated (imports)), ]
+
+    graph_from_data_frame (imports)
 }
-deps <- readRDS (f)
-```
 
+graph_metrics <- function (g) {
 
-```{r fig8-p1-deps-calc, eval = calc_fig8_p1_deps}
-deps_p1 <- deps |>
-    group_by (from, version) |>
-    summarise (n_base = n_unique [to == "base"],
-               n_recommended = sum (n_unique [to %in% recommended]),
-               n_contrib = sum (n_unique [!to %in% c ("base", recommended)]),
-               .groups = "keep") |>
-    mutate (n_total = n_base + n_recommended + n_contrib,
-            n_base = n_base / n_total,
-            n_recommended = n_recommended / n_total,
-            n_contrib = n_contrib / n_total) |>
-    group_by (from) |>
-    summarise (n_base = n_base / lag (n_base),
-               n_recommended = n_recommended / lag (n_recommended),
-               n_contrib = n_contrib / lag (n_contrib),
-               seq = seq_along (n_base),
-               .groups = "keep") |>
-    mutate_at(vars (n_base, n_recommended, n_contrib),
-              ~replace (., !is.finite (.), NA)) |>
-    group_by (seq) |>
-    summarise (n_base = mean (n_base, na.rm = TRUE),
-               n_recommended = mean (n_recommended, na.rm = TRUE),
-               n_contrib = mean (n_contrib, na.rm = TRUE)) |>
-    pivot_longer (cols = c (n_base, n_recommended, n_contrib)) |>
-    filter (is.finite (value))
+    dd_in <- degree (g, mode = "in")
+    dd_in_zero <- length (which (dd_in < 1e-10)) / length (dd_in)
+    dd_in_mean_no0 <- logmean (dd_in [which (dd_in > 1e-10)])
+    dd_in_mean <- logmean (dd_in)
 
-saveRDS (deps_p1, f)
-```
+    dd_out <- degree (g, mode = "out")
+    dd_out_zero <- length (which (dd_out < 1e-10)) / length (dd_out)
+    dd_out_mean_no0 <- logmean (dd_out [which (dd_out > 1e-10)])
+    dd_out_mean <- logmean (dd_out)
 
-```{r fig8-alt-p1, eval = FALSE}
-deps_p1 <- deps |>
-    group_by (from) |>
-    mutate (seq = seq_along (from)) |>
-    group_by (seq) |>
-    summarise (n_base = sum (n_unique [to == "base"]),
-               n_recommended = sum (n_unique [to %in% recommended]),
-               n_contrib = sum (n_unique [!to %in% c ("base", recommended)]),
-               .groups = "keep") |>
-    mutate (n_total = n_base + n_recommended + n_contrib,
-            n_base = n_base / n_total,
-            n_recommended = n_recommended / n_total,
-            n_contrib = n_contrib / n_total)
-deps_p1 |>
-    pivot_longer (c (n_base, n_recommended, n_contrib)) |>
-    filter (seq <= 50) |>
-    ggplot (aes (x = seq, y = value, colour = name)) +
-        geom_line (lty = 2) +
-        geom_smooth (method = "loess", formula = "y ~ x", se = FALSE, lwd = 0.7) +
-        theme (legend.title = element_blank(),
-               legend.position = c (0.50, 0.9),
-               legend.background = element_rect(fill='transparent', colour='transparent')) +
-        xlab ("Release sequence") +
-        ylab ("Relative changes per release") +
-        ggtitle ("A: Change in calls") -> p1
-```
-
-
-
-
-```{r fig8-p1, eval = !file.exists (fig08_png)}
-readRDS (f) |>
-    filter (seq <= 50 & name != "n_contrib") |>
-    ggplot (aes (x = seq, y = value, colour = name)) +
-        geom_line (lty = 2) +
-        geom_smooth (method = "loess", formula = "y ~ x", se = FALSE, lwd = 0.7) +
-        theme (legend.title = element_blank(),
-               legend.position = c (0.50, 0.9),
-               legend.background = element_rect(fill='transparent', colour='transparent')) +
-        xlab ("Release sequence") +
-        ylab ("Relative changes per release") +
-        ggtitle ("A: Change in calls") -> p1
-```
-
-
-```{r fig8-load-couplings-releases, eval = !file.exists (fig08_png)}
-# couplings_releases data are calculated in the main pkg fn
-# `couplings_releases` in R/couplings.R, and uploaded as binary to GH release.
-f <- file.path (here, "data-raw", "couplings_releases.Rds")
-if (!file.exists (f)) {
-    u <- paste0 ("https://github.com/mpadge/pkgstats-analyses/",
-                 "releases/download/v0.0.1/",
-                 "couplings_releases.Rds")
-    download.file (u, f)
+    d <- distances (g)
+    d [!is.finite (d)] <- NA
+    stats <- apply (d, 2, function (i) c (median (i, na.rm = TRUE),
+                                          mean (i, na.rm = TRUE)))
+    c (dd_in_zero = dd_in_zero,
+       dd_in_mean_no0 = dd_in_mean_no0,
+       dd_in_mean = dd_in_mean,
+       dd_out_zero = dd_out_zero,
+       dd_out_mean_no0 = dd_out_mean_no0,
+       dd_out_mean = dd_out_mean,
+       re = reciprocity (g),
+       ad = assortativity_degree (g),
+       cb = centr_betw(g, directed = FALSE)$centralization,
+       cd = centr_degree(g)$centralization,
+       d_med = median (stats [1, ]),
+       d_mean = logmean (stats [2, ]))
 }
+
+years <- sort (unique (xraw$year))
+dat <- lapply (years, function (y) {
+    g1 <- graph_one_year (xraw, y, cran_by_year = TRUE)
+    if (!is.null (g1)) {
+        g1 <- c (year = y, graph_metrics (g1), what = 0)
+    }
+    g2 <- graph_one_year (xraw, y, cran_by_year = FALSE)
+    if (!is.null (g2)) {
+        g2 <- c (year = y, graph_metrics (g2), what = 1)
+    }
+    return (rbind (g1, g2))
+       })
+dat <- data.frame (do.call (rbind, dat))
+dat$what [dat$what == 0] <- "cran_by_year"
+dat$what [dat$what == 1] <- "annual"
+
+saveRDS (dat, graph_data_file)
 ```
 
-```{r fig8-couplings-releases, eval = !file.exists (fig08_png)}
-# unique & total instabilities are virtually identical
-deps_p2 <- readRDS (f)
-#deps_p2$efferent_unique [deps_p2$efferent_unique == 0L] <- NA_integer_
-deps_p2 <- deps_p2 |>
-    group_by (seq) |>
-    summarise (instability = logmean (instability_unique, na.rm = TRUE),
-               efferent = logmean (efferent_unique, na.rm = TRUE))
-coeff_p2 <- max (deps_p2$efferent, na.rm = TRUE) / max (deps_p2$instability, na.rm = TRUE)
-colours_p2 <- c ("instability" = "#F8766D",
-                 "efferent" = "#00BFC4")
-deps_p2 |>
-    filter (seq <= 100) |>
-    ggplot (aes (x = seq)) +
-        geom_line (aes (y = instability, col = "instability")) +
-        geom_line (aes (y = efferent / coeff_p2, col = "efferent")) +
-        scale_y_continuous (
-            name = "instability",
-            sec.axis = sec_axis (~.*coeff_p2, name = "Efferent calls")) +
-        xlab ("Release sequence") +
-        scale_colour_manual (values = colours_p2) +
-        theme (legend.title = element_blank(),
-           legend.position = c (0.80, 0.8),
-           legend.background = element_rect(fill='transparent', colour='transparent')) +
-        ggtitle ("B: Coupling instability") -> p2
+```{r fig8-intra-pkg-network-stats, eval = calc_graph_data_intern}
+xraw <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
+dat_one_year <- function (xraw, year = 2015) {
+
+    x <- xraw |>
+        filter (year <= !!year) |>
+        group_by (package) |>
+        slice_max (date)
+
+    c (year = year,
+       n_edges = logmean (x$n_edges, na.rm = TRUE),
+       n_edges_r = logmean (x$n_edges_r, na.rm = TRUE),
+       n_edges_src = logmean (x$n_edges_src, na.rm = TRUE),
+       n_edges_rel = logmean (x$n_edges / (x$n_fns_r + x$n_fns_src), na.rm = TRUE),
+       n_edges_rel_r = logmean (x$n_edges_r / x$n_fns_r, na.rm = TRUE),
+       n_edges_rel_src = logmean (x$n_edges_src / x$n_fns_src, na.rm = TRUE),
+       n_clusters = logmean (x$n_clusters, na.rm = TRUE),
+       centr_dir_mn = logmean (x$centrality_dir_mn, na.rm = TRUE),
+       centr_dir_md = logmean (x$centrality_dir_md, na.rm = TRUE),
+       centr_dir_mn_no0 = logmean (x$centrality_dir_mn_no0, na.rm = TRUE),
+       centr_dir_md_no0 = logmean (x$centrality_dir_md_no0, na.rm = TRUE),
+       centr_undir_mn = logmean (x$centrality_undir_mn, na.rm = TRUE),
+       centr_undir_md = logmean (x$centrality_undir_md, na.rm = TRUE),
+       centr_undir_mn_no0 = logmean (x$centrality_undir_mn_no0, na.rm = TRUE),
+       centr_undir_md_no0 = logmean (x$centrality_undir_md_no0, na.rm = TRUE),
+       central_edges_dir = logmean (x$num_terminal_edges_dir, na.rm = TRUE),
+       term_edges = logmean (x$num_terminal_edges_undir, na.rm = TRUE),
+       node_degree_mn = logmean (x$node_degree_mn, na.rm = TRUE),
+       node_degree_md = logmean (x$node_degree_md, na.rm = TRUE),
+       node_degree_max = logmean (x$node_degree_max, na.rm = TRUE))
+}
+years <- sort (unique (xraw$year))
+dat <- lapply (years, function (y) dat_one_year (xraw, y))
+dat <- data.frame (do.call (rbind, dat))
+dat$what <- "cran_by_year"
+
+xs <- xraw |>
+    group_by (year) |>
+    summarise (
+        n_edges = logmean (n_edges, na.rm = TRUE),
+        n_edges_r = logmean (n_edges_r, na.rm = TRUE),
+        n_edges_src = logmean (n_edges_src, na.rm = TRUE),
+        n_edges_rel = logmean (n_edges / (n_fns_r + n_fns_src), na.rm = TRUE),
+        n_edges_rel_r = logmean (n_edges_r / n_fns_r, na.rm = TRUE),
+        n_edges_rel_src = logmean (n_edges_src / n_fns_src, na.rm = TRUE),
+        n_clusters = logmean (n_clusters, na.rm = TRUE),
+        centr_dir_mn = logmean (centrality_dir_mn, na.rm = TRUE),
+        centr_dir_md = logmean (centrality_dir_md, na.rm = TRUE),
+        centr_dir_mn_no0 = logmean (centrality_dir_mn_no0, na.rm = TRUE),
+        centr_dir_md_no0 = logmean (centrality_dir_md_no0, na.rm = TRUE),
+        centr_undir_mn = logmean (centrality_undir_mn, na.rm = TRUE),
+        centr_undir_md = logmean (centrality_undir_md, na.rm = TRUE),
+        centr_undir_mn_no0 = logmean (centrality_undir_mn_no0, na.rm = TRUE),
+        centr_undir_md_no0 = logmean (centrality_undir_md_no0, na.rm = TRUE),
+        central_edges_dir = logmean (num_terminal_edges_dir, na.rm = TRUE),
+        term_edges = logmean (num_terminal_edges_undir, na.rm = TRUE),
+        node_degree_mn = logmean (node_degree_mn, na.rm = TRUE),
+        node_degree_md = logmean (node_degree_md, na.rm = TRUE),
+        node_degree_max = logmean (node_degree_max, na.rm = TRUE))
+xs$what <- "annual"
+
+saveRDS (rbind (dat, xs), graph_intern_data_file)
 ```
 
-```{r fig8-afferent, eval = !file.exists (fig08_png)}
-# afferent fn imports by other pkgs
-deps_p3 <- readRDS (f)
-deps_p3$afferent_fns_per_pkg [which (is.na (deps_p3$afferent_fns_per_pkg))] <- 0L
-deps_p3 <- deps_p3 |>
-    group_by (seq) |>
-    summarise (packages = logmean (afferent_npkgs),
-               fns_per_pkg = logmean (afferent_fns_per_pkg)) |>
-    filter (seq <= 50)
-coeff_p3 <- max (deps_p3$fns_per_pkg) / max (deps_p3$packages)
-# colours from `ggplot_build(p1)$data`:
-colours_p3 <- c ("fns_per_pkg" = "#F8766D",
-                 "packages" = "#00BFC4")
-p3 <- ggplot (deps_p3, aes (x = seq)) +
-        geom_line (aes (y = packages, col = "packages")) +
-        geom_line (aes (y = fns_per_pkg / coeff_p3, col = "fns_per_pkg")) +
+```{r fig8-construct, eval = !file.exists (fig08_png)}
+dat <- readRDS (graph_data_file)
+dat_cran <- dat |> filter (what == "cran_by_year")
+dat <- dat |> filter (what == "annual")
+coeff_fig8_p1 <- max (dat$dd_in_zero) / max (dat$dd_in_mean)
+colours_fig8_p1 <- c ("vert_degree" = "red",
+                      "not_imported" = "blue")
+
+fig8_p1 <- ggplot (dat, aes (x = year)) +
+        geom_line (aes (y = dd_in_mean, col = "vert_degree")) +
+        geom_line (aes (y = dd_in_zero / coeff_fig8_p1, col = "not_imported")) +
+        geom_line (data = dat_cran, aes (y = dd_in_mean, col = "vert_degree"), lty = 2) +
+        geom_line (data = dat_cran, aes (y = dd_in_zero / coeff_fig8_p1, col = "not_imported"), lty = 2) +
+        ylab ("Vertex degree") +
         scale_y_continuous (
-            name = "fns_per_pkg",
-            sec.axis = sec_axis (~.*coeff_p3, name = "Imported fns / pkg")) +
-        xlab ("Release sequence") +
-        scale_colour_manual (values = colours_p3) +
-        theme (legend.title = element_blank(),
-               legend.position = c (0.15, 0.5),
-               legend.background = element_rect(fill='transparent', colour='transparent')) +
-        ggtitle ("C: Imports by other pkgs")
+            sec.axis = sec_axis (~.*coeff_fig8_p1, name = "Prop. non-imported pkgs")) +
+        ggtitle ("A: CRAN pkg deps") +
+        theme (legend.title = element_blank (),
+               legend.position = c (0.2, 0.9),
+               legend.background = element_rect(fill='transparent', colour='transparent'))
+
+coeff_fig8_p2 <- max (dat$d_mean) / max (dat$cb)
+colours_fig8_p2 <- c ("centr_betw" = "red",
+                      "centr_degree" = "green",
+                      "mean_dist" = "blue")
+fig8_p2 <- ggplot (dat, aes (x = year)) +
+        geom_line (aes (y = cb, col = "centr_betw")) +
+        geom_line (aes (y = cd, col = "centr_degree")) +
+        geom_line (aes (y = d_mean / coeff_fig8_p2, col = "mean_dist")) +
+        geom_line (data = dat_cran, aes (y = cb, col = "centr_betw"), lty = 2) +
+        geom_line (data = dat_cran, aes (y = cd, col = "centr_degree"), lty = 2) +
+        geom_line (data = dat_cran, aes (y = d_mean / coeff_fig8_p2, col = "mean_dist"), lty = 2) +
+        ylab ("centrality") +
+        scale_y_continuous (
+            sec.axis = sec_axis (~.*coeff_fig8_p2, name = "Mean distance")) +
+        ggtitle ("B: CRAN network metrics") +
+        #guides (color = guide_legend (ncol = 2)) +
+        theme (legend.title = element_blank (),
+               legend.position = c (0.7, 0.9),
+               legend.background = element_rect(fill='transparent', colour='transparent'))
+```
+
+```{r fig8-network-internal1, eval = !file.exists (fig08_png)}
+dat <- readRDS (graph_intern_data_file)
+dat_cran <- dat |>
+    filter (what == "cran_by_year") |>
+    select (year, starts_with ("n_")) |>
+    rename (total = n_edges_rel, R = n_edges_rel_r, src = n_edges_rel_src) |>
+    select (year, total, R, src, n_clusters) |>
+    mutate (R = 10 * R, total = 10 * total) |>
+    pivot_longer (c (total, R, src, n_clusters))
+fig8_p3 <- dat |>
+    filter (what == "annual") |>
+    select (year, starts_with ("n_")) |>
+    rename (total = n_edges_rel, R = n_edges_rel_r, src = n_edges_rel_src) |>
+    select (year, total, R, src, n_clusters) |>
+    mutate (R = 10 * R, total = 10 * total) |>
+    pivot_longer (c (total, R, src, n_clusters)) |>
+    ggplot (aes (x = year, y = value, colour = name)) +
+        geom_line () +
+        #geom_line (data = dat_cran, lty = 2) +
+        ylab ("Ratio edges/vertices") +
+        ggtitle ("C: Pkg edges and clusters") +
+        guides (color = guide_legend (ncol = 2)) +
+        theme (legend.title = element_blank (),
+               legend.position = c (0.5, 0.15),
+               legend.background = element_rect(fill='transparent', colour='transparent'))
+s <- dat |>
+    filter (what == "annual") |>
+    select (year, n_edges_rel) |>
+    rename (n = n_edges_rel)
+s <- lm (n ~ year, data = s)$coefficients [2]
+#1 / s
+```
+
+
+```{r fig8-network-internal2, eval = !file.exists (fig08_png)}
+dat <- readRDS (graph_intern_data_file)
+dat_cran <- dat |>
+    filter (what == "cran_by_year") |>
+    select (year, centr_dir_mn, node_degree_mn, term_edges) |>
+    rename (centr = centr_dir_mn,
+            vert_degree = node_degree_mn) |>
+    mutate (vert_degree = vert_degree * 10)
+coeff_fig8_p4 <- max (dat$term_edges) / max (dat$centr_dir_mn)
+coeff_fig8_p4 <- max (dat$centr_dir_mn) / max (dat$term_edges)
+colours_fig8_p4 <- c ("centr" = "red",
+                      "vert_degree" = "green",
+                      "term_edges" = "blue")
+
+fig8_p4 <- dat |>
+    filter (what == "annual") |>
+    select (year, centr_dir_mn, node_degree_mn, term_edges) |>
+    rename (centr = centr_dir_mn,
+            vert_degree = node_degree_mn) |>
+    mutate (vert_degree = vert_degree * 5) |>
+    ggplot (aes (x = year)) +
+        geom_line (aes (y = centr / coeff_fig8_p4, col = "centr")) +
+        geom_line (aes (y = vert_degree, col = "vert_degree")) +
+        geom_line (aes (y = term_edges, col = "term_edges")) +
+        #geom_line (data = dat_cran, aes (y = centr_undir, col = "centr_undir"), lty = 2) +
+        #geom_line (data = dat_cran, aes (y = centr_dir, col = "centr_dir"), lty = 2) +
+        #geom_line (data = dat_cran, aes (y = vert_degree / coeff_fig8_p4, col = "vert_degree"), lty = 2) +
+        #geom_line (data = dat_cran, aes (y = term_edges / coeff_fig8_p4, col = "term_edges"), lty = 2) +
+        ylab ("Vert. degree (*5) / Term. edges") +
+        scale_y_continuous (
+            sec.axis = sec_axis (~.*coeff_fig8_p4, name = "Centrality")) +
+        ggtitle ("D: Pkg centrality metrics") +
+        guides (color = guide_legend (ncol = 2)) +
+        theme (legend.title = element_blank (),
+               legend.position = c (0.5, 0.37),
+               legend.background = element_rect(fill='transparent', colour='transparent'))
 ```
 
 
 ```{r fig8-assemble, echo = FALSE, eval = !file.exists (fig08_png)}
 png (fig08_png, width = 7, height = 7, units = "in", res = 300)
-(p1 | p2) / p3
+(fig8_p1 + fig8_p2) / (fig8_p3 + fig8_p4)
 graphics.off ()
 ```
 
-```{r fig8-out, out.width = 700, fig.cap = "**Fig. 7** Dependency networks between packages over sequential releases. (A) Proportional change in numbers of calls to base and recommended packages between successive releases. Solid lines show loess-smoothed interpolations, while dashed lines show raw values (and not values from cran snapshots). (B) Coupling instability. (C) Average numbers of functions from each package imported by other packages, and averge numbers of times packages are imported by other packages."}
+```{r fig8-out, echo = FALSE, out.width = 700, fig.cap = "**Figure 8** Network metrics for (A-B) the CRAN dependency network, and (C-D) Function call networks within packages."}
 knitr::include_graphics (fig08_png)
-```
-
-```{r fig8-nfns-vs-nimports, eval = FALSE}
-cp <- readRDS (f) |>
-    group_by (seq) |>
-    slice_max (seq)
-x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
-    group_by (date) |>
-    slice_max (date) |>
-    ungroup () |>
-    select (package, n_fns_r_exported)
-cp <- left_join (cp, x, by = "package")
-tmp <- data.frame (aff = log10 (cp$afferent_unique),
-                   nfns = log10 (cp$n_fns_r_exported)) |>
-    filter (is.finite (aff) & is.finite (nfns))
-ggplot (tmp, aes (x = nfns, y = aff)) +
-    geom_hex () +
-    geom_smooth (method = "lm", formulat = "y ~ x")
-mod <- lm (aff ~ nfns, data = tmp)
 ```

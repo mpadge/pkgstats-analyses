@@ -836,7 +836,7 @@ releases, relative rates of change approach the stable level of 1, and
 proportions to these three categories of packages remain relatively stable.
 
 
-```{r fig08, child = "figures/fig08.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
+```{r fig07, child = "figures/fig07.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
 Figure 7B shows the average trajectory of coupling instability for individual
@@ -885,7 +885,7 @@ dependency network has nevertheless progressively increased, especially since
 2015, indicating that those packages which are imported by others have been
 imported by increasing numbers of other packages.
 
-```{r fig09, child = "figures/fig09.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
+```{r fig08, child = "figures/fig08.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
 Such an increase in average numbers of imports must increase the overall
@@ -936,7 +936,7 @@ equivalent increase in Fig. 9A after 224 releases, indicating that decreases in
 internal connectivity through increasing dominance of recently-released
 packages far outweighs compensatory decreases through packages maturing.
 
-```{r fig10, child = "figures/fig10.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
+```{r fig09, child = "figures/fig09.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
 Finally, centrality metrics change dramatically as packages mature (Fig. 9B),
@@ -962,7 +962,7 @@ documentation of R functions. This increase in `/R` documentation is likely a
 direct reflection of the widespread adoption of `roxygen2` as the documentation
 standard for R packages.
 
-```{r fig11, child = "figures/fig11.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
+```{r fig10, child = "figures/fig10.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
 The relative proportion of white space in code lines has increased consistently

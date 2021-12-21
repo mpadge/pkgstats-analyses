@@ -37,7 +37,8 @@ recommended_pkgs <- function () {
 #' full snapshot of all latest CRAN packages in that year, regardless of when
 #' these were uploaded. If `FALSE`, calculate annual values from packages which
 #' were uploaded in that year.
-#' @return A `data.frame` of dependency data with `year` column.
+#' @return A list of 2 `data.frame` objects with annual rows for (1) dependency
+#' data, and (2) Gini coefficient data.
 #' @export
 dependencies <- function (x, cran_by_year = TRUE) {
 
@@ -47,9 +48,11 @@ dependencies <- function (x, cran_by_year = TRUE) {
         years <- sort (unique (x$year))
         deps <- lapply (years, function (y)
                         dependencies_one_year (x, recommended, y, cran_by_year))
-        deps <- do.call (rbind, deps)
+        deps0 <- deps
+        gini <- do.call (rbind, lapply (deps, function (i) i$gini))
+        deps <- do.call (rbind, lapply (deps, function (i) i$deps))
     } else {
-        deps <- dependencies_one_year (x, recommended, 2018, cran_by_year)
+        deps <- dependencies_one_year (x, recommended, cran_by_year = cran_by_year)
     }
 
     return (deps)
@@ -81,7 +84,7 @@ dependencies_one_year <- function (x, recommended, year = 2018, cran_by_year = T
                         out <- strsplit (strsplit (ex, ",") [[1]], "\\:")
                         lens <- vapply (out, length, integer (1))
                         out <- do.call (rbind, out [which (lens == 3)])
-                        
+
                         this_pkg <- x$package [i]
                         out <- out [which (out [, 1] != this_pkg), , drop = FALSE]
 
@@ -98,6 +101,8 @@ dependencies_one_year <- function (x, recommended, year = 2018, cran_by_year = T
                         return (c (
                             package = this_pkg,
                             month = x$month [i],
+                            n_deps = length (i_ctb),
+
                             n_total_base <- sum (n_total [i_base]),
                             n_total_rmcd <- sum (n_total [i_rcmd]),
                             n_total_ctb <- sum (n_total [i_ctb]),
@@ -112,12 +117,13 @@ dependencies_one_year <- function (x, recommended, year = 2018, cran_by_year = T
 
     deps_full <- data.frame (package = deps [, 1],
                              date =  lubridate::as_date (as.integer (deps [, 2])),
-                             n_total_base = as.integer (deps [, 3]),
-                             n_total_rmcd = as.integer (deps [, 4]),
-                             n_total_ctb = as.integer (deps [, 5]),
-                             n_unique_base = as.integer (deps [, 6]),
-                             n_unique_rmcd = as.integer (deps [, 7]),
-                             n_unique_ctb = as.integer (deps [, 8]))
+                             n_deps = as.integer (deps [, 3]),
+                             n_total_base = as.integer (deps [, 4]),
+                             n_total_rmcd = as.integer (deps [, 5]),
+                             n_total_ctb = as.integer (deps [, 6]),
+                             n_unique_base = as.integer (deps [, 7]),
+                             n_unique_rmcd = as.integer (deps [, 8]),
+                             n_unique_ctb = as.integer (deps [, 9]))
 
     deps <- deps_full |>
         dplyr::mutate (year = lubridate::year (date),
@@ -144,6 +150,8 @@ dependencies_one_year <- function (x, recommended, year = 2018, cran_by_year = T
                               base_unique = sum (n_unique_base) / sum (n_unique),
                               recommended_unique = sum (n_unique_rmcd) / sum (n_unique),
                               contributed_unique = sum (n_unique_ctb) / sum (n_unique),
+                              gini_lin_deps = gini_lin (n_deps),
+                              gini_log_deps = gini_log (n_deps),
                               gini_lin_tot = gini_lin (n_total_ctb),
                               gini_lin_unique = gini_lin (n_unique_ctb),
                               gini_log_tot = gini_log (n_total_ctb),
@@ -158,20 +166,35 @@ dependencies_one_year <- function (x, recommended, year = 2018, cran_by_year = T
                               base_unique = sum (n_unique_base) / sum (n_unique),
                               recommended_unique = sum (n_unique_rmcd) / sum (n_unique),
                               contributed_unique = sum (n_unique_ctb) / sum (n_unique),
+                              gini_lin_deps = gini_lin (n_deps),
+                              gini_log_deps = gini_log (n_deps),
                               gini_lin_tot = gini_lin (n_total_ctb),
                               gini_lin_unique = gini_lin (n_unique_ctb),
                               gini_log_tot = gini_log (n_total_ctb),
                               gini_log_unique = gini_log (n_unique_ctb))
     }
 
-    deps <- tidyr::pivot_longer (deps,
-                                 cols = c (base_total, recommended_total, contributed_total,
-                                           base_unique, recommended_unique, contributed_unique),
-                                 names_to = c ("total", "unique"),
-                                 names_sep = "\\_") |>
+    gini <- deps |>
+        dplyr::select (c (year, starts_with ("gini"))) |>
+        dplyr::rename_with (~ gsub ("^gini\\_", "", .x)) |>
+        tidyr::pivot_longer (cols = c (lin_deps, log_deps,
+                                       lin_tot, log_tot,
+                                       lin_unique, log_unique),
+                             names_to = c ("total", "unique"),
+                             names_sep = "\\_") |>
+        dplyr::rename (gini = value,
+                       scale = total,
+                       category = unique)
+
+    deps <- deps |>
+        dplyr::select (!tidyr::starts_with ("gini")) |>
+        tidyr::pivot_longer (cols = c (base_total, recommended_total, contributed_total,
+                                       base_unique, recommended_unique, contributed_unique),
+                             names_to = c ("total", "unique"),
+                             names_sep = "\\_") |>
         dplyr::rename (proportion = value,
                        type = total,
                        category = unique)
 
-    return (deps)
+    return (list (deps = deps, gini = gini))
 }

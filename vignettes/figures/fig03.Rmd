@@ -13,6 +13,8 @@ datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
 
 fig03_png <- file.path (here, "vignettes", "figures", "fig03.png")
 n_files_exists <- n_files_exists & !file.exists (fig03_png)
+f_fig3_pkg_level <- file.path (v_data_dir, "fig03-pkg-n-files.Rds")
+do_fig3_pkg_n_files <- !file.exists (f_fig3_pkg_level) & !file.exists (fig03_png)
 ```
 
 ```{r fig3-n-files-data, eval = !n_files_exists}
@@ -61,10 +63,6 @@ dat$data [!is.finite (dat$data)] <- NA
 saveRDS (dat, n_files_file)
 ```
 
-```{r fig3-pkg-level-n-filename}
-f_fig3_pkg_level <- file.path (v_data_dir, "fig03-pkg-n-files.Rds")
-do_fig3_pkg_n_files <- !file.exists (f_fig3_pkg_level)
-```
 
 ```{r fig3-pkg-level-n-files, eval = do_fig3_pkg_n_files}
 x_per_pkg <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
@@ -95,7 +93,7 @@ saveRDS (x_per_pkg, f_fig3_pkg_level)
 ```
 
 
-```{r fig3a}
+```{r fig3a, eval = !file.exists (fig03_png)}
 dat <- readRDS (n_files_file) |>
     mutate (inst = inst * max (src) / max (inst, na.rm = TRUE)) |>
     filter (what == "cran_by_year") |>
@@ -116,7 +114,7 @@ p1 <- ggplot (dat, aes (x = year, y = n_files, color = dir)) +
 # dat_ann are very similar but much noisier, so not shown
 ```
 
-```{r fig3-p2, warning = FALSE, message = FALSE}
+```{r fig3-p2, warning = FALSE, message = FALSE, eval = !file.exists (fig03_png)}
 x_per_pkg <- readRDS (f_fig3_pkg_level)
 
 # rm 1st inst value which is anomalously high:

@@ -19,6 +19,7 @@ fig04_png <- file.path (here, "vignettes", "figures", "fig04.png")
 ```{r fig4-lang-file}
 f <- file.path (here, "data-raw", "languages.Rds")
 langs_exists <- file.exists (f)
+langs_exists <- TRUE # disable next 2 chunks
 ```
 
 ```{r fig4-languages, eval = !langs_exists}

@@ -13,6 +13,8 @@ calc_ext_calls_dat <- !file.exists (f_fig6_exdat) & !file.exists (fig06_png)
 cp_dat_file <- file.path (v_data_dir, "fig06-coupling-data.Rds")
 cp_dat_exists <- file.exists (cp_dat_file)
 f_fig6_deps <- file.path (v_data_dir, "fig06-deps.Rds")
+f_fig6_gini <- file.path (v_data_dir, "fig06-gini.Rds")
+# gini coeffs are then actually Fig. 7
 calc_fig6_deps <- !file.exists(f_fig6_deps) & !file.exists (fig06_png)
 f_top10 <- file.path (v_data_dir, "fig06-top10-pkgs.Rds")
 calc_top10 <- !file.exists (f_top10) & !file.exists (fig06_png)
@@ -34,11 +36,13 @@ saveRDS (x, f_fig6_exdat)
 ```{r fig6-deps-calc, eval = calc_fig6_deps}
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
 deps1 <- dependencies (x, cran_by_year = TRUE)
-deps1$what <- "cran_by_year"
+deps1$deps$what <- deps1$gini$what <- "cran_by_year"
 deps2 <- dependencies (x, cran_by_year = FALSE)
-deps2$what <- "annual"
-deps <- rbind (deps1, deps2)
+deps2$deps$what <- deps2$gini$what <- "annual"
+gini <- rbind (deps1$gini, deps2$gini)
+deps <- rbind (deps1$deps, deps2$deps)
 saveRDS (deps, f_fig6_deps)
+saveRDS (gini, f_fig6_gini)
 ```
 
 ```{r fig6-coupling-data-generate, eval = !cp_dat_exists & !file.exists (fig06_png)}
@@ -123,6 +127,7 @@ cp_dat <- readRDS (cp_dat_file) |>
 cp_dat$lty <- cp_dat$what == "annual"
 cp_dat$year <- as.integer (cp_dat$year)
 
+
 p2 <- ggplot (cp_dat, aes (x = year, y = instability, colour = what, lty = lty)) +
     geom_ribbon (aes (ymin = lo, ymax = hi, fill = what, colour = NULL),
                  alpha = 0.15, show.legend = FALSE) +
@@ -130,6 +135,7 @@ p2 <- ggplot (cp_dat, aes (x = year, y = instability, colour = what, lty = lty))
     theme (legend.position = "none") +
     ggtitle ("B: Coupling Instability")
 ```
+
 
 ```{r fig6-deps-p2, eval = !file.exists (fig06_png)}
 deps <- readRDS (f_top10)

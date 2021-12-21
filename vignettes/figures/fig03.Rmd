@@ -16,7 +16,7 @@ f_fig3_pkg_level <- file.path (v_data_dir, "fig03-pkg-n-files.Rds")
 do_fig3_pkg_n_files <- !file.exists (f_fig3_pkg_level) & !file.exists (fig03_png)
 ```
 
-```{r fig3-n-files-data, eval = !n_files_exists}
+```{r fig3-n-files-data, eval = !n_files_exists & !file.exists (fig03_png)}
 # takes a few tens of seconds
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
 nfiles_one_year <- function (x, year = 2015) {

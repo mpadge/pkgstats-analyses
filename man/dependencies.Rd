@@ -16,7 +16,8 @@ these were uploaded. If \code{FALSE}, calculate annual values from packages whic
 were uploaded in that year.}
 }
 \value{
-A \code{data.frame} of dependency data with \code{year} column.
+A list of 2 \code{data.frame} objects with annual rows for (1) dependency
+data, and (2) Gini coefficient data.
 }
 \description{
 Extract all dependencies from the "external_calls" component of the main

@@ -52,7 +52,7 @@ f <- file.path (v_data_dir, "fig04-fns-per-year.Rds")
 fns_per_year_exists <- file.exists (f)
 calcfns_per_year <- !fns_per_year_exists & !file.exists (fig04_png)
 ```
-```{r fig4-nfns-per-year, eval = !fns_per_year_exists}
+```{r fig4-nfns-per-year, eval = calcfns_per_year}
 fns_per_year <- function (x, year = 2015) {
 
     x1 <- x |>

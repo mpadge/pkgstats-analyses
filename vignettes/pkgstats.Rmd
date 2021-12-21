@@ -75,12 +75,9 @@ presented a number of statistics relevant to the present work, including:
 
 - Compound annual growth rates in numbers of new packages were slightly less
   (at 43%) than growth in active packages (47%) and in new releases (51%).
-- Compound annual growth rates in numbers of new package authors was lower than
   these, at 39%.
 - Each package has around 7 +/- 19 new releases per year, at an average
   inter-release frequency of 65 +/ 144 days.
-- Each author has 2 +/- 17 packages, and 15 +/ 125 releases.
-- Median package sizes are 20-40 KB, while mean values are 2-20 MB.
 - Total numbers of imported packages increases with compound annual growth rate
   of 62%.
 - The standard python libraries represent around 19% of all package imports.
@@ -91,14 +88,14 @@ packages. The size of pypi necessarily restricted these analyses to package
 metadata, although single metrics of package size were also included. Moreover,
 the size of pypi meant that analyses of dependency networks were also
 relatively restricted to aggregate statistics only, with no analyses of the
-internal properties of dependency networks.
+internal properties of dependency networks themselves.
 
 More detailed considerations of temporal development and evolution of code have
 largely been restricted to individual packages. Analyses of code evolution
 frequently refer to work of @software-evolution-97, who expressed their
 findings as a series of "laws" of software evolution. These "laws" include
 that, over time, software increases both in complexity and in functional
-content (or numbers of functions). Those laws of growth themselves derive from
+content (or numbers of "modules"). Those laws of growth themselves derive from
 @Turski96, who posited an inverse-square law for software growth, later
 formalised in @Turski02.
 
@@ -113,10 +110,10 @@ These "laws" of software evolution have nevertheless been frequently used and
 cited (see overview in @Mens2008, and references therein), although
 overwhelmingly for considerations of individual software packages. They have
 been widely adopted in a burgeoning field of what might be referred to as
-"Software Mining and Analytics", to elucidate useful predictors of software
-quality. A useful overview of the field was provided by @mining-repos-2013, who
-usefully identified a number of categories, including that of "code statistics"
-examined here.
+"Software Mining and Analytics", particularly to elucidate useful predictors of
+software quality. A useful overview of the field was provided by
+@mining-repos-2013, who usefully identified a number of categories, including
+that of "code statistics" examined here.
 
 More detailed considerations of package dependency networks have been developed
 in more restricted, and thus more manageable, contexts, such as the analysis of
@@ -839,7 +836,7 @@ releases, relative rates of change approach the stable level of 1, and
 proportions to these three categories of packages remain relatively stable.
 
 
-```{r fig07, child = "figures/fig07.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
+```{r fig08, child = "figures/fig08.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
 Figure 7B shows the average trajectory of coupling instability for individual
@@ -888,7 +885,7 @@ dependency network has nevertheless progressively increased, especially since
 2015, indicating that those packages which are imported by others have been
 imported by increasing numbers of other packages.
 
-```{r fig08, child = "figures/fig08.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
+```{r fig09, child = "figures/fig09.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
 Such an increase in average numbers of imports must increase the overall
@@ -939,7 +936,7 @@ equivalent increase in Fig. 9A after 224 releases, indicating that decreases in
 internal connectivity through increasing dominance of recently-released
 packages far outweighs compensatory decreases through packages maturing.
 
-```{r fig09, child = "figures/fig09.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
+```{r fig10, child = "figures/fig10.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
 Finally, centrality metrics change dramatically as packages mature (Fig. 9B),
@@ -965,7 +962,7 @@ documentation of R functions. This increase in `/R` documentation is likely a
 direct reflection of the widespread adoption of `roxygen2` as the documentation
 standard for R packages.
 
-```{r fig10, child = "figures/fig10.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
+```{r fig11, child = "figures/fig11.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
 The relative proportion of white space in code lines has increased consistently

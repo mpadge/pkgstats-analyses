@@ -12,7 +12,6 @@ n_files_exists <- file.exists (n_files_file)
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
 
 fig03_png <- file.path (here, "vignettes", "figures", "fig03.png")
-n_files_exists <- n_files_exists & !file.exists (fig03_png)
 f_fig3_pkg_level <- file.path (v_data_dir, "fig03-pkg-n-files.Rds")
 do_fig3_pkg_n_files <- !file.exists (f_fig3_pkg_level) & !file.exists (fig03_png)
 ```

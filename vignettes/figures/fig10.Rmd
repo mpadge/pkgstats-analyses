@@ -1,209 +1,120 @@
 
-```{r fig10-precalc}
+<!--
+Fig 9 but over package release instead of year
+-->
+
+```{r fig10-calc-graph-data}
 library ("pkgstatsAnalyses")
 here <- here::here ()
-v_data_dir <- file.path (here, "vignettes", "data")
-
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
-f_fig10 <- file.path (v_data_dir, "fig10.Rds")
+v_data_dir <- file.path (here, "vignettes", "data")
+logmean <- function (x, ...) {
+    10 ^ mean (log10 (x [which (x > 0)]), na.rm = TRUE)
+}
 
 fig10_png <- file.path (here, "vignettes", "figures", "fig10.png")
-calc_fig10 <- !file.exists (f_fig10) & !file.exists (calc_fig10)
 ```
 
-```{r fig10-calc, eval = calc_fig10}
-x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
-do1 <- function (x, year = 2018, cran_by_year = TRUE) {
+```{r fig10-prepro, eval = !file.exists (fig10_png)}
+# graph metrics for inter-package dependency networks
+xraw <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
 
-    if (cran_by_year) {
-        xy <- x |>
-            filter (year <= !!year) |>
-            group_by (package) |>
-            slice_max (date)
-    } else {
-        xy <- x |>
-            filter (year == !!year)
-    }
-
-    tot_R <- xy$blank_lines_R + xy$comment_lines_R + xy$loc_R
-    tot_src <- xy$blank_lines_src + xy$comment_lines_src + xy$loc_src
-
-    tabs <- length (which (xy$indentation < 0)) /
-        length (which (!is.na (xy$indentation)))
-    indentation <- mean (xy$indentation [xy$indentation >= 0], na.rm = TRUE)
-
-    c (year = year,
-       blank_R = mean (xy$blank_lines_R / tot_R, na.rm = TRUE),
-       blank_src = mean (xy$blank_lines_src / tot_src, na.rm = TRUE),
-       comment_R = mean (xy$comment_lines_R / tot_R, na.rm = TRUE),
-       comment_src = mean (xy$comment_lines_src / tot_src, na.rm = TRUE),
-       rel_space_R = mean (xy$rel_space_R, na.rm = TRUE),
-       tabs = tabs,
-       indentation = indentation)
-}
-years <- sort (unique (x$year))
-
-n1 <- vapply (years, function (y) do1 (x, y, cran_by_year = TRUE), numeric (8))
-n1 <- data.frame (t (n1))
-n1$what <- "cran_by_year"
-
-n2 <- vapply (years, function (y) do1 (x, y, cran_by_year = FALSE), numeric (8))
-n2 <- data.frame (t (n2))
-n2$what <- "annual"
-saveRDS (rbind (n1, n2), f_fig10)
-```
-
-
-
-```{r fig10-p1-p2, eval = !file.exists (fig10_png)}
-
-x1_cran <- readRDS (f_fig10) |>
-    filter (what == "cran_by_year") |>
-    select (year, blank_R, blank_src, comment_R, comment_src) |>
-    pivot_longer (cols = c (blank_R, blank_src, comment_R, comment_src))
-p1 <- readRDS (f_fig10) |>
-    filter (what == "annual") |>
-    select (year, blank_R, blank_src, comment_R, comment_src) |>
-    pivot_longer (cols = c (blank_R, blank_src, comment_R, comment_src)) |>
-    ggplot (aes (x = year, y = value, colour = name)) +
-        geom_line () +
-        geom_line (data = x1_cran, lty = 2, show.legend = FALSE) +
-        ggtitle ("A: Blank & comment lines") +
-        ylab ("Proportion") +
-        theme (legend.title = element_blank(),
-               legend.position = c (0.2, 0.8),
-               legend.background = element_rect(fill='transparent', colour='transparent'))
-
-x2 <- readRDS (f_fig10)
-coeff_fig10_p2 <- max (x2$indentation) / max (x2$tabs)
-colours_fig10_p2 <- c ("rel_space" = "red",
-                       "tabs" = "blue",
-                       "indentation" = "green")
-x2_cran <- x2 |>
-    filter (what == "cran_by_year") |>
-    select (year, rel_space_R, tabs, indentation) |>
-    rename (rel_space = rel_space_R) |>
-    mutate (rel_space = rel_space * 4)
-
-p2 <- x2 |>
-    filter (what == "annual") |>
-    select (year, rel_space_R, tabs, indentation) |>
-    rename (rel_space = rel_space_R) |>
-    mutate (rel_space = rel_space * 4) |>
-    ggplot (aes (x = year)) +
-    geom_line (aes (y = rel_space, col = "rel_space")) +
-    geom_line (aes (y = tabs, col = "tabs")) +
-    geom_line (aes (y = indentation / coeff_fig10_p2, col = "indentation")) +
-    geom_line (data = x2_cran, aes (y = rel_space, col = "rel_space"), lty = 2) +
-    geom_line (data = x2_cran, aes (y = tabs, col = "tabs"), lty = 2) +
-    geom_line (data = x2_cran, aes (y = indentation / coeff_fig10_p2, col = "indentation"), lty = 2) +
-    ylab ("space (x4) | tabs") +
-    scale_y_continuous (
-        sec.axis = sec_axis (~.*coeff_fig10_p2, name = "Indentation")) +
-    ggtitle ("B: Indentation & Spacing") +
-        theme (legend.title = element_blank(),
-               legend.position = c (0.2, 0.2),
-               legend.background = element_rect(fill='transparent', colour='transparent'))
-
-```
-
-```{r fig10-p3, eval = !file.exists (fig10_png)}
-f <- file.path (v_data_dir, "fig04-fns-per-year.Rds")
-dat10c_cran <- readRDS (f) |>
-    filter (what == "cran_by_year") |>
-    select (c (year, npars_exported_mn, doclines_per_fn_exp_mn,
-               docchars_per_par_exp_mn)) |>
-    rename (npars = npars_exported_mn,
-            doclines = doclines_per_fn_exp_mn,
-            chars_per_par = docchars_per_par_exp_mn)
-
-scale_10c <- max (dat10c_cran$npars) / max (dat10c_cran$chars_per_par)
-colours_fig10_p3 <- c ("npars" = "red",
-                       "doclines" = "blue",
-                       "chars_per_par" = "green")
-
-readRDS (f) |>
-    filter (what == "annual") |>
-    select (c (year, npars_exported_mn, doclines_per_fn_exp_mn,
-               docchars_per_par_exp_mn)) |>
-    rename (npars = npars_exported_mn,
-            doclines = doclines_per_fn_exp_mn,
-            chars_per_par = docchars_per_par_exp_mn) |>
-    ggplot (aes (x = year)) +
-        geom_line (data = dat10c_cran, aes (y = doclines, col = "doclines"), lty = 2) +
-        geom_line (data = dat10c_cran, aes (y = chars_per_par, col = "chars_per_par"), lty = 2) +
-        geom_line (data = dat10c_cran, aes (y = npars / scale_10c, col = "npars"), lty = 2) +
-        geom_line (aes (y = doclines, col = "doclines")) +
-        geom_line (aes (y = chars_per_par, col = "chars_per_par")) +
-        geom_line (aes (y = npars / scale_10c, col = "npars")) +
-        theme (legend.position = "none") +
-        #theme (legend.title = element_blank(),
-        #       legend.position = c (0.85, 0.9),
-        #       legend.background = element_rect(fill='transparent', colour='transparent')) +
-        ylab ("Documentation characters / lines") +
-        scale_y_continuous (
-            sec.axis = sec_axis (~.*scale_10c, name = "Num. pars.")) +
-        ggtitle ("C: Params & Documentation") -> p3
-
-# slope of npars:
-s <- readRDS (f) |>
-    filter (what == "annual", year >= 2005) |>
-    select (c (year, npars_exported_mn)) |>
-    rename (npars = npars_exported_mn)
-s <- lm (npars ~ year, data = s)$coefficients [2]
-#1 / s
-
-```
-```{r fig10-release-intervals, eval = FALSE}
-# Average release intervals:
-x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
+x <- xraw |>
     group_by (package) |>
-    arrange (date) |>
-    summarise (interval = mean (diff (date))) |>
-    filter (is.finite (interval)) |>
-    mutate (interval = as.double (interval))
-logmean (x$interval)
-```
-
-
-```{r fig10-p4, eval = !file.exists (fig10_png)}
-dat_10d <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
-    group_by (package) |>
+    mutate (nfns_total = n_fns_r + n_fns_src) |>
     mutate (seq = seq_along (package)) |>
     group_by (seq) |>
     summarise (
-       npars = logmean (npars_exported_mn, na.rm = TRUE),
-       doclines = logmean (doclines_per_fn_exp_mn, na.rm = TRUE),
-       chars_per_par = logmean (docchars_per_par_exp_mn, na.rm = TRUE)) |>
-    filter (seq <= 100)
-scale_10d <- max (dat_10d$npars) / max (dat_10d$chars_per_par)
-colours_fig10_p4 <- c ("npars" = "red",
-                       "doclines" = "blue",
-                       "chars_per_par" = "green")
-dat_10d |>
-    ggplot (aes (x = seq)) +
-        geom_line (aes (y = doclines, col = "doclines")) +
-        geom_line (aes (y = chars_per_par, col = "chars_per_par")) +
-        geom_line (aes (y = npars / scale_10d, col = "npars")) +
-        theme (legend.title = element_blank(),
-               legend.position = c (0.7, 0.2),
-               legend.background = element_rect(fill='transparent', colour='transparent')) +
-        ylab ("Documentation characters / lines") +
-        scale_y_continuous (
-            sec.axis = sec_axis (~.*scale_10d, name = "Num. pars.")) +
-        ggtitle ("D: Params & Documentation") -> p4
-
-# slope of npars:
-npars <- dat_10d |> filter (seq >= 50)
-s <- lm (npars ~ seq, data = npars)$coefficients [2]
+               #n_edges = mean (n_edges [which (!is.na (n_edges))]),
+               #n_edges_r = mean (n_edges_r [which (!is.na (n_edges_r))]),
+               #n_edges_src = mean (n_edges_src [which (!is.na (n_edges_src))]),
+               #n_clusters = mean (n_clusters [which (!is.na (n_clusters))]),
+               n_edges = logmean (n_edges / nfns_total, na.rm = TRUE),
+               n_edges_r = logmean (n_edges_r / n_fns_r, na.rm = TRUE),
+               n_edges_src = logmean (n_edges_src / n_fns_src, na.rm = TRUE),
+               n_clusters = logmean (n_clusters, na.rm = TRUE),
+               centr_dir_mn = logmean (centrality_dir_mn, na.rm = TRUE),
+               centr_dir_md = logmean (centrality_dir_md, na.rm = TRUE),
+               centr_dir_mn_no0 = logmean (centrality_dir_mn_no0, na.rm = TRUE),
+               centr_dir_md_no0 = logmean (centrality_dir_md_no0, na.rm = TRUE),
+               centr_undir_mn = logmean (centrality_undir_mn, na.rm = TRUE),
+               centr_undir_md = logmean (centrality_undir_md, na.rm = TRUE),
+               centr_undir_mn_no0 = logmean (centrality_undir_mn_no0, na.rm = TRUE),
+                centr_undir_md_no0 = logmean (centrality_undir_md_no0, na.rm = TRUE),
+                central_edges_dir = mean (num_terminal_edges_dir, na.rm = TRUE),
+                term_edges = logmean (num_terminal_edges_undir, na.rm = TRUE),
+                node_degree_mn = logmean (node_degree_mn, na.rm = TRUE),
+                node_degree_md = logmean (node_degree_md, na.rm = TRUE),
+                node_degree_max = logmean (node_degree_max, na.rm = TRUE))
 ```
 
-```{r fig10-assemble, echo = FALSE, warning = FALSE}
-png (fig10_png, width = 7, height = 7, units = "in", res = 300)
-(p1 | p2) / (p3 + p4)
+
+```{r fig10-network-internal1, eval = !file.exists (fig10_png)}
+x1 <- x |>
+    select (seq, starts_with ("n_")) |>
+    rename (total = n_edges, R = n_edges_r, src = n_edges_src) |>
+    filter (seq <= 100)
+
+coeff_fig10_p1 <- max (x1$n_clusters) / max (x1$total)
+colours_fig10_p1 <- c ("total" = "red",
+                       "R" = "green",
+                       "src" = "blue",
+                       "n_clusters" = "orange")
+
+fig10_p1 <- x1 |>
+    ggplot (aes (x = seq)) +
+        geom_line (aes (y = total, col = "total")) +
+        geom_line (aes (y = R, col = "R")) +
+        geom_line (aes (y = src, col = "src")) +
+        geom_line (aes (y = n_clusters / coeff_fig10_p1, col = "n_clusters")) +
+        #scale_colour_manual (values = colours_fig10_p1) +
+        ylab ("Ratio edges/vertices") +
+        scale_y_continuous (
+            sec.axis = sec_axis (~.*coeff_fig10_p1, name = "Num. clusters")) +
+        ggtitle ("A: Pkg edges and clusters") +
+        guides (color = guide_legend (ncol = 2)) +
+        theme (legend.title = element_blank (),
+               legend.position = c (0.3, 0.9),
+               legend.background = element_rect(fill='transparent', colour='transparent'))
+
+# slope:
+s <- lm (total ~ seq, data = x1)$coefficients [2]
+```
+
+```{r fig10-network-internal2, eval = !file.exists (fig10_png)}
+x2 <- x |>
+    select (seq, centr_dir_mn, node_degree_mn, term_edges) |>
+    rename (centr = centr_dir_mn,
+            vert_degree = node_degree_mn)  |>
+    mutate (vert_degree = vert_degree * 10) |>
+    filter (seq < 100)
+
+coeff_fig10_p2 <- max (x2$centr) / max (x2$term_edges)
+colours_fig1e_p2 <- c ("centr" = "red",
+                      "vert_degree" = "green",
+                      "term_edges" = "blue")
+fig10_p2 <- x2 |>
+    ggplot (aes (x = seq)) +
+        geom_line (aes (y = centr / coeff_fig10_p2, col = "centr")) +
+        geom_line (aes (y = vert_degree, col = "vert_degree")) +
+        geom_line (aes (y = term_edges, col = "term_edges")) +
+        ggtitle ("D: pkg centrality metrics") +
+        ylab ("Vert degree (x10) / Term edges") +
+        scale_y_continuous (
+            sec.axis = sec_axis (~.*coeff_fig10_p2, name = "Centrality")) +
+        #guides (color = guide_legend (ncol = 2)) +
+        theme (legend.title = element_blank (),
+               legend.position = c (0.25, 0.87),
+               legend.background = element_rect(fill='transparent', colour='transparent'))
+```
+
+
+```{r fig10-assemble, echo = FALSE, eval = !file.exists (fig10_png)}
+png (fig10_png, width = 7, height = 3.5, units = "in", res = 300)
+fig10_p1 + fig10_p2
 graphics.off ()
 ```
 
-```{r fig10-out, echo = FALSE, out.width = 700, fig.cap = "**Figure 10.** Code formatting and documentation."}
+```{r fig10-make, echo = FALSE, out.width = 700, fig.cap = "**Figure 9** Network metrics from function call networks as a function of release sequence."}
 knitr::include_graphics (fig10_png)
 ```

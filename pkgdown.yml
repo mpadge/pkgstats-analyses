@@ -1,0 +1,20 @@
+pandoc: 2.7.3
+pkgdown: 2.0.1
+pkgdown_sha: ~
+articles:
+  fig01: figures/fig01.html
+  fig02: figures/fig02.html
+  fig03: figures/fig03.html
+  fig04: figures/fig04.html
+  fig05: figures/fig05.html
+  fig06: figures/fig06.html
+  fig07: figures/fig07.html
+  fig08: figures/fig08.html
+  fig09: figures/fig09.html
+  fig10: figures/fig10.html
+  pkgstats: pkgstats.html
+last_built: 2021-12-21T12:25Z
+urls:
+  reference: https://mpadge.github.io/pkgstats-analyses/reference
+  article: https://mpadge.github.io/pkgstats-analyses/articles
+

@@ -68,7 +68,8 @@ p1 <- ggplot (deps, aes (x = year, y = proportion, colour = type)) +
     geom_line () +
     geom_line (data = deps_cran, show.legend = FALSE, lty = 2) +
     ggtitle ("A: Fn calls") +
-    theme (legend.position = c (0.3, 0.7),
+    theme (legend.title = element_blank (),
+           legend.position = c (0.4, 0.6),
            legend.background = element_rect(fill='transparent', colour='transparent'))
 ```
 
@@ -139,6 +140,8 @@ p2 <- ggplot (cp_dat, aes (x = year, y = instability, colour = what, lty = lty))
 ```{r fig6-plot-gini, eval = !file.exists (fig06_png)}
 gini <- readRDS (f_fig6_gini) |>
     filter (scale == "lin" & category != "unique")
+gini$category [gini$category == "tot"] <- "fn_calls"
+gini$category [gini$category == "deps"] <- "pkg_deps"
 gini_cran <- gini |>
     filter (what == "cran_by_year")
 gini <- gini |>
@@ -149,7 +152,8 @@ gini <- ggplot (gini, aes (x = year, y = gini, colour = category)) +
     geom_line (data = gini_cran, show.legend = FALSE, lty = 2) +
     ggtitle ("C: Gini coeff") +
     ylab ("Gini coefficient") +
-    theme (legend.position = c (0.5, 0.2),
+    theme (legend.title = element_blank (),
+           legend.position = c (0.5, 0.2),
            legend.background = element_rect(fill='transparent', colour='transparent'))
 ```
 
@@ -171,7 +175,7 @@ deps10 <- deps [deps$package %in% top10$package [1:10], ]
 deps10 |>
     ggplot (aes (x = year, y = n, colour = package)) +
     geom_line () +
-    ggtitle ("C: Calls to top 10 packages") +
+    ggtitle ("D: Calls to top 10 packages") +
     ylab ("Number of calls") +
     scale_y_log10 () +
     theme (legend.title = element_blank(),

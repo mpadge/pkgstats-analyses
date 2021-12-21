@@ -67,7 +67,7 @@ deps <- deps [deps$what == "annual", ]
 p1 <- ggplot (deps, aes (x = year, y = proportion, colour = type)) +
     geom_line () +
     geom_line (data = deps_cran, show.legend = FALSE, lty = 2) +
-    ggtitle ("A: Proportion of function calls") +
+    ggtitle ("A: Fn calls") +
     theme (legend.position = c (0.3, 0.7),
            legend.background = element_rect(fill='transparent', colour='transparent'))
 ```
@@ -133,7 +133,24 @@ p2 <- ggplot (cp_dat, aes (x = year, y = instability, colour = what, lty = lty))
                  alpha = 0.15, show.legend = FALSE) +
     geom_line () +
     theme (legend.position = "none") +
-    ggtitle ("B: Coupling Instability")
+    ggtitle ("B: Instability")
+```
+
+```{r fig6-plot-gini, eval = !file.exists (fig06_png)}
+gini <- readRDS (f_fig6_gini) |>
+    filter (scale == "lin" & category != "unique")
+gini_cran <- gini |>
+    filter (what == "cran_by_year")
+gini <- gini |>
+    filter (what == "annual")
+
+gini <- ggplot (gini, aes (x = year, y = gini, colour = category)) +
+    geom_line () +
+    geom_line (data = gini_cran, show.legend = FALSE, lty = 2) +
+    ggtitle ("C: Gini coeff") +
+    ylab ("Gini coefficient") +
+    theme (legend.position = c (0.5, 0.2),
+           legend.background = element_rect(fill='transparent', colour='transparent'))
 ```
 
 
@@ -169,7 +186,7 @@ prop_top2 <- 16.6
 
 ```{r fig6-assemble, echo = FALSE, eval = !file.exists (fig06_png)}
 png (fig06_png, width = 7, height = 7, units = "in", res = 300)
-(p1 | p2) / p3
+(p1 | p2 | gini) / p3
 graphics.off ()
 ```
 

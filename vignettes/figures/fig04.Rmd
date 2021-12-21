@@ -8,12 +8,13 @@ logmean <- function (x, ...) {
 }
 
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
+fig04_png <- file.path (here, "vignettes", "figures", "fig04.png")
+```
+```{r fig4-data, eval = !file.exists (fig04_png)}
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
 x$num_languages <- vapply (strsplit (x$languages, ","), length,
                            integer (1))
 x$doclines_per_fn_exp_mn [which (!is.finite (x$doclines_per_fn_exp_mn))] <- NA
-
-fig04_png <- file.path (here, "vignettes", "figures", "fig04.png")
 ```
 
 ```{r fig4-lang-file}

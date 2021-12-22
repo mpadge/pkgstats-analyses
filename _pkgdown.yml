@@ -1,3 +1,7 @@
 url: https://mpadge.github.io/pkgstats-analyses/
 template:
   bootstrap: 5
+articles:
+  - title: pkgstats
+    contents:
+    - pkgstats

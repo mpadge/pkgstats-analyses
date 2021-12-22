@@ -143,10 +143,16 @@ dependencies_one_year <- function (x, recommended, year = 2018, cran_by_year = T
             (2 * length (n) ^ 2 * mean (n, na.rm = TRUE))
     }
 
+    logmean <- function (x, ...) {
+        10 ^ mean (log10 (x [which (x > 0)]), na.rm = TRUE)
+    }
+
     if (!cran_by_year) {
 
         deps <- dplyr::group_by (deps, year) |>
-            dplyr::summarise (base_total = sum (n_total_base) / sum (n_total),
+            dplyr::summarise (ndeps_log = logmean (n_deps),
+                              ndeps_lin = mean (n_deps, na.rm = TRUE),
+                              base_total = sum (n_total_base) / sum (n_total),
                               recommended_total = sum (n_total_rmcd) / sum (n_total),
                               contributed_total = sum (n_total_ctb) / sum (n_total),
                               base_unique = sum (n_unique_base) / sum (n_unique),
@@ -162,6 +168,8 @@ dependencies_one_year <- function (x, recommended, year = 2018, cran_by_year = T
 
         deps <- deps |>
             dplyr::summarise (year = !!year,
+                              ndeps_log = logmean (n_deps),
+                              ndeps_lin = mean (n_deps, na.rm = TRUE),
                               base_total = sum (n_total_base) / sum (n_total),
                               recommended_total = sum (n_total_rmcd) / sum (n_total),
                               contributed_total = sum (n_total_ctb) / sum (n_total),
@@ -177,7 +185,7 @@ dependencies_one_year <- function (x, recommended, year = 2018, cran_by_year = T
     }
 
     gini <- deps |>
-        dplyr::select (c (year, starts_with ("gini"))) |>
+        dplyr::select (c (year, tidyr::starts_with ("gini"))) |>
         dplyr::rename_with (~ gsub ("^gini\\_", "", .x)) |>
         tidyr::pivot_longer (cols = c (lin_deps, log_deps,
                                        lin_tot, log_tot,
@@ -187,6 +195,15 @@ dependencies_one_year <- function (x, recommended, year = 2018, cran_by_year = T
         dplyr::rename (gini = value,
                        scale = total,
                        category = unique)
+
+    # not exported here, but can be directly examined to demonstrate progressive
+    # incresaes over time
+    ndeps <- deps |>
+        dplyr::select (year, tidyr::starts_with ("ndeps")) |>
+        dplyr::rename_with (~ gsub ("^ndeps\\_", "", .x)) |>
+        tidyr::pivot_longer (cols = c (log, lin)) |>
+        dplyr::rename (ndeps = value,
+                       scale = name)
 
     deps <- deps |>
         dplyr::select (!tidyr::starts_with ("gini")) |>

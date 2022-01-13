@@ -164,7 +164,7 @@ First, we describe the [`{pkgstats}`](https://docs.ropensci.org/pkgstats) R
 package, which can be used to generate and analyze properties of R package
 code, and the accompanying database of code statistics of all historical CRAN
 packages.  We then describe trends in CRAN R package properties over the
-history of the archive (199X-2021).  We focus on trends in four areas: Package
+history of the archive (1998-2021).  We focus on trends in four areas: Package
 metadata (licenses, authorship, translation), internal content and structure
 (file and function types and sizes), intra-package code structure (function
 call networks), and finally, dependency networks amongst packages. Finally, we
@@ -183,7 +183,7 @@ statistics from all packages. The resultant data have been published with the
 [v0.0.3 release of the {pkgstats}
 package](https://github.com/ropensci-review-tools/pkgstats/releases/tag/v0.0.3).
 All results that follow used the `pkgstats-CRAN-all` data, which contain one
-row for each package ever published on CRAN (total of 112,212 rows), and 91
+row for each package ever published on CRAN (total of 105,375 rows), and 91
 column-wise variables quantifying and qualifying many aspects of each package,
 as described in the following sub-sections.
 
@@ -201,22 +201,23 @@ the "Comprehensive R Archive Network" or CRAN, which is the centralised
 distribution system for R packages. The `R` language itself is defined by a
 single "package" referred to as "base R". By default, all installations of `R`
 also [include a suite of "recommended"
-packages](https://github.com/wch/r-source/tree/trunk/src/library). All other
-packages are referred to as "Contributed Packages". A number of the following
-results distinguish between base, recommended, and contributed code or
-packages.
+packages](https://github.com/wch/r-source/tree/trunk/src/library). All packages
+other than these are referred to as "Contributed Packages". A number of the
+following results distinguish between these three categories of base,
+recommended, and contributed packages.
 
 CRAN currently holds close to 19,000 contributed packages, and also maintains a
 complete archive of all previous versions of all packages, including of
 archived packages no longer available on CRAN. The data analysed here were
 generated from a local mirror of the entire CRAN repository, including all
-current and archived packages, and amounting to around 105,000 packages (for an
-average of slightly over 5 releases per package). The raw data for these
-analyses are the contributed packages themselves. While relationships to
-objects (functions) in the base and contributed packages are considered, the
-structure of the base and recommended packages is not analysed here.
+current and archived versions of all packages, and amounting to around 105,000
+individual versions (for an average of slightly over 5 releases per package).
+The raw data for these analyses are the contributed packages themselves. While
+relationships to objects (functions) in the base and contributed packages are
+considered, the structures of the base and recommended packages are not
+analysed here.
 
-All R packages accord with the structure defined in the ["*Writing R
+All R packages must accord with the structure defined in the ["*Writing R
 Extensions*"
 Manual](https://cran.r-project.org/doc/manuals/R-exts.html#Linking-to-native-routines-in-other-packages).
 Many aspects of the following analyses were applied to different components of
@@ -242,27 +243,27 @@ R packages, in particular the following main sub-directories:
 The results which follow also distinguish between the two main kinds of R
 functions:
 
-- Exported functions intended to be called by users of a package.
+- Exported functions intended to be called by users of a package; and
 - Non-exported functions intended only to be called internally by other
   functions of a package.
 
 
 ### Code tagging with "ctags" and "gtags"
 
-The `pkgstats` package is a static code analysis tool specifically developed
-for R packages, with much of the functionality extending from two general
-static analysis tools. Static code analysis tools generally work by
-constructing parse trees which relate a grammar describing one or more computer
-languages to each expression encountered by tracing the code. An important
-first step is to "tag" each expression, identifying the kind of expression and
-its scope (generally its membership either of some component of the underlying
-grammar, or some more local scope such as definitions within locally-sourced
-files).
+The [`{pkgstats}`](https://docs.ropensci.org/pkgstats) package is a static code
+analysis tool specifically developed for R packages, with much of the
+functionality extending from two general static analysis tools. Static code
+analysis tools generally work by constructing parse trees which relate a
+grammar describing one or more computer languages to each expression
+encountered by tracing the code. An important first step is to "tag" each
+expression, identifying the kind of expression and its scope, generally
+implying its membership either of some component of the underlying grammar, or
+some more local scope such as definitions within locally-sourced files.
 
-The `pkgstats` package uses two open-source libraries for code tagging and
-parse tree construction: "ctags" and "gtags". The original "ctags" library is
-no longer maintained, and these analyses used a maintained version called
-["Universal ctags"](https://ctags.io) which,
+[`{pkgstats}`](https://docs.ropensci.org/pkgstats) uses two open-source
+libraries for code tagging and parse tree construction: "ctags" and "gtags".
+The original "ctags" library is no longer maintained, and these analyses used a
+maintained version called ["Universal ctags"](https://ctags.io) which,
 
 > generates an index (or tag) file of language objects found in source files
 > for programming languages.
@@ -286,11 +287,12 @@ network" of references to all R functions in all packages, including the
 package being analysed, the base and recommended packages, and all other
 contributed packages imported by each package. Functions were attributed to
 packages by matching function names. Function names in R do not have to be
-unique, and "namespace conflicts" may arise between packages implementing
-different functions with the same name. We presumed that namespace conflicts
-most commonly arise in re-definitions of functions initially defined in base or
-recommended packages, and in all such cases we attributed a function to the
-external or contributed package over base or recommended definitions.
+unique, and ["namespace conflicts"](https://conflicted.r-lib.org/) may arise
+between packages implementing different functions with the same name. We
+presumed that namespace conflicts most commonly arise in re-definitions of
+functions initially defined in base or recommended packages, and in all such
+cases we attributed a function to the external or contributed package over base
+or recommended definitions.
 
 The "gtags" library, itself part of the [GNU Global
 library](https://www.gnu.org/software/global/), generates entries for every
@@ -334,11 +336,11 @@ Data generated by "ctags" and "gtags" which were analysed here included:
 
 ### The `pkgstats` package
 
-This sub-section describes additional data generated by `pkgstats` beyond that
-extracted from "ctags" and "gtags". The full list of all data generated by the
-package is given in [the online
-documentation](https://docs.ropensci.org/pkgstats/), with this sub-section only
-describing those aspects which were analysed here.
+This sub-section describes additional data generated by
+[`{pkgstats}`](https://docs.ropensci.org/pkgstats) beyond that extracted from
+"ctags" and "gtags". The full list of all data generated by the package is
+given in [the online documentation](https://docs.ropensci.org/pkgstats/), with
+this sub-section only describing those aspects which were analysed here.
 
 #### 'DESCRIPTION' files
 
@@ -371,14 +373,17 @@ of all translations provided for each package.
 
 #### Lines of Code (LoC)
 
-`pkgstats` includes its own internal tool (coded in C++) for analysing
-Lines-of-Code (Loc). This tool produces output similar to many common LoC
-tools, with additional data on:
+[`{pkgstats}`](https://docs.ropensci.org/pkgstats) includes its own internal
+tool (coded in C++) for analysing Lines-of-Code (Loc). This tool produces
+output similar to many common LoC tools, with additional data on:
 
 1. Total numbers of code, comment, and blank lines;
 2. Total numbers of characters in code lines, along with total numbers of
    white-space characters, to enable metrics of proportional white space; and
 3. Code indentation, including identification of tab-indentation.
+
+These white-space and indentation metrics were developed to enable
+quantification of aspects of code outlay and design.
 
 #### Function-level analyses
 
@@ -391,8 +396,9 @@ as class definitions.)
 
 Each exported function in an R package must have a corresponding documentation
 file in the `/man` directory of the package with the suffix, `.Rd` for "R
-documentation". `pkgstats` also statically parses these files with [the
-`parse_Rd` function of the recommended `tools`
+documentation". [`{pkgstats}`](https://docs.ropensci.org/pkgstats) also
+statically parses these files with [the `parse_Rd` function of the recommended
+`{tools}`
 package](https://stat.ethz.ch/R-manual/R-devel/library/tools/html/parse_Rd.html).
 For the present analyses, this enabled identification of the number of
 parameters for each function, and the number of documentation characters for
@@ -403,18 +409,18 @@ result of `parse_Rd` to text (via the `tools::Rd2txt` function).
 
 ### Network Analyses
 
-Two distinct kinds of network analysis were performed here: *inter-package*
-analyses of dependency networks between packages (akin to
-@seven-pkg-networks-2019), and *intra-package* analyses of the function call
+Two distinct kinds of network analyses were performed here: *inter-package*
+analyses of dependency networks between packages [akin to
+@seven-pkg-networks-2019], and *intra-package* analyses of the function call
 networks extracted from the "ctags" and "gtags" data described above.
 
 #### Inter-Package Network Analyses
 
 The 'DESCRIPTION' files of R packages must specify all external packages which
 a package imports. These data can be used to construct a full dependency
-network of all packages. The results below present the following measures
+network between all packages. The results below present the following measures
 derived from package dependency networks, all of which were calculated with the
-`igraph` package [@igraph].
+`{igraph}` package [@igraph].
 
 1. Numbers of packages which are not imported by any others - the terminal
    vertices in a dependency network; 
@@ -425,7 +431,7 @@ derived from package dependency networks, all of which were calculated with the
    package in the network;
 4. The network-level *degree centrality*, which is a measure of vertex degree
    standardised to the overall size and structure of the network
-   (@network-centrality-79).
+   [@network-centrality-79].
 5. A measure of the overall "size" of the network as the average distance
    between all pairs of vertices.
 
@@ -476,34 +482,38 @@ Intra-package analyses considered the following metrics:
 [Coupling Instability](https://en.wikipedia.org/wiki/Software_package_metrics)
 is an important concept in the analysis of software dependency networks
 [@martin-agile-2002], and depends in turn on numbers of so-called *afferent*
-and *efferent* couplings. For any given packages, these are defined as:
+and *efferent* couplings. For any given package, these are defined as:
 
 - *Afferent Couplings* as numbers of functions in other packages which depend
   on functions within the package.
 - *Efferent Couplings* as numbers of functions from other packages which the
   package depends on.
 
-*Afferent* couplings are numbers of *inbound* edges from all other packages to
-a given package, while *efferent* couplings are *outbound* edges coupling that
-package with all other packages. Respectively denoting afferent and efferent
-couplings by $n_a$ and $n_e$, the coupling instability, $I$, is then defined as
-$I = n_e / (n_e + n_a)$. Packages which depend on many external calls (high
-efferent couplings), yet upon which few other packages depend (low afferent
-couplings) thus have a high coupling instability, while packages upon which
-many other packages depend, yet which themselves depend on few other packages
-have a low coupling instability. The analyses below quantified coupling
-instability for each package from the dependency networks, using total numbers
-of function calls between all packages, in order to estimate the average
-coupling instability of the entire network.
+In other words,
+
+- *Afferent* couplings are numbers of *inbound* edges from all other packages
+  to a given package, while
+- *efferent* couplings are *outbound* edges coupling that package with all
+  other packages.
+
+Respectively denoting afferent and efferent couplings by $n_a$ and $n_e$, the
+coupling instability, $I$, is defined as $I = n_e / (n_e + n_a)$. Packages
+which depend on many external calls (high efferent couplings), yet upon which
+few other packages depend (low afferent couplings) thus have a high coupling
+instability, while packages upon which many other packages depend, yet which
+themselves depend on few other packages have a low coupling instability. The
+analyses below quantified coupling instability for each package from the
+dependency networks, using total numbers of function calls between all
+packages, in order to estimate the average coupling instability of the entire
+network.
 
 ### Statistical Analyses
 
 The following results depict and interpret qualitative trends and patterns,
-without reporting on any statistical tests. In frequentist terms, data were
-sufficiently large ($N > 105,000$) to ensure that all of the reported results,
-were they to be analyses as linear relationships, were entirely significant.
-There are two further important aspects to note in regard to statistical
-analyses detailed below.
+without implementing or reporting values for any statistical tests. In
+frequentist terms, data were sufficiently large (N > 105,000) to ensure that
+all of the reported results were entirely significant. There are two further
+important aspects to note in regard to statistical analyses detailed below.
 
 #### Temporal Analyses
 

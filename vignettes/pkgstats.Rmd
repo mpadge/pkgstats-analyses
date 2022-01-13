@@ -523,7 +523,7 @@ in two main ways:
 1. As annual developments averaged over all packages; or
 2. As developments for individual packages over sequences of releases.
 
-Several of the following results are divided into the corresponding
+Several of the following results are accordingly divided into the corresponding
 sub-sections of "Annual Developments" and "Sequential Releases," respectively
 referring to these two modes of analysis. Annual developments aggregate values
 over all packages for each year, while sequential developments aggregate values

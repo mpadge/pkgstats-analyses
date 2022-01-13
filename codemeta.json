@@ -1,8 +1,5 @@
 {
-  "@context": [
-    "https://doi.org/10.5063/schema/codemeta-2.0",
-    "http://schema.org"
-  ],
+  "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
   "@type": "SoftwareSourceCode",
   "identifier": "pkgstatsAnalyses",
   "description": "Analyses of 'pkgstats' Results for all CRAN Packages.",
@@ -10,7 +7,7 @@
   "codeRepository": "https://github.com/mpadge/pkgstats-analyses",
   "issueTracker": "https://github.com/mpadge/pkgstats-analyses/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.0.1.130",
+  "version": "0.0.1.131",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -25,9 +22,6 @@
       "email": "mark.padgham@email.com"
     }
   ],
-  "contributor": {},
-  "copyrightHolder": {},
-  "funder": {},
   "maintainer": [
     {
       "@type": "Person",
@@ -87,6 +81,18 @@
     },
     {
       "@type": "SoftwareApplication",
+      "identifier": "pkgdown",
+      "name": "pkgdown",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://github.com/r-lib/pkgdown"
+    },
+    {
+      "@type": "SoftwareApplication",
       "identifier": "rmarkdown",
       "name": "rmarkdown",
       "provider": {
@@ -123,14 +129,14 @@
       "sameAs": "https://CRAN.R-project.org/package=tidyr"
     }
   ],
-  "softwareRequirements": [
-    {
+  "softwareRequirements": {
+    "1": {
       "@type": "SoftwareApplication",
       "identifier": "R",
       "name": "R",
       "version": ">= 4.1.0"
     },
-    {
+    "2": {
       "@type": "SoftwareApplication",
       "identifier": "curl",
       "name": "curl",
@@ -142,7 +148,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=curl"
     },
-    {
+    "3": {
       "@type": "SoftwareApplication",
       "identifier": "dplyr",
       "name": "dplyr",
@@ -154,7 +160,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=dplyr"
     },
-    {
+    "4": {
       "@type": "SoftwareApplication",
       "identifier": "future",
       "name": "future",
@@ -166,7 +172,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=future"
     },
-    {
+    "5": {
       "@type": "SoftwareApplication",
       "identifier": "future.apply",
       "name": "future.apply",
@@ -178,7 +184,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=future.apply"
     },
-    {
+    "6": {
       "@type": "SoftwareApplication",
       "identifier": "ggplot2",
       "name": "ggplot2",
@@ -190,7 +196,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=ggplot2"
     },
-    {
+    "7": {
       "@type": "SoftwareApplication",
       "identifier": "hms",
       "name": "hms",
@@ -202,7 +208,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=hms"
     },
-    {
+    "8": {
       "@type": "SoftwareApplication",
       "identifier": "jsonlite",
       "name": "jsonlite",
@@ -214,7 +220,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=jsonlite"
     },
-    {
+    "9": {
       "@type": "SoftwareApplication",
       "identifier": "lme4",
       "name": "lme4",
@@ -226,7 +232,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=lme4"
     },
-    {
+    "10": {
       "@type": "SoftwareApplication",
       "identifier": "lubridate",
       "name": "lubridate",
@@ -238,7 +244,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=lubridate"
     },
-    {
+    "11": {
       "@type": "SoftwareApplication",
       "identifier": "memoise",
       "name": "memoise",
@@ -250,7 +256,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=memoise"
     },
-    {
+    "12": {
       "@type": "SoftwareApplication",
       "identifier": "parallelly",
       "name": "parallelly",
@@ -262,7 +268,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=parallelly"
     },
-    {
+    "13": {
       "@type": "SoftwareApplication",
       "identifier": "pbapply",
       "name": "pbapply",
@@ -274,7 +280,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=pbapply"
     },
-    {
+    "14": {
       "@type": "SoftwareApplication",
       "identifier": "rvest",
       "name": "rvest",
@@ -286,7 +292,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=rvest"
     },
-    {
+    "15": {
       "@type": "SoftwareApplication",
       "identifier": "stringi",
       "name": "stringi",
@@ -298,7 +304,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=stringi"
     },
-    {
+    "16": {
       "@type": "SoftwareApplication",
       "identifier": "tibble",
       "name": "tibble",
@@ -309,7 +315,8 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=tibble"
-    }
-  ],
-  "fileSize": "16252.825KB"
+    },
+    "SystemRequirements": null
+  },
+  "fileSize": "16291.087KB"
 }

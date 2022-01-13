@@ -7,7 +7,7 @@ init:
 	echo "pkgdown::init_site()" | R --no-save -q
 
 knith:
-	echo "pkgdown::build_article('$(LFILE)')" | R --no-save -q
+	echo "pkgdown::build_article('$(LFILE)',quiet=FALSE)" | R --no-save -q
 
 open:
 	xdg-open docs/articles/pkgstats.html &

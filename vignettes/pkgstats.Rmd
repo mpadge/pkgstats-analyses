@@ -59,56 +59,61 @@ if (!file.exists (f_p)) {
 
 ## Introduction
 
-The temporal development of software has been studied for many decades, with
-the majority of studies examining the development of individual pieces of
-software or, in rarer cases, comparative studies between a select few pieces of
-software. Open source software in many languages is, however, increasingly
-dependent upon and therefore shaped by developments in other packages or
-libraries. We therefore assert that the development or evolution of open source
-software is better studies in *collective* rather than *individual* terms. A
-computer language has associated with it an evolving ecosystem of software, and
-the evolution of any one component of that ecosystem is best studied in the
-context of the evolution of the ecosystem as a whole.
+The temporal development of software has been studied for many decades,
+commonly through the development of individual pieces of software or, in rarer
+cases, comparative studies between a select few pieces of software [see
+@oss-evolution-2016 for a comprehensive review]. Open source software in many
+languages is nevertheless increasingly dependent upon and therefore shaped by
+developments in other packages or libraries. Any computer language has
+associated with it an evolving ecosystem of software, and the evolution of any
+one component of that ecosystem is best studied in the context of the evolution
+of the ecosystem as a whole. In short, the development or evolution of open
+source software is better studied in *collective* rather than *individual*
+terms. 
 
-A key component of the success of Open Source Software (OSS) is package
-managers [@pkg-mngrs-2018], which effectively serve as curated repositories of
-independently-contributed software. Package managers exist both for specific
-operating systems [@pkg-mngrs-2018] and specific computer languages such as
+For many computer languages, individual pieces of open-source software --
+hereafter referred to as "packages" -- are held and distributed through
+centralised package distribution services, or "package managers"
+[@pkg-mngrs-2018]. Package managers serve as curated repositories of
+independently-contributed software, and exist for computer languages including
 python [@new-pypi-2018], LaTeX [@ctan-wiki], JavaScript [@npm-2020], and many
-others. This work analyses all current and historically archived packages in
-the CRAN (Comprehensive R Archive Network) package manager for the R language.
+others [as well as operating-system specific package managers such as Debian,
+@dpkg]. This present work analyses all current and historically archived
+packages in the CRAN (Comprehensive R Archive Network) package manager for the
+R language.
 
-The majority of prior work on the temporal development or evolution of software
-has been based on individual pieces of software, here generically referred to
-as "packages". One notably exception is a recent analysis of the "pypi" (Python
-Package Index) package manager for python [@pypi2019], which analysed and
-presented a number of statistics relevant to the present work, including:
+An analogous analysis was recently conducted on the "pypi" (Python Package
+Index) package manager for python [@pypi2019], which analysed the temporal
+evolution of several aspects of the package manager system. Findings relevant
+to the present work included that:
 
 - Compound annual growth rates in numbers of new packages were slightly less
   (at 43%) than growth in active packages (47%) and in new releases (51%).
   these, at 39%.
 - Each package has around 7 +/- 19 new releases per year, at an average
   inter-release frequency of 65 +/ 144 days.
-- Total numbers of imported packages increases with compound annual growth rate
-  of 62%.
+- Total numbers of imported packages have increased with a compound annual
+  growth rate of 62%.
 - The standard python libraries represent around 19% of all package imports.
 
 This analyses represents the most comprehensive analysis to date of a package
-manager for any computer language, drawn almost two million releases of 179,000
-packages. The size of pypi necessarily restricted these analyses to package
-metadata, although single metrics of package size were also included. Moreover,
-the size of pypi meant that analyses of dependency networks were also
+manager for any computer language, drawn from almost two million releases of
+179,000 packages. The size of pypi necessarily restricted these analyses to
+package metadata, although single metrics of package size were also included.
+Moreover, the size of pypi meant that analyses of dependency networks were also
 relatively restricted to aggregate statistics only, with no analyses of the
-internal properties of dependency networks themselves.
+internal properties of dependency networks themselves. Thus while this
+represents an exemplary study of the evolution of a package manager, the size
+of this system precluded any analyses of how individual pieces of software
+evolve both internally, and in relation to the aggregate evolution of the
+system as a whole.
 
-More detailed considerations of temporal development and evolution of code have
-largely been restricted to individual packages. Analyses of code evolution
-frequently refer to work of @software-evolution-97, who expressed their
-findings as a series of "laws" of software evolution. These "laws" include
-that, over time, software increases both in complexity and in functional
-content (or numbers of "modules"). Those laws of growth themselves derive from
-@Turski96, who posited an inverse-square law for software growth, later
-formalised in @Turski02.
+Analyses of code evolution frequently refer to work of @software-evolution-97,
+who expressed their findings as a series of "laws" of software evolution. These
+"laws" include that, over time, software increases both in complexity and in
+functional content (or numbers of "modules"). Those laws of growth themselves
+derive from @Turski96, who posited an inverse-square law for software growth,
+later formalised in @Turski02.
 
 This inverse-square "law" was nevertheless an empirical fitting exercise only,
 and merely posits the arguably simplest form for a process in which the rate of
@@ -118,67 +123,64 @@ appear to have been either any examinations of alternative models of growth, or
 of plausible theoretical foundations for any particular model.
 
 These "laws" of software evolution have nevertheless been frequently used and
-cited (see overview in @Mens2008, and references therein), although
+cited [see overview in @Mens2008, and references therein], although
 overwhelmingly for considerations of individual software packages. They have
 been widely adopted in a burgeoning field of what might be referred to as
 "Software Mining and Analytics", particularly to elucidate useful predictors of
 software quality. A useful overview of the field was provided by
-@mining-repos-2013, who usefully identified a number of categories, including
-that of "code statistics" examined here.
+@mining-repos-2013, who empirically identified a number of research categories
+within this broad field, including one of "code statistics" in which the
+current research would fit.
 
 More detailed considerations of package dependency networks have been developed
 in more restricted, and thus more manageable, contexts, such as the analysis of
-the Debian network of @macro-evolution-2009, which revealed progressive
-increases in package inter-dependencies. Although they observe increases in the
-sizes of packages over time, and claim that this reflects the laws of
-@software-evolution-97, they neither quantify nor model actual rates of change.  <!-- do we or do we plan to? -->
-They also observe that the relative sizes of packages, measured in terms of
-lines of code, remains relatively stable across releases.
+the Debian network by @macro-evolution-2009, which revealed progressive
+increases in package inter-dependencies. Although they observed increases in
+the sizes of packages over time, and claimed that this reflected the laws of
+@software-evolution-97, they neither quantified nor modelled actual rates of
+change. They also observed that the relative sizes of packages, measured in
+terms of lines of code, remained relatively stable across releases.
 
-A more extensive consideration of dependency networks alone was provided by 
+A more extensive consideration of dependency networks alone was provided by
 @seven-pkg-networks-2019, who examined networks from seven package management
-systems, including pypi and CRAN. They observe
-that both numbers of packages and numbers of dependencies increase more slowly
-for CRAN packages than for any of the other systems they consider, as do
-numbers of package updates. They also observe that the "survival probability"
-(that a package is not updated at some time, $t$) <!-- This seems to be reversed? --> is far greater for CRAN than
-for other package ecosystems (although with differences observed between
-packages which are not required by other packages, and those which are).
-Finally, they observe that the Gini coefficient of inequality between dependent
-packages has also increased over time in all systems.
+systems, including pypi and CRAN. They observed that both numbers of packages
+and numbers of dependencies have increased more slowly for CRAN packages than
+for any of the other systems they considered, as have numbers of package
+updates. They also observed that the "survival probability" (that a package is
+not updated at some time, $t$) has been far greater for CRAN than for other
+package ecosystems, albeit with differences observed between packages which are
+not required or imported by other packages, and those which are. Finally, they
+observed that the Gini coefficient of inequality between dependent packages has
+also increased over time in all systems.
 
 This work focusses on the CRAN package system which is around one tenth the
 size of pypi for the python language, although still amounting to over 100,000
 releases of around 20,000 packages. This smaller sizes enables far more
 detailed analyses than previous work, not just of package metadata, but also
-extending to detailed analyses of the code itself.
+extending to detailed analyses of the code itself, as described in the Methods
+which follow.
 
 First, we describe the `{pkgstats}` R package, which can be used to generate
 and analyze properties of R package code, and the accompanying database of code
 statistics of all historical CRAN packages.  We then describe trends in CRAN
 R package properties over the history of the archive (199X-2021).  We focus on
 trends in four areas: Package metadata (licenses, authorship, translation),
-Package and content (file and function types and sizes), intra-package code
-structure (function call networks), and finally, dependency networks amongst
-packages. Finally, we discuss implications and likely drivers of these trends,
-and potential further applications and extensions of the `pkgstats` package
-and database.
+internal content and structure (file and function types and sizes),
+intra-package code structure (function call networks), and finally, dependency
+networks amongst packages. Finally, we discuss implications and likely drivers
+of these trends, and potential further applications and extensions of the
+`{pkgstats}` package and database.
 
 ## Methods
 
-<!-- This section should be way longer. It shoule
-- described pkgstats package in more detail, to the point of basic usage
-- describe the different metrics collected - if not a full list, then at least
-  categories and a reference to a full list
-- describe the usage of `ctags` and generation of relevant network statistics
+<!-- This section should be way longer. It should
 - describe the availability of the full package database and where to download
   it
 -->
 
-Data in this study were generated by the [the R package,
-`pkgstats`](https://docs.ropensci.org/pkgstats/), which we developed to
-quantify the structure and content of R packages using static code analysis
-techniques [@static-analysis-2016]. That package [includes a function,
+We developed `{pkgstats}` to quantify the structure and content of R packages
+using static code analysis techniques [@static-analysis-2016]. That package
+[includes a function,
 `pkgstats_from_archive`](https://docs.ropensci.org/pkgstats/reference/pkgstats_from_archive.html),
 which can be applied to a local mirror of the CRAN archive to collate
 statistics from all packages. This methodological description begins with an

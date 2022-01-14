@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">pkgstatsAnalyses</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.1.139</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.1.140</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,12 +59,15 @@
     
   </div>
 </nav><div class="container template-article">
-<script src="pkgstats_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+
+
+
+<div class="row">
   <main id="main"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Historical Trends in R Package Structure and Interdependency on CRAN</h1>
                         <h4 data-toc-skip class="author">Mark Padgham &amp; Noam Ross</h4>
             
-            <h4 data-toc-skip class="date">2022-01-13</h4>
+            <h4 data-toc-skip class="date">2022-01-14</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/mpadge/pkgstats-analyses/blob/HEAD/vignettes/pkgstats.Rmd" class="external-link"><code>vignettes/pkgstats.Rmd</code></a></small>
       <div class="d-none name"><code>pkgstats.Rmd</code></div>
@@ -76,7 +79,7 @@
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
 <p>The temporal development of software has been studied for many decades, commonly through the development of individual pieces of software or, in rarer cases, comparative studies between a select few pieces of software <span class="citation">(see Chahal and Saini 2016 for a comprehensive review)</span>. Open source software in many languages is nevertheless increasingly dependent upon and therefore shaped by developments in other packages or libraries. Any computer language has associated with it an evolving ecosystem of software, and the evolution of any one component of that ecosystem is best studied in the context of the evolution of the ecosystem as a whole. In short, the development or evolution of open source software is better studied in <em>collective</em> rather than <em>individual</em> terms.</p>
-<p>For many computer languages, individual pieces of open-source software – hereafter referred to as “packages” – are held and distributed through centralised package distribution services, or “package managers” <span class="citation">(Ovens 2018)</span>. Package managers serve as curated repositories of independently-contributed software, and exist for computer languages including python <span class="citation">(Harihareswara 2018)</span>, LaTeX <span class="citation">(“CTAN” 2021)</span>, JavaScript <span class="citation">(Goldwater 2020)</span>, and many others <span class="citation">(as well as operating-system specific package managers such as Debian, Debian Policy Editors 2021)</span>. This present work analyses all current and historically archived packages in the CRAN (Comprehensive R Archive Network) package manager for the R language.</p>
+<p>For many computer languages, individual pieces of open-source software – hereafter referred to as “packages” – are held and distributed through centralised package distribution services, or “package managers” <span class="citation">(Ovens 2018)</span>. Package managers serve as curated repositories of independently-contributed software, and exist for computer languages including python <span class="citation">(Harihareswara 2018)</span>, LaTeX <span class="citation">(<span>“CTAN”</span> 2021)</span>, JavaScript <span class="citation">(Goldwater 2020)</span>, and many others <span class="citation">(as well as operating-system specific package managers such as Debian, Debian Policy Editors 2021)</span>. This present work analyses all current and historically archived packages in the CRAN (Comprehensive R Archive Network) package manager for the R language.</p>
 <p>An analogous analysis was recently conducted on the “pypi” (Python Package Index) package manager for python <span class="citation">(Bommarito and Bommarito 2019)</span>, which analysed the temporal evolution of several aspects of the package manager system. Findings relevant to the present work included that:</p>
 <ul>
 <li>Compound annual growth rates in numbers of new packages were slightly less (at 43%) than growth in active packages (47%) and in new releases (51%). these, at 39%.</li>
@@ -88,7 +91,7 @@
 <p>Analyses of code evolution frequently refer to work of <span class="citation">Lehman et al. (1997)</span>, who expressed their findings as a series of “laws” of software evolution. These “laws” include that, over time, software increases both in complexity and in functional content (or numbers of “modules”). Those laws of growth themselves derive from <span class="citation">Turski (1996)</span>, who posited an inverse-square law for software growth, later formalised in <span class="citation">Turski (2002)</span>.</p>
 <p>This inverse-square “law” was nevertheless an empirical fitting exercise only, and merely posits the arguably simplest form for a process in which the rate of growth of a system decreases as the system grows. There is no theoretical reasons why software evolution should follow such a trajectory, nor do there appear to have been either any examinations of alternative models of growth, or of plausible theoretical foundations for any particular model.</p>
 <p>These “laws” of software evolution have nevertheless been frequently used and cited <span class="citation">(see overview in Mens 2008, and references therein)</span>, although overwhelmingly for considerations of individual software packages. They have been widely adopted in a burgeoning field of what might be referred to as “Software Mining and Analytics”, particularly to elucidate useful predictors of software quality. A useful overview of the field was provided by <span class="citation">Allamanis and Sutton (2013)</span>, who empirically identified a number of research categories within this broad field, including one of “code statistics” in which the current research would fit.</p>
-<p>More detailed considerations of package dependency networks have been developed in more restricted, and thus more manageable, contexts, such as the analysis of the Debian network by <span class="citation">Gonzalez-Barahona et al. (n.d.)</span>, which revealed progressive increases in package inter-dependencies. Although they observed increases in the sizes of packages over time, and claimed that this reflected the laws of <span class="citation">Lehman et al. (1997)</span>, they neither quantified nor modelled actual rates of change. They also observed that the relative sizes of packages, measured in terms of lines of code, remained relatively stable across releases.</p>
+<p>More detailed considerations of package dependency networks have been developed in more restricted, and thus more manageable, contexts, such as the analysis of the Debian network by <span class="citation">Gonzalez-Barahona et al. (2009)</span>, which revealed progressive increases in package inter-dependencies. Although they observed increases in the sizes of packages over time, and claimed that this reflected the laws of <span class="citation">Lehman et al. (1997)</span>, they neither quantified nor modelled actual rates of change. They also observed that the relative sizes of packages, measured in terms of lines of code, remained relatively stable across releases.</p>
 <p>A more extensive consideration of dependency networks alone was provided by <span class="citation">Decan, Mens, and Grosjean (2019)</span>, who examined networks from seven package management systems, including pypi and CRAN. They observed that both numbers of packages and numbers of dependencies have increased more slowly for CRAN packages than for any of the other systems they considered, as have numbers of package updates. They also observed that the “survival probability” (that a package is not updated at some time, <span class="math inline">\(t\)</span>) has been far greater for CRAN than for other package ecosystems, albeit with differences observed between packages which are not required or imported by other packages, and those which are. Finally, they observed that the Gini coefficient of inequality between dependent packages has also increased over time in all systems.</p>
 <p>This work focusses on the CRAN package system which is around one tenth the size of pypi for the python language, although still amounting to over 100,000 releases of around 20,000 packages. This smaller sizes enables far more detailed analyses than previous work, not just of package metadata, but also extending to detailed analyses of the code itself, as described in the Methods which follow.</p>
 <p>First, we describe the <a href="https://docs.ropensci.org/pkgstats" class="external-link"><code>{pkgstats}</code></a> R package, which can be used to generate and analyze properties of R package code, and the accompanying database of code statistics of all historical CRAN packages. We then describe trends in CRAN R package properties over the history of the archive (1998-2021). We focus on trends in four areas: Package metadata (licenses, authorship, translation), internal content and structure (file and function types and sizes), intra-package code structure (function call networks), and finally, dependency networks amongst packages. Finally, we discuss implications and likely drivers of these trends, and potential further applications and extensions of the <a href="https://docs.ropensci.org/pkgstats" class="external-link"><code>{pkgstats}</code></a> package and database.</p>
@@ -402,62 +405,62 @@ Fig 8 but over package release instead of year
 </div>
 </div>
 <div class="section level2 unnumbered">
-<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+<h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references">
-<div id="ref-mining-repos-2013">
-<p>Allamanis, Miltiadis, and Charles Sutton. 2013. “Mining Source Code Repositories at Massive Scale Using Language Modeling.” In <em>2013 10th Working Conference on Mining Software Repositories</em>, 207–16. <a href="https://doi.org/10.1109/MSR.2013.6624029" class="external-link">https://doi.org/10.1109/MSR.2013.6624029</a>.</p>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-mining-repos-2013" class="csl-entry">
+Allamanis, Miltiadis, and Charles Sutton. 2013. <span>“Mining Source Code Repositories at Massive Scale Using Language Modeling.”</span> In <em>2013 10th Working Conference on Mining Software Repositories</em>, 207–16. <a href="https://doi.org/10.1109/MSR.2013.6624029" class="external-link">https://doi.org/10.1109/MSR.2013.6624029</a>.
 </div>
-<div id="ref-pypi2019">
-<p>Bommarito, Ethan, and Michael Bommarito. 2019. “An Empirical Analysis of the Python Package Index (Pypi).” <em>arXiv</em> 1907.11073. <a href="http://arxiv.org/abs/1907.11073" class="external-link">http://arxiv.org/abs/1907.11073</a>.</p>
+<div id="ref-pypi2019" class="csl-entry">
+Bommarito, Ethan, and Michael Bommarito. 2019. <span>“An Empirical Analysis of the Python Package Index (PyPI).”</span> <em>arXiv</em> 1907.11073. <a href="https://arxiv.org/abs/1907.11073" class="external-link">https://arxiv.org/abs/1907.11073</a>.
 </div>
-<div id="ref-oss-evolution-2016">
-<p>Chahal, Kuljit Kaur, and Munish Saini. 2016. “Open Source Software Evolution: A Systematic Literature Review (Part 1).” <em>International Journal of Open Source Software and Processes (IJOSSP)</em> 7 (1): 28–45. <a href="https://doi.org/10.4018/IJOSSP.2016010101" class="external-link">https://doi.org/10.4018/IJOSSP.2016010101</a>.</p>
+<div id="ref-oss-evolution-2016" class="csl-entry">
+Chahal, Kuljit Kaur, and Munish Saini. 2016. <span>“Open Source Software Evolution: A Systematic Literature Review (Part 1).”</span> <em>International Journal of Open Source Software and Processes (IJOSSP)</em> 7 (1): 28–45. <a href="https://doi.org/10.4018/IJOSSP.2016010101" class="external-link">https://doi.org/10.4018/IJOSSP.2016010101</a>.
 </div>
-<div id="ref-igraph">
-<p>Csardi, Gabor, and Tamas Nepusz. 2006. “The Igraph Software Package for Complex Network Research.” <em>InterJournal</em> Complex Systems: 1695. <a href="https://igraph.org" class="external-link">https://igraph.org</a>.</p>
+<div id="ref-igraph" class="csl-entry">
+Csardi, Gabor, and Tamas Nepusz. 2006. <span>“The Igraph Software Package for Complex Network Research.”</span> <em>InterJournal</em> Complex Systems: 1695. <a href="https://igraph.org" class="external-link">https://igraph.org</a>.
 </div>
-<div id="ref-ctan-wiki">
-<p>“CTAN.” 2021. <em>Wikipedia</em>. <a href="https://en.wikipedia.org/w/index.php?title=CTAN&amp;oldid=1049045588" class="external-link">https://en.wikipedia.org/w/index.php?title=CTAN&amp;oldid=1049045588</a>.</p>
+<div id="ref-ctan-wiki" class="csl-entry">
+<span>“CTAN.”</span> 2021. <em>Wikipedia</em>. <a href="https://en.wikipedia.org/w/index.php?title=CTAN&amp;oldid=1049045588" class="external-link">https://en.wikipedia.org/w/index.php?title=CTAN&amp;oldid=1049045588</a>.
 </div>
-<div id="ref-dpkg">
-<p>Debian Policy Editors. 2021. “3. Binary Packages — Debian Policy Manual V4.6.0.1.” <em>Debian Policy Manual</em>. <a href="https://www.debian.org/doc/debian-policy/ch-binary.html" class="external-link">https://www.debian.org/doc/debian-policy/ch-binary.html</a>.</p>
+<div id="ref-dpkg" class="csl-entry">
+Debian Policy Editors. 2021. <span>“3. <span>Binary</span> Packages — <span>Debian</span> <span>Policy</span> <span>Manual</span> V4.6.0.1.”</span> <em>Debian Policy Manual</em>. <a href="https://www.debian.org/doc/debian-policy/ch-binary.html" class="external-link">https://www.debian.org/doc/debian-policy/ch-binary.html</a>.
 </div>
-<div id="ref-seven-pkg-networks-2019">
-<p>Decan, Alexandre, Tom Mens, and Philippe Grosjean. 2019. “An Empirical Comparison of Dependency Network Evolution in Seven Software Packaging Ecosystems.” <em>Empirical Software Engineering</em> 24: 381–416. <a href="https://doi.org/10.1007/s10664-017-9589-y" class="external-link">https://doi.org/10.1007/s10664-017-9589-y</a>.</p>
+<div id="ref-seven-pkg-networks-2019" class="csl-entry">
+Decan, Alexandre, Tom Mens, and Philippe Grosjean. 2019. <span>“An Empirical Comparison of Dependency Network Evolution in Seven Software Packaging Ecosystems.”</span> <em>Empirical Software Engineering</em> 24: 381–416. <a href="https://doi.org/10.1007/s10664-017-9589-y" class="external-link">https://doi.org/10.1007/s10664-017-9589-y</a>.
 </div>
-<div id="ref-network-centrality-79">
-<p>Freeman, Linton C. 1978. “Centrality in Social Networks Conceptual Clarification.” <em>Social Networks</em> 1 (3): 215–39. <a href="https://doi.org/https://doi.org/10.1016/0378-8733(78)90021-7" class="external-link">https://doi.org/https://doi.org/10.1016/0378-8733(78)90021-7</a>.</p>
+<div id="ref-network-centrality-79" class="csl-entry">
+Freeman, Linton C. 1978. <span>“Centrality in Social Networks Conceptual Clarification.”</span> <em>Social Networks</em> 1 (3): 215–39. https://doi.org/<a href="https://doi.org/10.1016/0378-8733(78)90021-7" class="external-link">https://doi.org/10.1016/0378-8733(78)90021-7</a>.
 </div>
-<div id="ref-npm-2020">
-<p>Goldwater, Matt. 2020. “An Abbreviated History of JavaScript Package Managers.” <em>Medium</em>. <a href="https://javascript.plainenglish.io/an-abbreviated-history-of-javascript-package-managers-f9797be7cf0e" class="external-link">https://javascript.plainenglish.io/an-abbreviated-history-of-javascript-package-managers-f9797be7cf0e</a>.</p>
+<div id="ref-npm-2020" class="csl-entry">
+Goldwater, Matt. 2020. <span>“An Abbreviated History of <span>JavaScript</span> Package Managers.”</span> <em>Medium</em>. <a href="https://javascript.plainenglish.io/an-abbreviated-history-of-javascript-package-managers-f9797be7cf0e" class="external-link">https://javascript.plainenglish.io/an-abbreviated-history-of-javascript-package-managers-f9797be7cf0e</a>.
 </div>
-<div id="ref-macro-evolution-2009">
-<p>Gonzalez-Barahona, Jesus M., Gregorio Robles, Martin Michlmayr, Juan José Amor, and Daniel M. German. n.d. “Macro-Level Software Evolution: A Case Study of a Large Software Compilation.” <em>Empirical Software Engineering</em> 14 (3): 262–85. <a href="https://doi.org/10.1007/s10664-008-9100-x" class="external-link">https://doi.org/10.1007/s10664-008-9100-x</a>.</p>
+<div id="ref-macro-evolution-2009" class="csl-entry">
+Gonzalez-Barahona, Jesus M., Gregorio Robles, Martin Michlmayr, Juan José Amor, and Daniel M. German. 2009. <span>“Macro-Level Software Evolution: A Case Study of a Large Software Compilation.”</span> <em>Empirical Software Engineering</em> 14: 262–85. <a href="https://doi.org/10.1007/s10664-008-9100-x" class="external-link">https://doi.org/10.1007/s10664-008-9100-x</a>.
 </div>
-<div id="ref-new-pypi-2018">
-<p>Harihareswara, Sumana. 2018. “A New Package Index for Python [LWN.Net].” <em>A New Package Index for Python</em>. <a href="https://lwn.net/Articles/751458/" class="external-link">https://lwn.net/Articles/751458/</a>.</p>
+<div id="ref-new-pypi-2018" class="csl-entry">
+Harihareswara, Sumana. 2018. <span>“A New Package Index for <span>Python</span> [<span>LWN</span>.net].”</span> <em>A New Package Index for Python</em>. <a href="https://lwn.net/Articles/751458/" class="external-link">https://lwn.net/Articles/751458/</a>.
 </div>
-<div id="ref-software-evolution-97">
-<p>Lehman, M. M., J. F. Ramil, P. D. Wernick, D. E. Perry, and W. M. Turski. 1997. “Metrics and Laws of Software Evolution-the Nineties View.” In <em>Proceedings Fourth International Software Metrics Symposium</em>, 20–32. <a href="https://doi.org/10.1109/METRIC.1997.637156" class="external-link">https://doi.org/10.1109/METRIC.1997.637156</a>.</p>
+<div id="ref-software-evolution-97" class="csl-entry">
+Lehman, M. M., J. F. Ramil, P. D. Wernick, D. E. Perry, and W. M. Turski. 1997. <span>“Metrics and Laws of Software Evolution-the Nineties View.”</span> In <em>Proceedings Fourth International Software Metrics Symposium</em>, 20–32. <a href="https://doi.org/10.1109/METRIC.1997.637156" class="external-link">https://doi.org/10.1109/METRIC.1997.637156</a>.
 </div>
-<div id="ref-martin-agile-2002">
-<p>Martin, Robert C. 2003. <em>Agile Software Development, Principles, Patterns, and Practices</em>. Upper Saddle River, N.J.: Prentice-Hall.</p>
+<div id="ref-martin-agile-2002" class="csl-entry">
+Martin, Robert C. 2003. <em>Agile Software Development, Principles, Patterns, and Practices</em>. Upper Saddle River, N.J.: Prentice-Hall.
 </div>
-<div id="ref-Mens2008">
-<p>Mens, Tom. 2008. “Introduction and Roadmap: History and Challenges of Software Evolution.” In <em>Software Evolution</em>, 1–11. Berlin, Heidelberg: Springer Berlin Heidelberg. <a href="https://doi.org/10.1007/978-3-540-76440-3_1" class="external-link">https://doi.org/10.1007/978-3-540-76440-3_1</a>.</p>
+<div id="ref-Mens2008" class="csl-entry">
+Mens, Tom. 2008. <span>“Introduction and Roadmap: History and Challenges of Software Evolution.”</span> In <em>Software Evolution</em>, 1–11. Berlin, Heidelberg: Springer Berlin Heidelberg. <a href="https://doi.org/10.1007/978-3-540-76440-3_1" class="external-link">https://doi.org/10.1007/978-3-540-76440-3_1</a>.
 </div>
-<div id="ref-pkg-mngrs-2018">
-<p>Ovens, Steve. 2018. “The Evolution of Package Managers.” <em>Opensource.com</em>. <a href="https://opensource.com/article/18/7/evolution-package-managers" class="external-link">https://opensource.com/article/18/7/evolution-package-managers</a>.</p>
+<div id="ref-pkg-mngrs-2018" class="csl-entry">
+Ovens, Steve. 2018. <span>“The Evolution of Package Managers.”</span> <em>Opensource.com</em>. <a href="https://opensource.com/article/18/7/evolution-package-managers" class="external-link">https://opensource.com/article/18/7/evolution-package-managers</a>.
 </div>
-<div id="ref-static-analysis-2016">
-<p>Papamichail, Michail, Themistoklis Diamantopoulos, and Andreas Symeonidis. 2016. “User-Perceived Source Code Quality Estimation Based on Static Analysis Metrics.” In <em>2016 Ieee International Conference on Software Quality, Reliability and Security (Qrs)</em>, 100–107. <a href="https://doi.org/10.1109/QRS.2016.22" class="external-link">https://doi.org/10.1109/QRS.2016.22</a>.</p>
+<div id="ref-static-analysis-2016" class="csl-entry">
+Papamichail, Michail, Themistoklis Diamantopoulos, and Andreas Symeonidis. 2016. <span>“User-Perceived Source Code Quality Estimation Based on Static Analysis Metrics.”</span> In <em>2016 IEEE International Conference on Software Quality, Reliability and Security (QRS)</em>, 100–107. <a href="https://doi.org/10.1109/QRS.2016.22" class="external-link">https://doi.org/10.1109/QRS.2016.22</a>.
 </div>
-<div id="ref-Turski02">
-<p>Turski, W. M. 2002. “The Reference Model for Smooth Growth of Software Systems Revisited.” <em>IEEE Transactions on Software Engineering</em> 28 (8): 814–15. <a href="https://doi.org/10.1109/TSE.2002.1027802" class="external-link">https://doi.org/10.1109/TSE.2002.1027802</a>.</p>
+<div id="ref-Turski96" class="csl-entry">
+Turski, W. M. 1996. <span>“Reference Model for Smooth Growth of Software Systems.”</span> <em>IEEE Transactions on Software Engineering</em> 22 (08): 599–600. <a href="https://doi.org/10.1109/TSE.1996.10007" class="external-link">https://doi.org/10.1109/TSE.1996.10007</a>.
 </div>
-<div id="ref-Turski96">
-<p>———. 1996. “Reference Model for Smooth Growth of Software Systems.” <em>IEEE Transactions on Software Engineering</em> 22 (08): 599–600. <a href="https://doi.org/10.1109/TSE.1996.10007" class="external-link">https://doi.org/10.1109/TSE.1996.10007</a>.</p>
+<div id="ref-Turski02" class="csl-entry">
+———. 2002. <span>“The Reference Model for Smooth Growth of Software Systems Revisited.”</span> <em>IEEE Transactions on Software Engineering</em> 28 (8): 814–15. <a href="https://doi.org/10.1109/TSE.2002.1027802" class="external-link">https://doi.org/10.1109/TSE.2002.1027802</a>.
 </div>
 </div>
 </div>

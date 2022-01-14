@@ -1,4 +1,4 @@
-pandoc: 2.7.3
+pandoc: 2.14.2
 pkgdown: 2.0.1
 pkgdown_sha: ~
 articles:
@@ -13,7 +13,7 @@ articles:
   fig09: figures/fig09.html
   fig10: figures/fig10.html
   pkgstats: pkgstats.html
-last_built: 2022-01-13T11:58Z
+last_built: 2022-01-14T08:30Z
 urls:
   reference: https://mpadge.github.io/pkgstats-analyses/reference
   article: https://mpadge.github.io/pkgstats-analyses/articles

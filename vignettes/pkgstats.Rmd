@@ -574,17 +574,19 @@ trajectories or results.
 
 ## Results
 
+Many of the following results reveal pronounced changes broadly centered around
+2010. It is important in interpreting such results to note that the largest
+public code hosting platform, GitHub, launched in 2008. This changes from that
+year onward are very likely influenced by the increased public accessibility of
+code, as discussed further below.
+
 ### Metadata
 
-The relatively regulated process of CRAN submissions [@seven-pkg-networks-2019]
-is reflected in more regulated meta-data able to be extracted from package
-'DESCRIPTION' files. Numbers of both authors and contributors have increased
-over time (Fig. 1A), with contributors having been rarely acknowledged at all
-prior to 2010 (two years after the launch of GitHub), increasing to an average
-of one acknowledged contributor per package in 2021.
-
+Numbers of both authors and contributors have increased over time (Fig. 1A),
+with contributors having been rarely acknowledged at all prior to 2010,
+increasing to an average of one acknowledged contributor per package in 2021.
 Numbers of unique licenses primarily reflect numbers of ways of declaring
-licenses, rather than actual numbers of licenses. Figure 1B shows a roughly
+licenses, rather than numbers of actual licenses. Figure 1B shows a roughly
 linear increase in license declarations up to around 2007, followed by a
 pronounced drop and progression into a roughly stable range of somewhere over
 50 distinct entries. The different ways of specifying the three versions of GPL
@@ -618,7 +620,7 @@ The practice of translating messages within R packages into other languages has
 steadily declined in recent years (Fig. 2A), suggesting a pronounced increase
 in acceptance over the last 15 or so years of English as a globally standard
 language, and a concomitant decrease in active acknowledgement of other
-languages. (The `en@quot` translation entry is described in the [*R
+languages. (The `en@quot` translation entry in Fig. 2A is described in the [*R
 Installation and Administration*
 Manual](https://cran.r-project.org/doc/manuals/R-admin.html#Localization-of-messages)
 as a translation which, "can be used in a UTF-8 locale to have American error
@@ -627,7 +629,7 @@ quotes.") Rates of decrease since 2008 equate to 1.5% fewer packages per year
 including translations, from a total of just over 20% of all packages in 2008,
 to barely over 1% in 2021. While rates of decrease have slowed somewhat in
 recent years, extrapolation of the preceding five years nevertheless suggests
-that the practice of offering translations will entirely disappear by 2023.
+that the practice of offering translations will effectively disappear by 2023.
 
 ```{r fig02, child = "figures/fig02.Rmd", eval = TRUE, echo = FALSE}
 ```
@@ -647,13 +649,13 @@ The temporal development of numbers of files manifest several notable
 characteristics (Figure 3). Unsurprisingly, R packages have always been
 dominated by files in the `R/` directory, numbers of which increased
 considerably up to around 2010, after which they have generally stabilised at
-mean values of around 13-15 files (Fig. 3A). The `vignettes`
-directory is the only place within R packages in which numbers of files
-have remained relatively constant over the preceding 20+ years. Packages
-generally had very few files in the `inst` directory prior to 2010, after which
-they increased until around 2015, before decreasing again more recently. The
-two sub-directories in which numbers of files have increased most significantly
-are `src` and `tests`, with the latter increase particularly distinct, clearly
+mean values of around 13-15 files per package (Fig. 3A). The `vignettes`
+directory is the only place within R packages in which numbers of files have
+remained relatively constant over the preceding 20+ years. Packages generally
+had very few files in the `inst` directory prior to 2010, after which they
+increased until around 2015, before decreasing again more recently. The two
+sub-directories in which numbers of files have increased most significantly are
+`src` and `tests`, with the latter increase particularly distinct, clearly
 indicating that packages have become progressively better tested.
 
 
@@ -681,17 +683,17 @@ with each successive release.
 Figure 4 shows the temporal evolution of a number of code metrics. These
 figures distinguish between the two primary kinds of R functions, exported and
 non-exported, and also between the main sub-directories of R packages described
-at the outset. Lines of Code ("LoC") in the primary `/R` and `/src` directories
-broadly increased up to around 2005-2010, after which time LoC in these
-directories has slightly decreased, converging on just over 600 lines in both
-`/R` and `/src` directories. These trends are broadly reflected in LoC per
-function (Fig. 4B), excepting the early years of CRAN, during which functions
-often had well over 100 lines each, especially `src` functions defined in other
-languages (in those years, primarily Fortran and C). LoC per function have
-remained broadly stable for almost 20 years, at around 30 lines for all
-function types and languages. The slight decrease discernible since around 2015
-amounts to one LoC less for exported, non-exported, and `/src` functions every
-3.4, 8.5, and 1.5 years, respectively.
+at the outset. Lines of Code ("LoC") in the primary `/R` and `/src`
+sub-directories broadly increased up to around 2005-2010, after which time LoC
+in these directories has slightly decreased, converging on just over 600 lines
+in both `/R` and `/src` directories. These trends are broadly reflected in LoC
+per function (Fig. 4B), excepting the early years of CRAN, during which
+functions often had well over 100 lines each, especially `src` functions
+defined in other languages (in those years, primarily Fortran and C). LoC per
+function have remained broadly stable for almost 20 years, at around 30 lines
+for all function types and languages. The slight decrease discernible since
+around 2015 amounts to one LoC less for exported, non-exported, and `/src`
+functions every 3.4, 8.5, and 1.5 years, respectively.
 
 Total numbers of R functions initially increased until around 2007, peaking at
 just under 30 exported and over 50 non-exported functions per package (Fig.
@@ -736,18 +738,18 @@ release of a package.
 ```{r fig05, child = "figures/fig05.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
-These increases in LoC nevertheless corresponded to general decreases in
-LoC per function with increasing numbers of releases (Fig. 5B). Similar to the
-aggregate LoC measures of panel A, `/src` directories represent the only
-location where LoC manifest a distinct peak as packages matured, with LoC per
-`/src` function peaking slightly earlier (after around 40 releases) than total
-LoC (slightly over 50). In all directories, LoC per function either slightly
-increased or remained generally stable over the first 50 or so releases, beyond
-which functions in all directories clearly become considerably more
-streamlined, and LoC decreases markedly out to the 100th release. These
-decreases are nevertheless relatively minor, and amount to removing one LoC per
-function for every 5, 7, or 18 releases for exported R, non-exported R, or
-source functions, respectively.
+These increases in LoC nevertheless corresponded to general decreases in LoC
+per function with increasing numbers of releases (Fig. 5B). In all directories,
+LoC per function either slightly increased or remained generally stable over
+the first 50 or so releases, beyond which functions in all directories clearly
+become considerably more streamlined, and LoC decreases markedly out to the
+100th release. Similar to the aggregate LoC measures of panel A, LoC in `/src`
+directories manifest a distinct peak as packages matured, with LoC per `/src`
+function peaking slightly earlier (after around 40 releases) than total LoC
+(slightly over 50). The decreases in the latter portions of Fig. 5B are
+nevertheless relatively minor, and amount to removing one LoC per function for
+every 5, 7, or 18 releases for exported R, non-exported R, and source function,
+respectively.
 
 The increasing total measures of LoC of panel A combined with decreasing LoC
 per function of panel B must mean that more functions are added as packages
@@ -863,7 +865,9 @@ imported packages, and total numbers of external function calls. Numbers of
 function calls will only equal numbers of imported packages when only one
 function is used from each package, otherwise numbers of function calls must be
 greater, leading to larger Gini coefficients of inequality in numbers of
-external function calls between packages.
+external function calls between packages. Other than this expected difference
+in scale, results from both single-package imports and numbers of functions
+were qualitatively similar.
 
 Finally, figure 6D depicts changes in numbers of unique function calls from
 each package to the top ten contributed packages, defined as the ten packages
@@ -904,7 +908,8 @@ stability thus arise as packages develop purely through being imported as
 dependencies by increasing numbers of other packages. This in turn suggests
 that the best way to counteract the increasing coupling instability of CRAN as
 a whole depicted in Fig. 6B would be to ensure that packages remain
-progressively developed, rather than abandoned after only a few releases.
+progressively developed, rather than abandoned (or archived) after only a few
+releases.
 
 Finally, Fig. 7C shows progressions of both packages and individual functions
 being imported into other packages as a function of release sequence. The
@@ -913,8 +918,8 @@ releases, as was already clear from Fig. 7B. Packages with less than ten
 releases are, on average, imported by very few other packages, while packages
 with 40 or more releases are imported by ten other packages on average. The
 second line on that figure nevertheless reveals that packages import on average
-only 1-2 functions from other packages, and that numbers of functions imported
-by other packages increase only marginally as packages mature.
+only 1-2 functions from any given package, and that numbers of functions
+imported by other packages increase only marginally as packages mature.
 
 Coupled with the observed increases in numbers of exported functions as
 packages mature depicted in Fig. 5C, the slight increase in numbers of
@@ -1013,36 +1018,36 @@ for comment lines in `/R` code, which have increased dramatically since around
 2010. This roughly corresponds to the first release of the {roxygen2} package
 which has indubitably done more than any other package to standardise
 documentation of R functions. This increase in `/R` documentation is likely a
-direct reflection of the widespread adoption of `roxygen2` as the documentation
+direct reflection of the widespread adoption of {roxygen2} as the documentation
 standard for R packages.
 
 ```{r fig10, child = "figures/fig10.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
 The relative proportion of white space in code lines has increased consistently
-yet very slightly over time, amount to an increase from slightly under 13% to
-slightly over 14.5%. The most dramatic development of Fig. 10B is clearly the
-decrease in the proportion of files with tab-indentation, from well over 60%
-before the year 2000 to barely over 10% today. Code indentation ignoring tabs
-increased until around 2005-2010, remaining constant at 3-3.5 spaces for many
-years before more recently declining to well under 3 spaces.
+yet very slightly over time, amounting to an increase from slightly under 13%
+to slightly over 14.5%. The most dramatic development of Fig. 10B is clearly
+the decrease in the proportion of files with tab-indentation, from well over
+60% before the year 2000 to barely over 10% today. Ignoring tabs, code
+indentation increased until around 2005-2010, remaining constant at 3-3.5
+spaces for many years before more recently declining to well under 3 spaces.
 
 Each R function in 1998 had an average of six parameters, yet this declined
-very rapidly to under four within two years. Numbers of parameters have
-progressively increased since then, yet still barely exceeding an average of
-four parameters per function. Parameter documentation has followed an almost
+very rapidly to under four within two years (Fig. 10C). Numbers of parameters
+have progressively increased since then, yet still barely exceeding an average
+of four parameters per function. Parameter documentation has followed an almost
 identical trend, increasing from under 70 characters per parameter to just over
 80. In contrast, total numbers of documentation lines per function initially
 increased until around 2010, at almost 60 lines, before decreasing more
 recently to 50 lines per function or less.
 
-Finally, the equivalent results analysed as a function of release sequence
-rather than year reveal that functions become markedly better documented as
-packages mature (Fig. 10D). Analogous to preceding results, the recent decrease
-in documentation lines per function likely reflects an increasing prevalence of
-recently released packages, while all packages uniformly expand function
-documentation as they mature, even though documentation of individual
-parameters does not greatly change.
+The equivalent results analysed as a function of release sequence rather than
+year reveal that functions become markedly better documented as packages mature
+(Fig. 10D), although not through additional documentation of parameters.
+Analogous to preceding results, the recent decrease in documentation lines per
+function likely reflects an increasing prevalence of recently released packages
+which outweighs increases in function documentation as individual packages
+mature.
 
 Finally, contrasting panels C and D of Fig. 10 also reveals a likely influence
 of increasing dominance of recent packages on numbers of parameters per
@@ -1059,6 +1064,10 @@ parameters per function through the increasing dominance of recently released
 packages.
 
 ## Discussion
+
+The relatively regulated process of CRAN submissions [@seven-pkg-networks-2019]
+is reflected in more regulated meta-data able to be extracted from package
+'DESCRIPTION' files.
 
 ### Dependency Networks
 

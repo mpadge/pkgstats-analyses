@@ -68,7 +68,7 @@ readRDS (f) |>
                legend.position = c (0.30, 0.6),
                legend.background = element_rect(fill='transparent', colour='transparent')) +
         xlab ("Release sequence") +
-        ylab ("Relative changes per release") +
+        ylab ("Proportion") +
         ggtitle ("A: Change in calls") -> p1
 ```
 
@@ -146,7 +146,7 @@ png (fig07_png, width = 7, height = 7, units = "in", res = 300)
 graphics.off ()
 ```
 
-```{r fig7-out, out.width = 700, fig.cap = "**Fig. 7** Dependency networks between packages over sequential releases. (A) Proportional change in numbers of calls to base and recommended packages between successive releases. Solid lines show loess-smoothed interpolations, while dashed lines show raw values (and not values from cran snapshots). (B) Coupling instability. (C) Average numbers of functions from each package imported by other packages, and averge numbers of times packages are imported by other packages."}
+```{r fig7-out, out.width = 700, fig.cap = "**Fig. 7** Dependency networks between packages over sequential releases. (A) Proportional of calls to base and recommended packages across successive releases. (B) Coupling instability. (C) Average numbers of functions from each package imported by other packages, and averge numbers of times packages are imported by other packages."}
 knitr::include_graphics (fig07_png)
 ```
 

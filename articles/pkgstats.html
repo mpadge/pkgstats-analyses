@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">pkgstatsAnalyses</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.1.144</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.1.145</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -238,6 +238,7 @@
 <em>efferent</em> couplings are <em>outbound</em> edges coupling that package with all other packages.</li>
 </ul>
 <p>Respectively denoting afferent and efferent couplings by <span class="math inline">\(n_a\)</span> and <span class="math inline">\(n_e\)</span>, the coupling instability, <span class="math inline">\(I\)</span>, is defined as <span class="math inline">\(I = n_e / (n_e + n_a)\)</span>. Packages which depend on many external calls (high efferent couplings), yet upon which few other packages depend (low afferent couplings) thus have a high coupling instability, while packages upon which many other packages depend, yet which themselves depend on few other packages have a low coupling instability. The analyses below quantified coupling instability for each package from the dependency networks, using total numbers of function calls between all packages, in order to estimate the average coupling instability of the entire network.</p>
+<p>We also adapted this measure of coupling instability <em>between packages</em> to a measure of <em>internal</em> coupling instability <span class="citation">(Almugrin and Melton 2015)</span> between the individual files of one package. Packages with high internal coupling instability make many calls between individual files, while packages with low instability make more calls within single files, and relatively fewer between them.</p>
 </div>
 <div class="section level3">
 <h3 id="statistical-analyses">Statistical Analyses<a class="anchor" aria-label="anchor" href="#statistical-analyses"></a>
@@ -397,6 +398,8 @@ Fig 8 but over package release instead of year
 <div class="section level2">
 <h2 id="discussion">Discussion<a class="anchor" aria-label="anchor" href="#discussion"></a>
 </h2>
+<p>These results reveal a number of metrics which appear to have evolved in one direction when collectively measured across all CRAN packages, yet which tend to evolve in opposing directions within the evolution of individual packages. An example is the metric of “coupling instability” which has increased markedly for all packages since around 2010 (Fig. 6B), yet which decreases in any individual package from near one on first release (due to new packages being unable to be used or depended on by other packages) to near zero after around 100 releases. Additional examples arose in proportions of calls to base R functions, which have collectively decreased over time (Fig. 6A), from over 80 to under 70%, while calls to contributed packages have collectively increased from under 1% to almost 15% in 2021. While individual packages tend to use proportionally fewer calls to base R functions as they mature, they also use proportionally fewer calls to contributed packages, and substitute both of these with increasing proportions of calls to recommended packages (Fig. 7A). Simpler examples also arise in variables like numbers of R functions per file, which have decreased consistently over CRAN as a whole (Fig. 4D), yet which increase progressively as individual packages mature.</p>
+<p>These general patterns indicate the ubiquity of a dual dynamic between CRAN becoming collectively dominated by less mature packages, and so manifesting statistic properties increasingly reflective of packages in relatively preliminary states of development, while individual packages themselves generally manifest opposing tendencies. It is not straightforward for many metrics considered here to determine whether a given observed trajectory might be a positive development for CRAN as a whole or not, yet the example of coupling instability does provide one metric with a clear understating, and for which high values are generally considered undesirable <span class="citation">(Martin 2003)</span>.</p>
 <p>The relatively regulated process of CRAN submissions <span class="citation">(Decan, Mens, and Grosjean 2019)</span> is reflected in more regulated meta-data able to be extracted from package ‘DESCRIPTION’ files.</p>
 <div class="section level3">
 <h3 id="dependency-networks">Dependency Networks<a class="anchor" aria-label="anchor" href="#dependency-networks"></a>
@@ -405,6 +408,10 @@ Fig 8 but over package release instead of year
 <p>For discrete, non-negative variables such as counts, Gini coefficients must generally increase with the scale or maximal values of those variables.</p>
 <p><img src="pkgstats_files/figure-html/gini-with-n-1.png" width="700"></p>
 </div>
+<div class="section level3">
+<h3 id="future-work">Future Work<a class="anchor" aria-label="anchor" href="#future-work"></a>
+</h3>
+</div>
 </div>
 <div class="section level2 unnumbered">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
@@ -412,6 +419,9 @@ Fig 8 but over package release instead of year
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-mining-repos-2013" class="csl-entry">
 Allamanis, Miltiadis, and Charles Sutton. 2013. <span>“Mining Source Code Repositories at Massive Scale Using Language Modeling.”</span> In <em>2013 10th Working Conference on Mining Software Repositories</em>, 207–16. <a href="https://doi.org/10.1109/MSR.2013.6624029" class="external-link">https://doi.org/10.1109/MSR.2013.6624029</a>.
+</div>
+<div id="ref-almugrin_coupling_2015" class="csl-entry">
+Almugrin, Saleh, and Austin Melton. 2015. <span>“Indirect <span>Package</span> <span>Coupling</span> <span>Based</span> on <span>Responsibility</span> in an <span>Agile</span>, <span>Object</span>-<span>Oriented</span> <span>Environment</span>.”</span> In <em>2015 <span>Second</span> <span>International</span> <span>Conference</span> on <span>Trustworthy</span> <span>Systems</span> and <span>Their</span> <span>Applications</span></em>, 110–19. <a href="https://doi.org/10.1109/TSA.2015.26" class="external-link">https://doi.org/10.1109/TSA.2015.26</a>.
 </div>
 <div id="ref-pypi2019" class="csl-entry">
 Bommarito, Ethan, and Michael Bommarito. 2019. <span>“An Empirical Analysis of the Python Package Index (PyPI).”</span> <em>arXiv</em> 1907.11073. <a href="https://arxiv.org/abs/1907.11073" class="external-link">https://arxiv.org/abs/1907.11073</a>.

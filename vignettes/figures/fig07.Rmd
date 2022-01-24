@@ -42,11 +42,7 @@ deps_p1 <- deps |>
             n_recommended = n_recommended / n_total,
             n_contrib = n_contrib / n_total) |>
     group_by (from) |>
-    summarise (n_base = n_base / lag (n_base),
-               n_recommended = n_recommended / lag (n_recommended),
-               n_contrib = n_contrib / lag (n_contrib),
-               seq = seq_along (n_base),
-               .groups = "keep") |>
+    mutate (seq = seq_along (n_base)) |>
     mutate_at(vars (n_base, n_recommended, n_contrib),
               ~replace (., !is.finite (.), NA)) |>
     group_by (seq) |>
@@ -59,44 +55,17 @@ deps_p1 <- deps |>
 saveRDS (deps_p1, f)
 ```
 
-```{r fig7-alt-p1, eval = FALSE}
-deps_p1 <- deps |>
-    group_by (from) |>
-    mutate (seq = seq_along (from)) |>
-    group_by (seq) |>
-    summarise (n_base = sum (n_unique [to == "base"]),
-               n_recommended = sum (n_unique [to %in% recommended]),
-               n_contrib = sum (n_unique [!to %in% c ("base", recommended)]),
-               .groups = "keep") |>
-    mutate (n_total = n_base + n_recommended + n_contrib,
-            n_base = n_base / n_total,
-            n_recommended = n_recommended / n_total,
-            n_contrib = n_contrib / n_total)
-deps_p1 |>
-    pivot_longer (c (n_base, n_recommended, n_contrib)) |>
-    filter (seq <= 50) |>
-    ggplot (aes (x = seq, y = value, colour = name)) +
-        geom_line (lty = 2) +
-        geom_smooth (method = "loess", formula = "y ~ x", se = FALSE, lwd = 0.7) +
-        theme (legend.title = element_blank(),
-               legend.position = c (0.50, 0.9),
-               legend.background = element_rect(fill='transparent', colour='transparent')) +
-        xlab ("Release sequence") +
-        ylab ("Relative changes per release") +
-        ggtitle ("A: Change in calls") -> p1
-```
-
 
 
 
 ```{r fig7-p1, eval = !file.exists (fig07_png)}
 readRDS (f) |>
-    filter (seq <= 50 & name != "n_contrib") |>
+    filter (seq <= 50) |>
     ggplot (aes (x = seq, y = value, colour = name)) +
-        geom_line (lty = 2) +
-        geom_smooth (method = "loess", formula = "y ~ x", se = FALSE, lwd = 0.7) +
+        geom_line (lty = 1) +
+        #geom_smooth (method = "loess", formula = "y ~ x", se = FALSE, lwd = 0.5) +
         theme (legend.title = element_blank(),
-               legend.position = c (0.50, 0.9),
+               legend.position = c (0.30, 0.6),
                legend.background = element_rect(fill='transparent', colour='transparent')) +
         xlab ("Release sequence") +
         ylab ("Relative changes per release") +

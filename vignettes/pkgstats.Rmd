@@ -507,6 +507,14 @@ dependency networks, using total numbers of function calls between all
 packages, in order to estimate the average coupling instability of the entire
 network.
 
+We also adapted this measure of coupling instability *between packages* to a
+measure of *internal* coupling instability [@almugrin_coupling_2015] between
+the individual files of one package. Packages with high internal coupling
+instability make many calls between individual files, while packages with low
+instability make more calls within single files, and relatively fewer between
+them.
+
+
 ### Statistical Analyses
 
 The following results depict and interpret qualitative trends and patterns,
@@ -1065,6 +1073,35 @@ packages.
 
 ## Discussion
 
+These results reveal a number of metrics which appear to have evolved in one
+direction when collectively measured across all CRAN packages, yet which tend
+to evolve in opposing directions within the evolution of individual packages.
+An example is the metric of "coupling instability" which has increased markedly
+for all packages since around 2010 (Fig. 6B), yet which decreases in any
+individual package from near one on first release (due to new packages being
+unable to be used or depended on by other packages) to near zero after around
+100 releases. Additional examples arose in proportions of calls to base R
+functions, which have collectively decreased over time (Fig. 6A), from over 80
+to under 70%, while calls to contributed packages have collectively increased
+from under 1% to almost 15% in 2021. While individual packages tend to use
+proportionally fewer calls to base R functions as they mature, they also use
+proportionally fewer calls to contributed packages, and substitute both of
+these with increasing proportions of calls to recommended packages (Fig. 7A).
+Simpler examples also arise in variables like numbers of R functions per file,
+which have decreased consistently over CRAN as a whole (Fig. 4D), yet which
+increase progressively as individual packages mature.
+
+These general patterns indicate the ubiquity of a dual dynamic between CRAN
+becoming collectively dominated by less mature packages, and so manifesting
+statistic properties increasingly reflective of packages in relatively
+preliminary states of development, while individual packages themselves
+generally manifest opposing tendencies. It is not straightforward for many
+metrics considered here to determine whether a given observed trajectory might
+be a positive development for CRAN as a whole or not, yet the example of
+coupling instability does provide one metric with a clear understating, and for
+which high values are generally considered undesirable [@martin-agile-2002].
+
+
 The relatively regulated process of CRAN submissions [@seven-pkg-networks-2019]
 is reflected in more regulated meta-data able to be extracted from package
 'DESCRIPTION' files.
@@ -1099,6 +1136,8 @@ g <- data.frame (n = xmax,
 ggplot (g, aes (x = n, y = gini)) +
     geom_line ()
 ```
+
+### Future Work
 
 
 ## References

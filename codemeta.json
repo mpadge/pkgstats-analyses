@@ -7,7 +7,7 @@
   "codeRepository": "https://github.com/mpadge/pkgstats-analyses",
   "issueTracker": "https://github.com/mpadge/pkgstats-analyses/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.0.1.146",
+  "version": "0.0.1.147",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -306,5 +306,5 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "35624.028KB"
+  "fileSize": "51158KB"
 }

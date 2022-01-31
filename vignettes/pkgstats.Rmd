@@ -611,15 +611,17 @@ code, as discussed further below.
 
 Numbers of both authors and contributors have increased over time (Fig. 1A),
 with contributors having been rarely acknowledged at all prior to 2010,
-increasing to an average of one acknowledged contributor per package in 2021.
-Numbers of unique licenses primarily reflect numbers of ways of declaring
-licenses, rather than numbers of actual licenses. Figure 1B shows a roughly
-linear increase in license declarations up to around 2007, followed by a
-pronounced drop and progression into a roughly stable range of somewhere over
-50 distinct entries. The different ways of specifying the three versions of GPL
-licenses have accounted for over 83% of all CRAN packages, with the second most
-common type license being MIT, at 9.6%, followed by BSD at 2.0%. One of these
-three licenses are used in 95% of all CRAN packages.
+increasing to an average of just under one acknowledged contributor per package
+in 2021. Numbers of unique licenses primarily reflect numbers of ways of
+declaring licenses, rather than numbers of actual licenses (for example,
+"GPL >= 2.0" is different to "Any GPL license version 2 or higher", although
+both clearly refer to the same license). Figure 1B shows a roughly linear
+increase in license declarations up to around 2007, followed by a pronounced
+drop and progression into a roughly stable range of somewhere over 50 distinct
+entries. The different ways of specifying the three versions of GPL licenses
+have accounted for over 83% of all CRAN packages, with the second most common
+type license being MIT, at 9.6%, followed by BSD at 2.0%. One of these three
+classes of licenses are used in 95% of all CRAN packages.
 
 
 ```{r fig01, child = "figures/fig01.Rmd", eval = TRUE, echo = FALSE}
@@ -656,7 +658,8 @@ quotes.") Rates of decrease since 2008 equate to 1.5% fewer packages per year
 including translations, from a total of just over 20% of all packages in 2008,
 to barely over 1% in 2021. While rates of decrease have slowed somewhat in
 recent years, extrapolation of the preceding five years nevertheless suggests
-that the practice of offering translations will effectively disappear by 2023.
+that the practice of offering translations will effectively disappear before
+the end of the coming year (2023).
 
 ```{r fig02, child = "figures/fig02.Rmd", eval = TRUE, echo = FALSE}
 ```

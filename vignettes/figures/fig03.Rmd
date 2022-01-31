@@ -109,6 +109,7 @@ p1 <- ggplot (dat, aes (x = year, y = n_files, color = dir)) +
     #geom_line (data = dat_ann, lty = 2) +
     ggtitle ("A: Numbers of files") +
     ylab ("#files") +
+    ylim (c (0, max (dat$n_files))) +
     theme (legend.position = "none")
 # dat_ann are very similar but much noisier, so not shown
 ```

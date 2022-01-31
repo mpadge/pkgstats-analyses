@@ -71,14 +71,13 @@ context of the evolution of the ecosystem as a whole. In short, the development
 or evolution of open source software is better studied in *collective* rather
 than *individual* terms. 
 
-Historically, the "evolution" of software has primarily focussed on individual
-pieces of software [@syeed_evolution_2013], frequently referring to the work of
-@software-evolution-97, who expressed their findings as a series of "laws" of
-software evolution. These "laws" include that, over time, software increases
-both in complexity and in functional content (or numbers of "modules"). Those
-laws of growth themselves derive from @Turski96, who posited an inverse-square
-law for software growth, later formalised in @Turski02, albeit as a purely
-empirical exercise absent any firm theoretical reasoning.
+One focal point of historically individual studies on software evolution has
+been the work of @software-evolution-97, who expressed their findings as a
+series of "laws" of software evolution. These "laws" include that, over time,
+software increases both in complexity and in functional content (or numbers of
+"modules"). Those laws of growth themselves derive from @Turski96, who posited
+an inverse-square law for software growth, later formalised in @Turski02,
+albeit as a purely empirical exercise absent any firm theoretical reasoning.
 
 These "laws" of software evolution have nevertheless been frequently used and
 cited [see overview in @Mens2008, and references therein], and have strongly
@@ -1116,7 +1115,6 @@ metrics considered here to determine whether a given observed trajectory might
 be a positive development for CRAN as a whole or not, yet the example of
 coupling instability does provide one metric with a clear understating, and for
 which high values are generally considered undesirable [@martin-agile-2002].
-
 
 ### Dependency Networks
 

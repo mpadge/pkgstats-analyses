@@ -66,12 +66,12 @@ saveRDS (dat, n_files_file)
 ```{r fig3-pkg-level-n-files, eval = do_fig3_pkg_n_files}
 x_per_pkg <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
     group_by (package) |>
-    summarise (R = files_R / lag (files_R),
-               src = files_src / lag (files_src),
-               inst = files_inst / lag (files_inst),
-               vignettes = files_vignettes / lag (files_vignettes),
-               tests = files_tests / lag (files_tests),
-               data = num_data_files / lag (num_data_files),
+    summarise (R = files_R,
+               src = files_src,
+               inst = files_inst,
+               vignettes = files_vignettes,
+               tests = files_tests,
+               data = num_data_files,
                seq = seq_along (R),
                .groups = "keep") |>
     mutate_at(vars (R, src, inst, vignettes, tests, data),
@@ -107,28 +107,22 @@ p1 <- ggplot (dat, aes (x = year, y = n_files, color = dir)) +
     geom_line (lwd = 0.4, lty = 2) +
     geom_smooth (method = "loess", formula = "y ~ x", se = FALSE, lwd = 0.5) +
     #geom_line (data = dat_ann, lty = 2) +
-    ggtitle ("A: Numbers of files") +
-    ylab ("#files") +
+    ggtitle ("A: Numbers of files per year") +
+    ylab ("Num. files") +
     ylim (c (0, max (dat$n_files))) +
     theme (legend.position = "none")
 # dat_ann are very similar but much noisier, so not shown
 ```
 
 ```{r fig3-p2, warning = FALSE, message = FALSE, eval = !file.exists (fig03_png)}
-x_per_pkg <- readRDS (f_fig3_pkg_level)
-
-# rm 1st inst value which is anomalously high:
-x_per_pkg$value [x_per_pkg$dir == "inst" & x_per_pkg$seq == 2] <- NA
-
-p2 <- x_per_pkg |>
+p2 <- readRDS (f_fig3_pkg_level) |>
     filter (seq <= 20) |>
     ggplot (aes (x = seq, y = value, colour = dir)) +
     geom_line (lwd = 0.4, lty = 2) +
     geom_smooth (method = "loess", formula = "y ~ x", se = FALSE, span = 0.7, lwd = 0.5) +
     xlab ("Release Sequence") +
-    ylab ("Ratio of #files") + 
-    ylim (c (0.9, 1.3)) +
-    ggtitle ("B: Ratio of #files / release") +
+    ylab ("Num. files") + 
+    ggtitle ("B: Numbers of files per release") +
     guides (color = guide_legend (ncol = 2)) +
     theme (legend.title = element_blank(),
            legend.position = c (0.3, 0.85),
@@ -142,6 +136,6 @@ graphics.off ()
 ```
 
 
-```{r fig3, echo = FALSE, message = FALSE, out.width = 700, fig.cap = "**Figure 3** (A) Number of files in different diretories per year (with legend in panel B). Solid lines represent loess-smoothed interpolations, while dashed lines are raw annual values (not CRAN snapshots). (B) Proportional increases in numbers of files per release."}
+```{r fig3, echo = FALSE, message = FALSE, out.width = 700, fig.cap = "**Figure 3** (A) Number of files in different diretories per year (with legend in panel B). Solid lines represent loess-smoothed interpolations, while dashed lines are raw annual values (not CRAN snapshots). (B) Numbers of files as a function of release sequence."}
 knitr::include_graphics (fig03_png)
 ```

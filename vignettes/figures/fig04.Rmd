@@ -270,6 +270,6 @@ png (fig04_png, width = 7, height = 7, units = "in", res = 300)
 graphics.off ()
 ```
 
-```{r fig4-out, out.width = 700, fig.cap = "**Fig. 4** Development of code metrics per year."}
+```{r fig4-out, out.width = 700, fig.cap = "**Fig. 4** Annual development of code metrics."}
 knitr::include_graphics (fig04_png)
 ```

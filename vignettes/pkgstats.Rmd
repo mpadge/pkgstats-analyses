@@ -105,8 +105,8 @@ R Archive Network", or CRAN, the focus of the present study.
 @seven-pkg-networks-2019 observed that both numbers of packages and numbers of
 dependencies have increased more slowly for CRAN than for any of the other
 systems they considered, as have numbers of package updates. They also observed
-that the "survival probability" (that a package is not updated at some time,
-$t$) has been far greater for CRAN than for other package ecosystems, albeit
+that the "survival probability" (that a package is updated after some given
+time) has been far greater for CRAN than for other package ecosystems, albeit
 with differences observed between packages which are not required or imported
 by other packages, and those which are. Finally, they observed that the Gini
 coefficient of inequality between dependent packages has also increased over
@@ -117,10 +117,10 @@ themselves, leaving analyses more focussed on aggregate properties such as
 those of dependency networks.
 
 There have also been detailed considerations of dependency networks from
-individual package distribution systems, such as the analysis of the Debian
+individual package distribution systems, such as the analyses of the Debian
 network by @macro-evolution-2009, who revealed progressive increases in package
 inter-dependencies. Although they observed increases in the sizes of packages
-over time, and claimed that this reflected the laws of @software-evolution-97,
+over time, and claimed that these reflected the laws of @software-evolution-97,
 they neither quantified nor modelled actual rates of change. They also observed
 that the relative sizes of packages, measured in terms of lines of code,
 remained relatively stable across releases. A recent analysis of the "pypi"
@@ -130,8 +130,8 @@ distribution system for any computer language, drawn from almost two million
 releases of 179,000 packages. The size of pypi necessarily restricted analyses
 to package metadata, although single metrics of package size were also
 included. Moreover, the size of pypi meant that analyses of dependency networks
-were also relatively restricted to aggregate statistics only, with no analyses
-of the internal properties of dependency networks themselves. Thus while this
+were also restricted to aggregate statistics only, with no analyses of the
+internal properties of dependency networks themselves. Thus while this
 represents an exemplary study of the evolution of a package distribution
 system, the size of this system precluded any analyses of how individual pieces
 of software evolve both internally, and in relation to the aggregate evolution

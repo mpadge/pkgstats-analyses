@@ -1177,43 +1177,22 @@ revealing annual Gini coefficients to have decreased over the preceding two
 decades, rather than increasing as they concluded (albeit in their case over a
 more narrow temporal range of 2012-2017). Quantifying annual values as
 snapshots of the entire system, including latest versions from all prior years,
-led to opposing trajectories of increasing Gini coefficients. These conflicting
-patterns prevent any firm conclusions regarding temporal evolution of Gini
-coefficients, but do reveal the critical importance of precisely specifying the
-methods used to aggregate annual values.
+led to opposing trajectories of increasing Gini coefficients.
+
+While detailed consideration of these differences lies beyond the scope of the
+present work, it is nevertheless important to note that for discrete,
+non-negative variables such as counts, Gini coefficients must generally
+increase with the scale or maximal values of those variables. Thus if average
+numbers of imported packages (or functions) increases over time, so should Gini
+coefficients. This consideration alone suggests that observations of
+*increasing* Gini coefficients should be interpreted cautiously, as they may
+merely reflect uniformly increasing dependence on external packages, while
+observations of *decreasing* Gini coefficients, as with out "snapshot" values,
+may reflect genuine changes. Whatever the underlying cause of these observed
+differences, they clearly reveal the critical importance of precisely
+specifying the methods used to aggregate annual values.
 
 
-
-### Dependency Networks
-
-The results of Fig. 6C for the Gini coefficients of inequality in both package
-dependencies and function call networks revealed contrasting patterns
-dependent on how annual values were aggregated. Gini coefficients are
-calculated as sums of absolute pairwise differences between individual items.
-For package dependencies, for example, these are pairwise differences between
-all packages in numbers of imports, standardised by the mean number of imports
-and a scaling coefficient such the result is bounded between zero (no
-inequality) and one (maximal inequality).
-
-For discrete, non-negative variables such as counts, Gini coefficients must
-generally increase with the scale or maximal values of those variables. 
-
-```{r gini-with-n, echo = FALSE}
-xmax <- 1:10
-n <- 1000
-g <- vapply (xmax, function (i) {
-                 #p <- exp (-(1:i))
-                 #p <- p / sum (p)
-                 p <- rep (1 / i, i)
-                 s <- sample (1:i, size = n, replace = TRUE, prob = p)
-                 sum (abs (dist (s, method = "manhattan"))) /
-                     (2 * n ^ 2 * mean (s))
-        }, numeric (1))
-g <- data.frame (n = xmax,
-                 gini = g)
-ggplot (g, aes (x = n, y = gini)) +
-    geom_line ()
-```
 
 ### Future Work
 

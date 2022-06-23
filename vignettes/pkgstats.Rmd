@@ -189,14 +189,14 @@ of these trends, and potential further applications and extensions of [the
 
 ## Methods
 
-We developed [`{pkgstats}`](https://docs.ropensci.org/pkgstats) to quantify the
-structure and content of R packages using static code analysis techniques
-[@static-analysis-2016]. That package [includes a function,
+We developed [the `{pkgstats}` R package](https://docs.ropensci.org/pkgstats)
+to quantify the structure and content of R packages using static code analysis
+techniques [@static-analysis-2016]. That package [includes a function,
 `pkgstats_from_archive`](https://docs.ropensci.org/pkgstats/reference/pkgstats_from_archive.html),
-which can be applied to a local mirror of the CRAN archive to collate
-statistics from all packages. The resultant data have been published with the
-[v0.0.3 release of the {pkgstats}
-package](https://github.com/ropensci-review-tools/pkgstats/releases/tag/v0.0.3).
+which can be applied to a local mirror of the CRAN archive to collate summary
+statistics from all packages. The resultant data will be updated on an ongoing
+basis, and published with each [latest release of the {pkgstats}
+package](https://github.com/ropensci-review-tools/pkgstats/releases/latest).
 All results that follow used the `pkgstats-CRAN-all` data, which contain one
 row for each package ever published on CRAN (total of 105,375 rows), and 91
 column-wise variables quantifying and qualifying many aspects of each package,
@@ -216,10 +216,11 @@ the ["Comprehensive R Archive Network" or CRAN](https://cran.r-project.org),
 which is the centralised distribution system for R packages. The `R` language
 itself is defined by a single "package" referred to as "base R". By default,
 all installations of `R` also [include a suite of "recommended"
-packages](https://github.com/wch/r-source/tree/trunk/src/library). All packages
-other than these are referred to as "Contributed Packages". A number of the
-following results distinguish between these three categories of base,
-recommended, and contributed packages [@german_evolution_2013].
+packages](https://cran.r-project.org/src/contrib/4.2.1/Recommended/) (change
+"4.2.1" to current version for updated list). All packages other than these are
+referred to as "Contributed Packages". A number of the following results
+distinguish between these three categories of base, recommended, and
+contributed packages [@german_evolution_2013].
 
 CRAN currently holds close to 19,000 contributed packages, and also maintains a
 complete archive of all previous versions of all packages, including of
@@ -277,7 +278,7 @@ implying its membership either of some component of the underlying grammar, or
 some more local scope such as definitions within locally-sourced files.
 
 [`{pkgstats}`](https://docs.ropensci.org/pkgstats) uses two open-source
-libraries for code tagging and parse tree construction: "ctags" and "gtags".
+libraries for code tagging and parse-tree construction: "ctags" and "gtags".
 The original "ctags" library is no longer maintained, and these analyses used a
 maintained version called ["Universal ctags"](https://ctags.io) which,
 
@@ -316,28 +317,30 @@ expression, with the "tag" itself defining the environment for that expression.
 This enables mappings to be made between every expression and its corresponding
 tag. We used "gtags" to construct object reference networks across all computer
 languages used in R packages (such as C, C++, or Python), to enable the
-construction of "function call networks" within and between all languages.
-While the terms "functions" and "calls" may not be appropriate for all computer
-languages and/or classes or types of objects, they nevertheless reflect the
-functionality of R code, and so are preferred here, even when referring to
-other object relationships such as class inheritance mechanisms.
+construction of "function call networks" within and between all languages. This
+work generally uses the terms "functions" and "calls" to refer to more general
+objects and references, because these terms more directly reflect the general
+functionality of R code. The terms should be interpreted throughout as also
+potentially referring to the more general concepts of "objects" and
+"references", such as class inheritance mechanisms.
 
-It is possible to cross-compile "gtags" with "ctags", to enable "gtags" to use
-the more expansive language parsing abilities of "ctags", and to greatly extend
-the range of languages able to be parsed by "gtags". In particular, "gtags"
-does not not by default parse R code, yet does so when cross-compiled with
-Universal "ctags". Cross-compiled installations of "gtags" are, however,
-generally several times slower than simpler installations, and so these
-analyses did not use a cross-compiled version. While this meant restricting
-analyses to a smaller subset of potential languages, the output of "ctags"
-itself nevertheless describes tags in all possible languages, with "gtags" only
-used to map function call networks in languages other than R. Function-call
-networks within R were extracted from the "ctags" output as described above,
-and one additional function was written in the `{pkgstats}` package to link
-calls within R code as defined by the "ctags" output to external objects
-defined in other languages and specified by the "gtags" output. This enabled
-full function-call networks to be constructed within and between different
-languages used in R packages.
+Default installations of "gtags" are able to parse only a restricted sub-set of
+computer languages. It is possible to cross-compile "gtags" with "ctags", to
+enable "gtags" to use the more expansive language parsing abilities of "ctags",
+and to greatly extend the range of languages able to be parsed by "gtags". In
+particular, "gtags" does not not by default parse R code, yet does so when
+cross-compiled with Universal "ctags". Cross-compiled installations of "gtags"
+are, however, generally several times slower than simpler installations, and so
+these analyses did not use a cross-compiled version. While this meant
+restricting analyses to a smaller subset of potential languages, the output of
+"ctags" itself nevertheless describes tags in all possible languages, with
+"gtags" only used to map function call networks in languages other than R.
+Function-call networks within R were extracted from the "ctags" output as
+described above, and one additional function was written in the `{pkgstats}`
+package to link calls within R code as defined by the "ctags" output to
+external objects defined in other languages and specified by the "gtags"
+output. This enabled full function-call networks to be constructed within and
+between different languages used in R packages.
 
 Data generated by "ctags" and "gtags" which were analysed here included:
 
@@ -374,7 +377,8 @@ able to be analysed here. We extracted:
 - Entries in the "URL" field specifying one or more Uniform Resource Locators
   (URLs) for the package.
 - Lists of all imported packages used to construct dependency networks between
-  packages. (Neither required nor suggested packages were considered here.)
+  packages. (Entries in other dependency fields of "Requires", "Suggests" or
+  "Enhances" were not considered here.)
 
 #### Translation files
 
@@ -419,8 +423,9 @@ package](https://stat.ethz.ch/R-manual/R-devel/library/tools/html/parse_Rd.html)
 For the present analyses, this enabled identification of the number of
 parameters for each function, and the number of documentation characters for
 each parameter. Total length of documentation for each function was also
-quantified as the number of lines in the output produced by converting the
-result of `parse_Rd` to text (via the `tools::Rd2txt` function).
+quantified as the numbers of both lines and characters in the output produced
+by converting the result of `parse_Rd` to text (via the `tools::Rd2txt`
+function).
 
 
 ### Network Analyses
@@ -433,10 +438,10 @@ networks extracted from the "ctags" and "gtags" data described above.
 #### Inter-Package Network Analyses
 
 The 'DESCRIPTION' files of R packages must specify all external packages which
-a package imports. These data can be used to construct a full dependency
-network between all packages. The results below present the following measures
-derived from package dependency networks, all of which were calculated with the
-`{igraph}` package [@igraph].
+a package depends upon for its functionality. These data can be used to
+construct a full dependency network between all packages. The results below
+present the following measures derived from package dependency networks, all of
+which were calculated with the `{igraph}` package [@igraph].
 
 1. Numbers of packages which are not imported by any others - the terminal
    vertices in a dependency network; 
@@ -498,7 +503,8 @@ Intra-package analyses considered the following metrics:
 [Coupling Instability](https://en.wikipedia.org/wiki/Software_package_metrics)
 is an important concept in the analysis of software dependency networks
 [@martin-agile-2002], and depends in turn on numbers of so-called *afferent*
-and *efferent* couplings. For any given package, these are defined as:
+and *efferent* couplings. In the context of the present analyses, for any given
+package, these were defined as:
 
 - *Afferent Couplings* as numbers of functions in other packages which depend
   on functions within the package.
@@ -507,10 +513,10 @@ and *efferent* couplings. For any given package, these are defined as:
 
 In other words,
 
-- *Afferent* couplings are numbers of *inbound* edges from all other packages
-  to a given package, while
-- *efferent* couplings are *outbound* edges coupling that package with all
-  other packages.
+- *Afferent* couplings are numbers of *inbound* edges from all functions in
+  other packages to functions in a given package, while
+- *efferent* couplings are *outbound* edges coupling that functions in package
+  with functions in all other packages.
 
 Respectively denoting afferent and efferent couplings by $n_a$ and $n_e$, the
 coupling instability, $I$, is defined as $I = n_e / (n_e + n_a)$. Packages
@@ -527,17 +533,20 @@ We also adapted this measure of coupling instability *between packages* to a
 measure of *internal* coupling instability [@almugrin_coupling_2015] between
 the individual files of one package. Packages with high internal coupling
 instability make many calls between individual files, while packages with low
-instability make more calls within single files, and relatively fewer between
-them.
+internal instability make more calls within single files, and relatively fewer
+between them.
 
 
 ### Statistical Analyses
 
-The following results depict and interpret qualitative trends and patterns,
-without implementing or reporting values for any statistical tests. Data were
-sufficiently large (N > 105,000) to ensure that all of the reported results
-were entirely significant in frequentist terms. There are two further important
-aspects to note in regard to statistical analyses detailed below.
+This section describes statistical techniques used to summarise the large
+amounts of data generated by the methods described in the preceding sections.
+The large numbers of data (generally N > 105,000) ensured that all statistics
+reported on in the following results were entirely significant in a
+conventional frequentist-statistical terms. The results accordingly depict and
+interpret qualitative trends and patterns, without implementing or reporting
+values for any statistical tests. There are two further important aspects to
+note in regard to statistical analyses detailed below.
 
 #### Temporal Analyses
 
@@ -554,8 +563,8 @@ over all packages for each year, while sequential developments aggregate values
 over each sequential release, so that the first versions of all packages are
 aggregated for a release sequence of one, second versions for release sequence
 two, and so on. Annual developments thus capture the collective development of
-the system as a whole, while sequential developments capture the development of
-individual packages.
+the system as a whole, while sequential developments collectively capture the
+internal development of individual packages.
 
 For continuously updated repositories like CRAN, annual developments can be
 captured in the following two primary ways:
@@ -605,7 +614,7 @@ Many of the following results reveal pronounced changes broadly centered around
 2010. It is important in interpreting such results to note that the largest
 public code hosting platform, GitHub, launched in 2008. This changes from that
 year onward are very likely influenced by the increased public accessibility of
-code, as discussed further below.
+code through such platforms, as discussed further below.
 
 ### Metadata
 

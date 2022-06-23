@@ -64,12 +64,12 @@ commonly through the development of individual pieces of software or, in rarer
 cases, comparative studies between a select few pieces of software [see
 comprehensive literature reviews in @syeed_evolution_2013;@oss-evolution-2016].
 Open source software in many languages is nevertheless increasingly dependent
-upon and therefore shaped by developments in other packages or libraries. Any
-computer language has associated with it an evolving ecosystem of software, and
-the evolution of any one component of that ecosystem is best studied in the
-context of the evolution of the ecosystem as a whole. In short, the development
-or evolution of open source software is better studied in *collective* rather
-than *individual* terms. 
+upon and shaped by developments in other packages or libraries. Any computer
+language has associated with it an evolving ecosystem of software, and the
+evolution of any one component of that ecosystem is best studied in the context
+of the evolution of the ecosystem as a whole. In short, the development or
+evolution of open source software is better studied in *collective* rather than
+*individual* terms. 
 
 One focal point of historically individual studies on software evolution has
 been the work of @software-evolution-97, who expressed their findings as a
@@ -145,17 +145,17 @@ evolutionary trajectories of individual components requires both a package
 distribution system of relatively modest size, and one which retains full
 archives of all previous packages. One package distribution system which
 fulfils both of these criteria is CRAN, or the Comprehensive R Archive Network,
-which is around one tenth the size of pypi, although still amounting to over
-100,000 releases of around 20,000 packages. CRAN is by far the dominant package
-distribution system for R; while other systems such as BioConductor and R-Forge
-have been considered elsewhere [@decan_development_2015], the present work
-focusses exclusively on CRAN.
+which is around one tenth the size of pypi, although still amounting at the
+time of writing to over 100,000 releases of around 20,000 packages. CRAN is the
+dominant package distribution system for R; while other systems such as
+BioConductor and R-Forge have been considered elsewhere
+[@decan_development_2015], the present work focusses exclusively on CRAN.
 
 This work builds on several prior analysis of CRAN packages. Perhaps most
 notably, this present article has been prepared ten years after
 @hornik_too_many_R_pkgs_2012 first published his article commemorating his
-"early history of the R project" ten years prior to that. In his 2012 article,
-Kurt Hornik, one of the instigators of CRAN, calls for,
+"early history of the R project", itself extending ten years prior to that. In
+his 2012 article, Kurt Hornik, one of the instigators of CRAN, calls for,
 
 > a considerable and concerted community effort ... providing R packages to
 > compute on R packages.
@@ -177,9 +177,9 @@ system as a whole.
 
 We begin by describing the [the `{pkgstats}` R
 package](https://docs.ropensci.org/pkgstats), which can be used to generate and
-analyse properties of R package code, and the accompanying database of code
-statistics of all historical CRAN packages.  We then describe trends in CRAN 
-package properties over the history of the archive (1998-2021), focussing on
+analyse properties of R package code, and the accompanying publicly-available
+database of code statistics of all historical CRAN packages.  We then describe
+trends in CRAN package properties over the history of the archive, focussing on
 trends in four areas: Package metadata (licenses, authorship, translation),
 internal content and structure (file and function types and sizes),
 intra-package code structure (function call networks), and finally, dependency

@@ -699,22 +699,25 @@ had very few files in the `inst` directory prior to 2010, after which they
 increased until around 2015, before decreasing again more recently. The two
 sub-directories in which numbers of files have increased most significantly are
 `/src` and `/tests`, with the latter increase particularly distinct, clearly
-indicating that packages have become progressively better tested.
+indicating that packages have become progressively better tested. This recent,
+generally linear increase started a couple of years after the initial release
+of what has become the most widely-used package for structuring tests,
+`{testthat}` [@testthat].
 
 
 ```{r fig03, child = "figures/_fig03.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
 Figure 3B shows equivalent changes within individual packages across successive
-releases. Numbers of files generally progressively increase as packages mature,
-with especially pronounced increases in the `/R` and `/inst` directories, the
-latter somewhat offset after around 15 releases by decreases in the `src`
-directory. These changes in `/src` and `/inst` directories in the later phases of
-package maturation may reflect restructuring code from the `/src` to the
-`/inst` directories in order to allow cross-compilation by other packages.
-Numbers of test files generally increase out to around 15 releases, after which
-they generally stabilise. The only directory in which numbers of files do not
-notably increase as packages mature is `/vignettes`.
+releases. Numbers of files have generally progressively increased as packages
+have matured, with especially pronounced increases in the `/R` and `/inst`
+directories, the latter somewhat offset after around 15 releases by decreases
+in the `src` directory. These changes in `/src` and `/inst` directories in the
+later phases of package maturation may reflect restructuring code from the
+`/src` to the `/inst` directories in order to allow cross-compilation by other
+packages. Numbers of test files generally increase out to around 15 releases,
+after which they generally stabilise. The only directory in which numbers of
+files do not notably increase as packages mature is `/vignettes`.
 
 
 ### Code Metrics
@@ -975,27 +978,27 @@ a package.
 
 The first two panels of Fig. 8 show the temporal development of the CRAN
 package dependency network, in both cases revealing that most network metrics
-have broadly stabilised over the preceding five or so years, and that
-variations were much more pronounced prior to around 2015. The proportion of
-terminal vertices, or packages not imported by any other packages, has remained
-broadly stable at around 55-60% of all packages. The mean vertex degree of the
-dependency network has nevertheless progressively increased, especially since
-2015, indicating that those packages which are imported by others have been
-imported by increasing numbers of other packages (Fig. 8A).
+have broadly stabilised over the preceding five or so years, following
+generally abrupt changes between around 2010 to 2015. The proportion of
+terminal vertices, or packages not imported by any other packages, has recently
+remained broadly stable at around 55-60% of all packages. The mean vertex
+degree of the dependency network has nevertheless progressively increased,
+especially since 2015, indicating that those packages which are imported by
+others have been imported by increasing numbers of other packages (Fig. 8A).
 
 ```{r fig08, child = "figures/_fig08.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
-Such an increase in average numbers of imports must increase the overall
-connectivity of the dependency network, with Fig. 8B showing concomitant
-decreases in both centrality metrics over time. Average distances between each
-pair of packages in the network increased notably up to around 2013, after
-which time they have progressively decreased. Since numbers of terminal
-vertices have remained generally stable, while centrality has decreased, the
-initial increase in mean distance likely reflects terminal vertices becoming
-nevertheless further away, for example through the network evolving a number of
-distinct centres. The more recent decrease in mean distance may then reflect an
-equivalent centralisation of the dependency network.
+Such an increase in average numbers of imports has nevertheless had little
+apparent effect on measures of network centrality (Fig. 8B), with both measures
+remaining broadly stable since 2015. The increasing vertex degree of Fig. 8A
+nevertheless seems reflected in decreasing mean distance between each pair of
+packages in Fig. 8B. More broadly, since numbers of terminal vertices have
+remained generally stable, while centrality has decreased, the initial increase
+in mean distance likely reflects terminal vertices becoming further away, for
+example through the network evolving a number of distinct centres. The more
+recent decrease in mean distance may then reflect an equivalent centralisation
+of the dependency network.
 
 The lower two panels of Fig. 8 depict the evolution of function call networks
 within individual packages. Fig. 8C shows the ratio of numbers of edges to
@@ -1055,9 +1058,9 @@ documentation (`.Rd`) files. Proportions of blank and comment lines have
 remained markedly similar in both `/R` and `/src` directories over time, except
 for comment lines in `/R` code, which have increased dramatically since around
 2010. This roughly corresponds to the first release of the `{roxygen2}` package
-which has indubitably done more than any other package to standardise
-documentation of R functions. This increase in `/R` documentation is likely a
-direct reflection of the widespread adoption of `{roxygen2}` as the
+[@roxygen2] which has indubitably done more than any other package to
+standardise documentation of R functions. This increase in `/R` documentation
+is likely a direct reflection of the widespread adoption of `{roxygen2}` as the
 documentation standard for R packages.
 
 ```{r fig10, child = "figures/_fig10.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}

@@ -3,7 +3,7 @@
 library ("pkgstatsAnalyses")
 here <- here::here ()
 v_data_dir <- file.path (here, "vignettes", "data")
-fig05_png <- file.path (here, "vignettes", "figures", "fig05.png")
+fig05_png <- file.path (here, "vignettes", "figures", "_fig05.png")
 ```
 
 ```{r fig5-preload, eval = !file.exists (fig05_png)}

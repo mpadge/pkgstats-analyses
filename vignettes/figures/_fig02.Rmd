@@ -10,7 +10,7 @@ f_fig2_tr <- file.path (v_data_dir, "fig02-tr.Rds")
 fig2_calc_top10_data <- !file.exists (f_fig2_top10)
 fig2_calc_tr_data <- !file.exists (f_fig2_tr)
 
-fig02_png <- file.path (here, "vignettes", "figures", "fig02.png")
+fig02_png <- file.path (here, "vignettes", "figures", "_fig02.png")
 fig2_calc_top10_data <- fig2_calc_top10_data & !file.exists (fig02_png)
 fig2_calc_tr_data <- fig2_calc_tr_data & !file.exists (fig02_png)
 ```

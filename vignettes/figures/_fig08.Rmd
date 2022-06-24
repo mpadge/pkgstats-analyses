@@ -18,7 +18,7 @@ datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
 graph_data_file <- file.path (v_data_dir, "fig08-graph-metrics.Rds")
 graph_intern_data_file <- file.path (v_data_dir, "fig08-graph-metrics-intern.Rds")
 
-fig08_png <- file.path (here, "vignettes", "figures", "fig08.png")
+fig08_png <- file.path (here, "vignettes", "figures", "_fig08.png")
 calc_graph_data <- !file.exists (graph_data_file) & !file.exists (fig08_png)
 calc_graph_data_intern <- !file.exists (graph_intern_data_file) & !file.exists (fig08_png)
 ```

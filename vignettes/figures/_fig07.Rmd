@@ -9,7 +9,7 @@ logmean <- function (x, ...) {
 }
 
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
-fig07_png <- file.path (here, "vignettes", "figures", "fig07.png")
+fig07_png <- file.path (here, "vignettes", "figures", "_fig07.png")
 f <- file.path (v_data_dir, "fig07_deps_p1.Rds")
 calc_fig7_p1_deps <- !file.exists (f) & !file.exists (fig07_png)
 ```

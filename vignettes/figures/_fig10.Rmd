@@ -7,7 +7,7 @@ v_data_dir <- file.path (here, "vignettes", "data")
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
 f_fig10 <- file.path (v_data_dir, "fig10.Rds")
 
-fig10_png <- file.path (here, "vignettes", "figures", "fig10.png")
+fig10_png <- file.path (here, "vignettes", "figures", "_fig10.png")
 calc_fig10 <- !file.exists (f_fig10) & !file.exists (fig10_png)
 ```
 

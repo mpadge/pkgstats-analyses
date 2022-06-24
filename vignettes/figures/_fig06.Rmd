@@ -6,7 +6,7 @@ v_data_dir <- file.path (here, "vignettes", "data")
 
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
 
-fig06_png <- file.path (here, "vignettes", "figures", "fig06.png")
+fig06_png <- file.path (here, "vignettes", "figures", "_fig06.png")
 
 f_fig6_exdat <- file.path (v_data_dir, "fig06-ext-calls.Rds")
 calc_ext_calls_dat <- !file.exists (f_fig6_exdat) & !file.exists (fig06_png)

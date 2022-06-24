@@ -8,7 +8,7 @@ logmean <- function (x, ...) {
 }
 
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
-fig04_png <- file.path (here, "vignettes", "figures", "fig04.png")
+fig04_png <- file.path (here, "vignettes", "figures", "_fig04.png")
 ```
 ```{r fig4-data, eval = !file.exists (fig04_png)}
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)

@@ -12,7 +12,7 @@ logmean <- function (x, ...) {
     10 ^ mean (log10 (x [which (x > 0)]), na.rm = TRUE)
 }
 
-fig09_png <- file.path (here, "vignettes", "figures", "fig09.png")
+fig09_png <- file.path (here, "vignettes", "figures", "_fig09.png")
 ```
 
 ```{r fig09-prepro, eval = !file.exists (fig09_png)}

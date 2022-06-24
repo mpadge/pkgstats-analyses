@@ -129,7 +129,7 @@ p3 <- ggplot (deps_p3, aes (x = seq)) +
         geom_line (aes (y = packages, col = "packages")) +
         geom_line (aes (y = fns_per_pkg / coeff_p3, col = "fns_per_pkg")) +
         scale_y_continuous (
-            name = "fns_per_pkg",
+            name = "packages",
             sec.axis = sec_axis (~.*coeff_p3, name = "Imported fns / pkg")) +
         xlab ("Release sequence") +
         scale_colour_manual (values = colours_p3) +

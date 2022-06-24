@@ -619,18 +619,22 @@ code through such platforms, as discussed further below.
 ### Metadata
 
 Numbers of both authors and contributors have increased over time (Fig. 1A),
-with contributors having been rarely acknowledged at all prior to 2010,
-increasing to an average of just under one acknowledged contributor per package
-in 2021. Numbers of unique licenses primarily reflect numbers of ways of
-declaring licenses, rather than numbers of actual licenses (for example,
-"GPL >= 2.0" is different to "Any GPL license version 2 or higher", although
-both clearly refer to the same license). Figure 1B shows a roughly linear
-increase in license declarations up to around 2007, followed by a pronounced
-drop and progression into a roughly stable range of somewhere over 50 distinct
-entries. The different ways of specifying the three versions of GPL licenses
-have accounted for over 83% of all CRAN packages, with the second most common
-type license being MIT, at 9.6%, followed by BSD at 2.0%. One of these three
-classes of licenses are used in 95% of all CRAN packages.
+with contributors having been rarely acknowledged at all prior to 2010.
+Presumably caused by the advent of online coding platforms, acknowledgement of
+contributions increased soon after then to an average of just under one
+acknowledged contributor per package in 2022. Encouragingly, this increase has
+been broadly linear, and shows no sign of slowing down.
+
+Numbers of unique licenses primarily reflect numbers of ways of declaring
+licenses, rather than numbers of actual licenses (for example, "GPL >= 2.0" is
+different to "Any GPL license version 2 or higher", although both clearly refer
+to the same license). Figure 1B shows a roughly linear increase in license
+declarations up to around 2007, followed by a pronounced drop and progression
+into a roughly stable range of somewhere over 50 distinct entries. The
+different ways of specifying the three versions of GPL licenses have accounted
+for over 83% of all CRAN packages, with the second most common type license
+being MIT, at 9.6%, followed by BSD at 2.0%. One of these three classes of
+licenses are used in 95% of all CRAN packages.
 
 
 ```{r fig01, child = "figures/_fig01.Rmd", eval = TRUE, echo = FALSE}

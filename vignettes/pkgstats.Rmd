@@ -1138,7 +1138,7 @@ The example of coupling instability nevertheless provides one metric with a
 clear understanding, and for which high values are generally considered
 undesirable [@martin-agile-2002]. In this context at least, the ongoing
 development of CRAN is defined by a dynamic balance between the stabilising
-influence of mature packages, and converse and potentially destabilising
+influence of mature packages, and the converse and potentially destabilising
 influences of increasing numbers of recently contributed packages.
 
 However, even balances between variables like these which are relatively easy
@@ -1203,7 +1203,7 @@ numbers of imported packages (or functions) increases over time, so should Gini
 coefficients. This consideration alone suggests that observations of
 *increasing* Gini coefficients should be interpreted cautiously, as they may
 merely reflect uniformly increasing dependence on external packages, while
-observations of *decreasing* Gini coefficients, as with out "snapshot" values,
+observations of *decreasing* Gini coefficients, as with our "snapshot" values,
 may reflect genuine changes. Whatever the underlying cause of these observed
 differences, they clearly reveal the critical importance of precisely
 specifying the methods used to aggregate annual values.

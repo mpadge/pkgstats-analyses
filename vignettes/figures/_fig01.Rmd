@@ -5,6 +5,9 @@ here <- here::here ()
 v_data_dir <- file.path (here, "vignettes", "data")
 
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
+f_fig1_urls <- file.path (v_data_dir, "fig01-urls.Rds")
+calc_fig1_urls <- !file.exists (f_fig1_urls)
+
 f_fig1_aut_ctb <- file.path (v_data_dir, "fig01-aut-ctb.Rds")
 calc_fig1_aut_ctb <- !file.exists (f_fig1_aut_ctb)
 f_fig1_lic <- file.path (v_data_dir, "fig01-lic.Rds")
@@ -14,6 +17,36 @@ fig01_png <- file.path (here, "vignettes", "figures", "_fig01.png")
 calc_fig1_aut_ctb <- calc_fig1_aut_ctb & !file.exists (fig01_png)
 calc_fig1_lic <- !file.exists (f_fig1_lic) & !file.exists (fig01_png)
 ```
+
+```{r fig1-urls, eval = calc_fig1_urls}
+x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
+# CRAN snapshot values:
+do1 <- function (x, year = 2018) {
+    xy <- x |>
+        filter (year <= !!year) |>
+        group_by (package) |>
+        slice_max (date)
+
+    return (length (which (!is.na (xy$urls))) / length (xy$urls))
+}
+years <- sort (unique (x$year))
+urls <- vapply (years, function (y) do1 (x, y), numeric (1))
+# annual values:
+xy <- x |>
+    group_by (year) |>
+    summarise (prop_urls = length (which (!is.na (urls))) / length (urls))
+xy$type <- "annual"
+xy <- rbind (
+    xy,
+    data.frame (
+        year = years,
+        prop_urls = urls,
+        type = "snapshot"
+    )
+)
+saveRDS (xy, f_fig1_urls)
+```
+
 
 ```{r fig1-aut-ctb, eval = calc_fig1_aut_ctb}
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
@@ -74,7 +107,6 @@ saveRDS (nlic, f_fig1_lic)
 
 
 ```{r fig1-make, eval = !file.exists (fig01_png), fig.width = 7, fig.height = 3.5}
-
 dat <- readRDS (f_fig1_aut_ctb)
 lo <- dat |>
     mutate (aut_lo = n_aut - se_aut,
@@ -105,21 +137,30 @@ p1 <- fig1_dat |>
     #             aes (ymin = lo, ymax = hi, fill = name, colour = NULL),
     #             alpha = 0.15, show.legend = FALSE) +
     geom_line (data = dat_annual, lty = 2) +
-    ggtitle ("A: Numbers of authors and contributors") +
+    ylab ("Number authors / contributors") +
+    ggtitle ("A: Num aut / ctb") +
     theme (legend.title = element_blank(),
            legend.position = c (0.2, 0.4),
            legend.background = element_rect(fill='transparent', colour='transparent'))
 
-p2 <- readRDS (f_fig1_lic) |>
+p2 <- readRDS (f_fig1_urls) |>
+    mutate (lty = (type == "annual")) |>
+    ggplot (aes (x = year, y = prop_urls, lty = lty)) +
+    geom_line () +
+    theme (legend.position = "none") +
+    ylab ("Proportion pkgs with URLs") +
+    ggtitle ("B: Prop URLs")
+
+p3 <- readRDS (f_fig1_lic) |>
     mutate (lty = (what == "cran_by_year")) |>
     ggplot (aes (x = year, y = n, lty = lty)) +
     geom_line () +
     theme (legend.position = "none") +
     ylab ("Number of distinct licenses") +
-    ggtitle ("B: Numbers of licenses")
+    ggtitle ("C: Num licenses")
 
 png (fig01_png, width = 7, height = 3.5, units = "in", res = 300)
-p1 | p2
+p1 + p2 + p3
 graphics.off ()
 ```
 

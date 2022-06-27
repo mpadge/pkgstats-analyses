@@ -645,8 +645,8 @@ being directly hosted on code-sharing platforms.
 here <- here::here ()
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
-x <- x [x$year < 2010, ]
-u <- regmatches (x$urls, regexpr ("http(s?)\\:\\/\\/[^\\/]*\\/", x$urls))
+x2010 <- x [x$year < 2010, ]
+u <- regmatches (x2010$urls, regexpr ("http(s?)\\:\\/\\/[^\\/]*\\/", x2010$urls))
 utab <- sort (table (u), decreasing = TRUE)
 utab <- data.frame (
     url = names (utab),
@@ -709,13 +709,13 @@ the end of the coming year (2023).
 ```{r fig02, child = "figures/_fig02.Rmd", eval = TRUE, echo = FALSE}
 ```
 
-
-Analyses of URLs provided in package 'DESCRIPTION' files clearly reveal an
-abrupt break after around 2010 with the advent of online code repositories
-(Fig. 2B). GitHub has always dominated, while r-forge has declined
-progressively since around 2015. The most notable increase has been the
-emergence of rOpenSci as provider of the only URL to come close to within
-1/20th of the popularity of GitHub over the past few years.
+Finally, Fig. 2B extends from the results of Fig. 1B to show temporal evolution
+of the top ten URLs specified in CRAN packages, clearly revealing a sharp
+increase after around 2010 following the advent of code hosting platforms.
+GitHub has always dominated, while r-forge has declined progressively since
+around 2015. The most notable increase has been the emergence of rOpenSci as
+provider of the only URL to come close to within 1/20th of the popularity of
+GitHub over the past few years.
 
 
 ### Package Structure and Content
@@ -1187,14 +1187,61 @@ could and should be extended in future analyses through considering such
 additional influences as weighted contributions of individual packages to the
 collective development of software systems.
 
+### The Influence of Code-Hosting Platforms
+
+Many results presented here manifest distinct temporal changes from around the
+year 2010 onwards, or a year or two after the establishment of online
+code-hosting platforms such as GitHub, GitLab, and Bitbucket
+[@wiki-code-hosting]. The synchronous advent of these platforms in Fig. 1B and
+increases in acknowledged contributors since 2010 in Fig. 1A provides
+suggestive evidence that the ability to collaboratively develop and disseminate
+code on these platforms has led to an increase in public acknowledgement of
+source code contributions. Encouragingly, these increases since around 2012 are
+roughly linear, and show no sign of slowing down.
+
+GitHub has been the dominant platform by far, generally accounting for close to
+an order of magnitude more URL entries than equivalent git-based platforms such
+as Bitbucket and GitLab. The recent decrease of GitHub URLs in the top ten
+shown in Fig. 2B has been slightly offset by an increase in rOpenSci URLs.
+rOpenSci provides a peer-review service for R packages, both generally
+improving code quality and publicising packages to a wider audience than what
+they might otherwise have reached from authors' own GitHub profile pages. Thus
+the increases in both GitHub and rOpenSci URLs reflect increased community
+engagement in the ongoing development of R packages.
+
+While such increased engagement may generally be viewed as positive, increased
+public awareness of other peoples code facilitated by code hosting platforms
+also seems to have produced increased dependence of R packages on other R
+packages. Coupling instability between packages has increased markedly since
+2010 (Fig. 6B). (The less clear patterns of Gini coefficients of equality of
+dependency networks are discussed further below.)
+
+Several of the network metrics of Fig. 8 also generally reveal abrupt
+transitions around 2012. The proportion of packages not imported by any others
+increased very abruptly (Fig. 8A), although this seems to have stabilised more
+recently, at around 60-70% of all packages. The increase in vertex degree also
+shown in that panel has nevertheless increased more progressively, only
+increasing at a slower rate more recently. As mentioned, these increases must
+mean that each package which is imported by other packages is imported an
+increasing number of times.
+
+The additional network metrics of Fig. 8B (network centrality, and mean
+inter-nodal distance) all manifest generally progressive linear trajectories up
+until around 2013, following which they have largely stabilised. This initial
+phase prior to that time was marked by decreasing centrality alongside
+increasing inter-nodal distances, suggestive of a de-centralising network.
+Against this trajectory, the advent of code hosting platforms has clearly had a
+stabilising effect in once again "re-centralising" the CRAN dependency network,
+and decreasing inter-nodal distances.
+
 ### Quantifying temporal development of software systems
 
-The preceding analyses contrasted and compared results derived from two
-distinct ways of quantifying "annual" statistics. The "snapshot" values
-considered the collective properties of the system as it existed in each year,
-including latest versions of all packages regardless of when those packages
-were last updated. In contrast, "annual" values only considered software
-actively uploaded in each year. As stated at the outset, snapshot values may be
+The results presented here contrasted and compared two distinct ways of
+quantifying "annual" statistics. The "snapshot" values considered the
+collective properties of the system as it existed in each year, including
+latest versions of all packages regardless of when those packages were last
+updated. In contrast, "annual" values only considered software actively
+uploaded in each year. As stated at the outset, snapshot values may be
 generally presumed to reflect exponentially-smoothed versions of annual values,
 and so these two approaches to aggregating annual values ought to qualitatively
 agree, with snapshots merely being an effectively smoothed version of annual

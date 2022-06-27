@@ -620,25 +620,57 @@ code through such platforms, as discussed further below.
 
 Numbers of both authors and contributors have increased over time (Fig. 1A),
 with contributors having been rarely acknowledged at all prior to 2010.
-Presumably caused by the advent of online coding platforms, acknowledgement of
-contributions increased soon after then to an average of just under one
-acknowledged contributor per package in 2022. Encouragingly, this increase has
-been broadly linear, and shows no sign of slowing down.
+Acknowledgement of contributions increased soon after then to an average of
+just under one acknowledged contributor per package in 2022. Encouragingly,
+recent increases in numbers of both authors and contributors have been broadly
+linear, and show no sign of slowing down.
 
-Numbers of unique licenses primarily reflect numbers of ways of declaring
-licenses, rather than numbers of actual licenses (for example, "GPL >= 2.0" is
-different to "Any GPL license version 2 or higher", although both clearly refer
-to the same license). Figure 1B shows a roughly linear increase in license
-declarations up to around 2007, followed by a pronounced drop and progression
-into a roughly stable range of somewhere over 50 distinct entries. The
-different ways of specifying the three versions of GPL licenses have accounted
-for over 83% of all CRAN packages, with the second most common type license
-being MIT, at 9.6%, followed by BSD at 2.0%. One of these three classes of
-licenses are used in 95% of all CRAN packages.
+Proportions of packages with Uniform Resource Locator (URL) fields increased
+very rapidly in the first five years of the millennium, before decreasing again
+until after 2010 ("all" in legend of Fig. 1B). Most URLs declared during this
+time were institutionally-hosted websites describing packages, rather than
+sites hosting the actual code. One third alone were academic sites from the
+English-speaking world (such as ".edu", ".ac.uk", or various other
+country-specific versions of these). The increase after around 2012 in the
+proportion of all packages with URLs corresponded to an increase in the
+proportion of packages using git-based hosting platforms (primarily GitHub,
+GitLab, and Bitbucket; "git" in legend). The general trajectory for packages
+specifying URLs thus seems to have passed through an early phase during which
+authors developed individual sites for each package (or group of packages), a
+subsequent phase during which this individual-site approach started to decline
+in popularity, and the final and currently increasing phase of package code
+being directly hosted on code-sharing platforms.
+
+```{r pre-2010-urls, echo = FALSE, eval = FALSE}
+here <- here::here ()
+datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
+x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
+x <- x [x$year < 2010, ]
+u <- regmatches (x$urls, regexpr ("http(s?)\\:\\/\\/[^\\/]*\\/", x$urls))
+utab <- sort (table (u), decreasing = TRUE)
+utab <- data.frame (
+    url = names (utab),
+    n = as.integer (utab),
+    proportion = as.double (utab) / length (u)
+)
+```
 
 
 ```{r fig01, child = "figures/_fig01.Rmd", eval = TRUE, echo = FALSE}
 ```
+
+Figure 1C shows a roughly linear increase in license declarations up to around
+2007, followed by a pronounced drop and progression into a roughly stable range
+of somewhere over 50 distinct entries. This high values reflects the fact that
+numbers of unique licenses primarily reflect numbers of ways of declaring
+licenses, rather than numbers of actual licenses (for example, "GPL >= 2.0" is
+different to "Any GPL license version 2 or higher", although both clearly refer
+to the same license). The different ways of specifying the three versions of
+GPL licenses have accounted for over 83% of all CRAN packages, with the second
+most common type license being MIT, at 9.6%, followed by BSD at 2.0%. One of
+these three classes of licenses are used in 95% of all CRAN packages.
+
+
 
 ```{r licenses, echo = FALSE}
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")

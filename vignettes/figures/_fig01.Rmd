@@ -31,6 +31,19 @@ do1 <- function (x, year = 2018) {
 }
 years <- sort (unique (x$year))
 urls <- vapply (years, function (y) do1 (x, y), numeric (1))
+# Git* URLs:
+x_git <- x
+x_git$urls [is.na (x_git$urls)] <- ""
+do1 <- function (x, year = 2018) {
+    xy <- x |>
+        filter (year <= !!year) |>
+        group_by (package) |>
+        slice_max (date)
+
+    return (length (grep ("[bg]it", xy$urls, ignore.case = TRUE)) / length (xy$urls))
+}
+urls_git <- vapply (years, function (y) do1 (x_git, y), numeric (1L))
+
 # annual values:
 xy <- x |>
     group_by (year) |>
@@ -44,7 +57,20 @@ xy <- rbind (
         type = "snapshot"
     )
 )
-saveRDS (xy, f_fig1_urls)
+
+xy_git <- x_git |>
+    group_by (year) |>
+    summarise (prop_urls = length (grep ("git", urls)) / length (urls))
+xy_git$type <- "annual_git"
+xy_git <- rbind (
+    xy_git,
+    data.frame (
+        year = years,
+        prop_urls = urls_git,
+        type = "snapshot_git"
+    )
+)
+saveRDS (rbind (xy, xy_git), f_fig1_urls)
 ```
 
 
@@ -143,13 +169,20 @@ p1 <- fig1_dat |>
            legend.position = c (0.2, 0.4),
            legend.background = element_rect(fill='transparent', colour='transparent'))
 
-p2 <- readRDS (f_fig1_urls) |>
-    mutate (lty = (type == "annual")) |>
-    ggplot (aes (x = year, y = prop_urls, lty = lty)) +
+dat_urls <- readRDS (f_fig1_urls)
+dat_urls$what <- ifelse (grepl ("git", dat_urls$type), "git", "all")
+dat_urls_annual <- dat_urls [grep ("annual", dat_urls$type), ]
+dat_urls <- dat_urls [which (!grepl ("annual", dat_urls$type)), ]
+
+p2 <- dat_urls |>
+    ggplot (aes (x = year, y = prop_urls, colour = what)) +
     geom_line () +
-    theme (legend.position = "none") +
+    geom_line (data = dat_urls_annual, lty = 2) +
     ylab ("Proportion pkgs with URLs") +
-    ggtitle ("B: Prop URLs")
+    ggtitle ("B: Prop URLs") +
+    theme (legend.title = element_blank(),
+           legend.position = c (0.2, 0.9),
+           legend.background = element_rect(fill='transparent', colour='transparent'))
 
 p3 <- readRDS (f_fig1_lic) |>
     mutate (lty = (what == "cran_by_year")) |>

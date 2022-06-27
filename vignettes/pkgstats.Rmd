@@ -1287,15 +1287,59 @@ may reflect genuine changes. Whatever the underlying cause of these observed
 differences, they clearly reveal the critical importance of precisely
 specifying the methods used to aggregate annual values.
 
+### Collective versus individual software evolution
 
+Beyond methods used to aggregate annual values, these results reveal striking
+contrasts between the collective evolution of CRAN as a unified software
+ecosystem, and the development trajectories of individual packages. Consider,
+for example, Fig. 3 showing numbers of files. These manifest clearly increasing
+trajectories over the lifetimes of individual packages, yet trajectories for
+CRAN as a whole are far less clear, mixing increases with decreases with other,
+non-linear patterns. This only clear insight that emerges from the two panels
+of this figure is that this metric provides direct insight into the evolution
+of individual packages. Given the foregoing discussions of increasing dominance
+over time of newer and relatively less mature packages on CRAN, the annual
+developments of Fig. 3A may indeed reflect nothing more than a confounding of
+individually-increasing numbers of files in more mature packages mixed with
+increasing numeric dominance of less mature packages in the system as a whole.
+Other results such as Fig. 4D (decreasing numbers of functions per file per
+year) and 5D (increasing numbers of functions per file per release) clearly
+reflect opposing trajectories, against which any intermediate results such
+as initially increasing annual numbers of functions followed by subsequent
+decreases (Fig. 4C) must be presumed to reflect a dynamic balance between the
+trajectories of individual packages (clear increases in Fig. 5C) with
+increasing dominance of newer packages.
 
-### Future Work
+These and many other aspects of these results clearly indicate that the
+temporal evolution of collective software systems can only be understood
+alongside equivalent understanding of the temporal evolution of individual
+packages. Collective properties alone are inadequate to understand how a system
+has actually evolved. Moreover, future work will likely have to consider and
+contrast systems for weighting the relative contributions of different packages
+to the software ecosystem as a whole. The present results applied uniform
+weights to all packages, regardless of whether an individual package has 100
+lines of code and has never been updated or even downloaded, or whether it has
+thousands of lines of code and orders of magnitude more downloads. Deriving and
+applying weighting schemes will be an extremely difficult endeavour, especially
+because there can never be any single, optimal scheme for doing so, and
+reported results will be intimately dependent on any chosen weighting scheme.
+We hope that the present work provides a firm empirical basis from which to
+begin the task of developing such schemes in order to further understanding of
+the evolution of software ecosystems.
+
+In conclusion, to return to where we started, with the initial consideration of
+"packages to compute on R packages" [@hornik_too_many_R_pkgs_2012],
 
 > we need better data to do computational statistics on statistical computing
 solutions: certainly, the CRAN package repository should be an extremely
 valuable resource for the community, both for gathering and analyzing such
 data.
 
-@hornik_too_many_R_pkgs_2012
+This study has demonstrated that the comparably unique nature of CRAN, in being
+both centralised and archived, does indeed ensure that it represents an
+extremely valuable resource. We hope that this present study represents only a
+beginning of subsequent attempts to delve deeper in to the wealth of data
+provided by CRAN.
+
 
 ## References

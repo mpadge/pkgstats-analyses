@@ -1180,12 +1180,9 @@ opposing tendencies. Direct comparisons presume more recent packages to have
 equal weight or influence on the overall system dynamic as do more mature
 packages. It may be more appropriate to implement some form of weighted
 analyses, for example, through weighting the contributions of individual
-packages by numbers of dependent packages. Although such analyses lie beyond
-the scope of the present work, the evident tensions between individual and
-collective dynamics represent a key finding of the present work, and one which
-could and should be extended in future analyses through considering such
-additional influences as weighted contributions of individual packages to the
-collective development of software systems.
+packages by numbers of dependent packages. This point is considered further
+in the concluding section below.
+
 
 ### The Influence of Code-Hosting Platforms
 
@@ -1205,8 +1202,8 @@ as Bitbucket and GitLab. The recent decrease of GitHub URLs in the top ten
 shown in Fig. 2B has been slightly offset by an increase in rOpenSci URLs.
 rOpenSci provides a peer-review service for R packages, both generally
 improving code quality and publicising packages to a wider audience than what
-they might otherwise have reached from authors' own GitHub profile pages. Thus
-the increases in both GitHub and rOpenSci URLs reflect increased community
+they might otherwise have reached from authors' own GitHub profile pages. These
+increases in both GitHub and rOpenSci URLs reflect increased community
 engagement in the ongoing development of R packages.
 
 While such increased engagement may generally be viewed as positive, increased
@@ -1313,19 +1310,19 @@ increasing dominance of newer packages.
 These and many other aspects of these results clearly indicate that the
 temporal evolution of collective software systems can only be understood
 alongside equivalent understanding of the temporal evolution of individual
-packages. Collective properties alone are inadequate to understand how a system
-has actually evolved. Moreover, future work will likely have to consider and
-contrast systems for weighting the relative contributions of different packages
-to the software ecosystem as a whole. The present results applied uniform
-weights to all packages, regardless of whether an individual package has 100
-lines of code and has never been updated or even downloaded, or whether it has
-thousands of lines of code and orders of magnitude more downloads. Deriving and
-applying weighting schemes will be an extremely difficult endeavour, especially
-because there can never be any single, optimal scheme for doing so, and
-reported results will be intimately dependent on any chosen weighting scheme.
-We hope that the present work provides a firm empirical basis from which to
-begin the task of developing such schemes in order to further understanding of
-the evolution of software ecosystems.
+packages. Collective properties alone are inadequate to understand how a
+software system has actually evolved. Moreover, future work will likely have to
+consider and contrast schemes for weighting the relative contributions of
+different packages to the software ecosystem as a whole. The present results
+applied uniform weights to all packages, regardless of whether an individual
+package has 100 lines of code and has never been updated or even downloaded, or
+whether it has thousands of lines of code and orders of magnitude more
+downloads. Deriving and applying weighting schemes will be an extremely
+difficult endeavour, especially because there can never be any single, optimal
+scheme for doing so, and reported results will be intimately dependent on any
+chosen weighting scheme. We hope that the present work provides a firm
+empirical basis from which to begin the task of developing such schemes in
+order to further understanding of the evolution of software ecosystems.
 
 In conclusion, to return to where we started, with the initial consideration of
 "packages to compute on R packages" [@hornik_too_many_R_pkgs_2012],
@@ -1337,9 +1334,9 @@ data.
 
 This study has demonstrated that the comparably unique nature of CRAN, in being
 both centralised and archived, does indeed ensure that it represents an
-extremely valuable resource. We hope that this present study represents only a
-beginning of subsequent attempts to delve deeper in to the wealth of data
-provided by CRAN.
+extremely valuable resource. We hope that this present study represents an
+intermediate milestone on the journey first hinted at one decade ago of
+attempts to delve deeper in to the wealth of data provided by CRAN.
 
 
 ## References

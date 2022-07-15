@@ -14,8 +14,11 @@ header-includes:
     - \usetikzlibrary{arrows}
 vignette: >
   %\VignetteIndexEntry{pkgstats}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  markdown: 
+    wrap: 80
 ---
 
 ```{r pkg-load, echo = FALSE, message = FALSE}
@@ -56,78 +59,65 @@ if (!file.exists (f_p)) {
 }
 ```
 
-
-## Introduction
+# Introduction
 
 The temporal development of software has been studied for many decades,
 commonly through the development of individual pieces of software or, in rarer
 cases, comparative studies between a select few pieces of software [see
-comprehensive literature reviews in @syeed_evolution_2013;@oss-evolution-2016].
-Open source software in many languages is nevertheless increasingly dependent
-upon and shaped by developments in other packages or libraries. Any computer
-language has associated with it an evolving ecosystem of software, and the
+comprehensive literature reviews in @syeed_evolution_2013;
+@oss-evolution-2016]. Software is dependent upon and shaped by developments in
+other packages or libraries. Any computer language has associated with it an
+evolving ecosystem of software packages and their interdependencies. The
 evolution of any one component of that ecosystem is best studied in the context
-of the evolution of the ecosystem as a whole. In short, the development or
-evolution of open source software is better studied in *collective* rather than
-*individual* terms. 
+of the evolution of the ecosystem as a whole.
 
 One focal point of historically individual studies on software evolution has
 been the work of @software-evolution-97, who expressed their findings as a
 series of "laws" of software evolution. These "laws" include that, over time,
 software increases both in complexity and in functional content (or numbers of
 "modules"). Those laws of growth themselves derive from @Turski96, who posited
-an inverse-square law for software growth, later formalised in @Turski02,
-albeit as a purely empirical exercise absent any firm theoretical reasoning.
+an empirically observed inverse-square law for software growth, later formalised in @Turski02.
 
-These "laws" of software evolution have nevertheless been frequently used and
-cited [see overview in @Mens2008, and references therein], and have strongly
-influenced the development of a research field which might be referred to as
-"Software Mining and Analytics", which has itself particularly focussed on
-elucidating useful predictors of software quality. A useful overview of the
-field was provided by @mining-repos-2013, who empirically identified a number
-of research categories within this broad field, including one of "code
-statistics" which describes this present research.
+These "laws" of software evolution  have strongly influenced the
+development of "Software Mining
+and Analytics" [@Mens2008]. The field is focused on elucidating
+predictors of software quality. A useful overview was provided by
+@mining-repos-2013, who identified a number of research categories
+within this broad field, including one of "code statistics."
 
-For many computer languages, individual pieces of open-source software --
-hereafter referred to as "packages" -- are held and distributed through
-centralised package distribution services [@pkg-mngrs-2018], which manifest
-forms of collective "evolution" above and beyond the evolution of individual
-packages. Package distribution services serve as curated repositories of
-independently-contributed software, and exist for computer languages including
-python [@new-pypi-2018], LaTeX [@ctan-wiki], JavaScript [@npm-2020], and many
-others [as well as operating-system specific package distribution services such
-as described in @dpkg]. Package distribution services have been analysed and
-compared both in terms of static collective properties [for example,
-@decan_topology_2016], as well as their temporal evolution, a notable example
-of which is @seven-pkg-networks-2019, who examined the evolution of dependency
-networks from seven package distribution systems, including the "Comprehensive
-R Archive Network", or CRAN, the focus of the present study.
-@seven-pkg-networks-2019 observed that both numbers of packages and numbers of
-dependencies have increased more slowly for CRAN than for any of the other
-systems they considered, as have numbers of package updates. They also observed
-that the "survival probability" (that a package is updated after some given
-time) has been far greater for CRAN than for other package ecosystems, albeit
-with differences observed between packages which are not required or imported
-by other packages, and those which are. Finally, they observed that the Gini
-coefficient of inequality between dependent packages has also increased over
-time in all systems. The total size of the systems studied by both
-@decan_topology_2016 and @seven-pkg-networks-2019 nevertheless left relatively
-little scope for detailed examinations of the properties of the packages
-themselves, leaving analyses more focussed on aggregate properties such as
-those of dependency networks.
+For many computer languages, individual pieces of open-source software
+("packages") are held and distributed through centralized package distribution
+services [@pkg-mngrs-2018] ("repositories"). These curated repositories of
+independently-contributed software exist for computer languages including python
+[@new-pypi-2018], LaTeX [@ctan-wiki], JavaScript [@npm-2020], and many others
+[as well as operating-system specific repositories as described in @dpkg].
+
+Package repositories have collective properties that emerge from individual
+packages and their interdependencies [@decan_topology_2016].
+@seven-pkg-networks-2019 examined the evolution of dependency networks from
+seven package distribution systems, including the Comprehensive R Archive
+Network (CRAN). They observed that the Gini coefficient of inequality between
+dependent packages has increased over time in all systems. On CRAN, they found
+that both numbers of packages and numbers of dependencies have increased more
+slowly than for any of the other systems, as have numbers of package updates.
+They also observed that the "survival probability" (that a package is updated
+after some given time) has been far greater for CRAN than for other package
+ecosystems. This rate differed between packages with and without reverse
+dependencies.
 
 There have also been detailed considerations of dependency networks from
-individual package distribution systems, such as the analyses of the Debian
-network by @macro-evolution-2009, who revealed progressive increases in package
-inter-dependencies. Although they observed increases in the sizes of packages
-over time, and claimed that these reflected the laws of @software-evolution-97,
-they neither quantified nor modelled actual rates of change. They also observed
+individual package distribution systems.  @macro-evolution-2009 showed progressive increases in Debian package
+inter-dependencies. They observed increases in the sizes of packages
+over time, and claimed that these reflected the laws of @software-evolution-97.
+They also observed
 that the relative sizes of packages, measured in terms of lines of code,
 remained relatively stable across releases. A recent analysis of the "pypi"
 (Python Package Index) package distribution system for python [@pypi2019]
 represented the most comprehensive analysis to that time of a single package
 distribution system for any computer language, drawn from almost two million
-releases of 179,000 packages. The size of pypi necessarily restricted analyses
+releases of 179,000 packages.
+
+The size of pypi necessarily restricted analyses
 to package metadata, although single metrics of package size were also
 included. Moreover, the size of pypi meant that analyses of dependency networks
 were also restricted to aggregate statistics only, with no analyses of the
@@ -137,43 +127,31 @@ system, the size of this system precluded any analyses of how individual pieces
 of software evolve both internally, and in relation to the aggregate evolution
 of the system as a whole.
 
-The primary aim of the present work is to examine the mutual evolutionary
-dynamics of both the collective properties of one package distribution system
-and the properties of individual software packages within that system. Detailed
-examination of the co-evolution of an entire software system along with
-evolutionary trajectories of individual components requires both a package
-distribution system of relatively modest size, and one which retains full
-archives of all previous packages. One package distribution system which
-fulfils both of these criteria is CRAN, or the Comprehensive R Archive Network,
-which is around one tenth the size of pypi, although still amounting at the
-time of writing to over 100,000 releases of around 20,000 packages. CRAN is the
-dominant package distribution system for R; while other systems such as
-BioConductor and R-Forge have been considered elsewhere
-[@decan_development_2015], the present work focusses exclusively on CRAN.
+The scale of package repositories presents an analytical challenge. The size of
+systems studied by @decan_topology_2016 @seven-pkg-networks-2019, and @pypi2019
+left relatively little scope for detailed examinations of the properties of the
+packages themselves, leaving analyses more focused on aggregate properties such
+as those of dependency networks. Moreover, the size of pypi meant that analyses
+of dependency networks were also restricted to aggregate statistics only, with
+no analyses of the internal properties of dependency networks themselves.
+<!-- TODO: summarise results/trends from these and the preceding pypi analysis -->
 
-This work builds on several prior analysis of CRAN packages. Perhaps most
-notably, this present article has been prepared ten years after
-@hornik_too_many_R_pkgs_2012 first published his article commemorating his
-"early history of the R project", itself extending ten years prior to that. In
-his 2012 article, Kurt Hornik, one of the instigators of CRAN, calls for,
+CRAN, the dominant repository of R packages, is more modest in size and more
+tractable for analysis in trends in development at both the individual and
+network level. At \~100,000 releases of approximately 19,000 packages, it is
+about tenth the size of pypi. Studies of CRAN so far have largely considered
+package metadata...
 
-> a considerable and concerted community effort ... providing R packages to
-> compute on R packages.
+<!-- I think the following paragraph wastes the opportunity to discuss the
+studies' results and instead focuses on their shortcomings. I would merge with the 
+paragraph above but describe the findings rather than just say what they didn't study. -->
 
-While he was referring in that context specifically to textual analyses of
-documentation files, his perceived absence of resources to "compute on
-packages" arguably remains largely true ten years later. Most analyses of the
-CRAN software system have considered what might be referred to as "metadata",
 such as personal networks of package authors [@plakidas_evolution_2017], or
 relationships between CRAN and software development platforms such as GitHub
-[@decan_development_2015;@decan_when_2016]. Analyses which have considered
+[@decan_development_2015; @decan_when_2016]. Analyses which have considered
 individual packages have also mostly examined simplified aggregate data such as
 sizes of packages [@german_evolution_2013], or dependency networks between
-packages [@mora-cantallops_complex_2020]. The present work aims to extend
-beyond such analyses, by reporting on a tool able to derive detailed data on
-the internal structure of every package which has ever existed on CRAN, and to
-relate such detailed package-internal data to the extrinsic evolution of the
-system as a whole.
+packages [@mora-cantallops_complex_2020].
 
 We begin by describing the [the `{pkgstats}` R
 package](https://docs.ropensci.org/pkgstats), which can be used to generate and
@@ -187,407 +165,296 @@ networks amongst packages. Finally, we discuss implications and likely drivers
 of these trends, and potential further applications and extensions of [the
 `{pkgstats}` package](https://docs.ropensci.org/pkgstats) and database.
 
-## Methods
+# Methods
 
-We developed [the `{pkgstats}` R package](https://docs.ropensci.org/pkgstats)
-to quantify the structure and content of R packages using static code analysis
-techniques [@static-analysis-2016]. That package [includes a function,
-`pkgstats_from_archive`](https://docs.ropensci.org/pkgstats/reference/pkgstats_from_archive.html),
-which can be applied to a local mirror of the CRAN archive to collate summary
-statistics from all packages. The resultant data will be updated on an ongoing
-basis, and published with each [latest release of the {pkgstats}
-package](https://github.com/ropensci-review-tools/pkgstats/releases/latest).
-All results that follow used the `pkgstats-CRAN-all` data, which contain one
-row for each package ever published on CRAN (total of 105,375 rows), and 91
-column-wise variables quantifying and qualifying many aspects of each package,
-as described in the following sub-sections.
+Ten years ago, in an article commemorating his "early history of the R project"
+ten years prior to that, Kurt Hornik called for
 
-This methodological description begins with an overview of the structure of
-the CRAN archive and how data were extracted, followed by a description of the
-two open-source libraries for "code tagging" used in the
-[`{pkgstats}`](https://docs.ropensci.org/pkgstats) package. We then describe
-the results generated by the package itself, before providing details of
-statistical analyses used to derive these results.
+> a considerable and concerted community effort ... providing R packages to 
+> compute on R packages.
 
-### Data: R packages and the CRAN server
+We developed the {pkgstats} package to quantify the structure and content of R
+packages using static code analysis [@static-analysis-2016]. The package
+includes a function, `pkgstats_from_archive()`, which can be applied to a local
+mirror of the CRAN archive to collate statistics from all packages. {pkgstats}
+generates 91 variables quantifying and qualifying package code. As the full
+process is computationally intensive, we have published the data on all packages
+(current and previous versions) on CRAN as of <DATE>, and expect to update this
+resource regularly. These data are available as the pkgstats-CRAN-all data set
+at <ZENODO DOI LINK>.
+<!-- TODO: Add Zenodo DOI -->
 
-Our primary data source comprised every version of every R package hosted on
-the ["Comprehensive R Archive Network" or CRAN](https://cran.r-project.org),
-which is the centralised distribution system for R packages. The `R` language
-itself is defined by a single "package" referred to as "base R". By default,
-all installations of `R` also [include a suite of "recommended"
-packages](https://cran.r-project.org/src/contrib/4.2.1/Recommended/) (change
-"4.2.1" to current version for updated list). All packages other than these are
-referred to as "Contributed Packages". A number of the following results
-distinguish between these three categories of base, recommended, and
-contributed packages [@german_evolution_2013].
+We studied R packages hosted on the CRAN including historical package versions
+and archived (deprecated) packages. This includes the R language itself, defined
+by a single "package" referred to as "base R". We include and distinguish
+between this "base" package, the suite of default ["recommended"
+packages](https://github.com/wch/r-source/tree/trunk/src/library), and the
+overwhelming majority of "contributed" packages [@german_evolution_2013]. Our
+analysis ran on a local mirror of CRAN as of July 2022, comprising <XXXXEXACT>
+contributed packages, <XXXEXACT> total package versions (for an average of
+slightly over 5 releases per package).
+<!-- TODO: Add Data -->
 
-CRAN currently holds close to 19,000 contributed packages, and also maintains a
-complete archive of all previous versions of all packages, including of
-archived packages no longer available on CRAN. The data analysed here were
-generated from a local mirror of the entire CRAN repository, including all
-current and archived versions of all packages, and amounting to around 105,000
-individual versions (for an average of slightly over 5 releases per package).
-The raw data for these analyses are the contributed packages themselves. While
-relationships to objects (functions) in the base and contributed packages are
-considered, the structures of the base and recommended packages are not
-analysed here.
+In this paper we describe trends in the variables described in the four
+following subsections. {pkgstats} generates these as well as a larger superset
+of package-level statistics, the full list of which is in the online
+documentation.
 
-All R packages must accord with the structure defined in the ["*Writing R
-Extensions*"
-Manual](https://cran.r-project.org/doc/manuals/R-exts.html#Linking-to-native-routines-in-other-packages)
-[as discussed in @hornik_too_many_R_pkgs_2012]. Many aspects of the following
-analyses were applied to different components of R packages, in particular the
-following main sub-directories:
+## Package metadata
 
-- The `/R` directory which holds all source files in the R language;
-- The `/src` directory which holds all code in other languages which needs to be compiled on package installation;
-- The `/inst` directory which generally holds bundles of external code, but may
-  also include code used for cross-linking in compilation, including of other
-  packages. Cross-linked code must be in an `/inst/include` sub-directory (as
-  explained in [this section of the "*Writing R Extensions*"
-  Manual](https://cran.r-project.org/doc/manuals/R-exts.html#Linking-to-native-routines-in-other-packages)).
-  All of the following analyses only consider the `/inst/include` directory, and
-  all references to the `/inst` directory imply this sub-directory only.
-  Analyses excluded all other sub-directories within the `/inst` directory.
-- The `/vignettes` directory which includes extended documentation. (Such
-  documentation may also be placed in an `/inst/doc` folder, but this was
-  ignored here.)
-- The `/tests` directory containing test files.
-- The `/data` directory containing data files used to implement or demonstrate
-  package functionality.
-
-The results which follow also distinguish between the two main kinds of R
-functions:
-
-- Exported functions intended to be called by users of a package; and
-- Non-exported functions intended only to be called internally by other
-  functions of a package.
-
-
-### Code tagging with "ctags" and "gtags"
-
-The [`{pkgstats}`](https://docs.ropensci.org/pkgstats) package is a static code
-analysis tool specifically developed for R packages, with much of the
-functionality extending from two general static analysis tools. Static code
-analysis tools generally work by constructing parse trees which relate a
-grammar describing one or more computer languages to each expression
-encountered by tracing the code. An important first step is to "tag" each
-expression, identifying the kind of expression and its scope, generally
-implying its membership either of some component of the underlying grammar, or
-some more local scope such as definitions within locally-sourced files.
-
-[`{pkgstats}`](https://docs.ropensci.org/pkgstats) uses two open-source
-libraries for code tagging and parse-tree construction: "ctags" and "gtags".
-The original "ctags" library is no longer maintained, and these analyses used a
-maintained version called ["Universal ctags"](https://ctags.io) which,
-
-> generates an index (or tag) file of language objects found in source files
-> for programming languages.
-
-This library was used here to tag each expression in the `R`, `src`, and
-`inst/include` directories, providing the following data for each tagged item:
-
-1. The tag itself, such as the name of a function, variable, or other object;
-2. The name and path of the corresponding file;
-3. The full content of the expression in which that tag was used (as a text string);
-4. The kind of object (in `R` files, generally a `function`, `functionVar` or
-   variable defined within a function, `globalVar` for global variables, or
-   other objects defined by the `R` language; kinds of objects can be
-   arbitrarily diverse in other languages);
-5. The computer language in which that object was referenced; and
-6. The start and end line numbers of the file in which that object is defined
-   or referenced.
-
-The "ctags" data for R files were also used to construct an "external call
-network" of references to all R functions in all packages, including the
-package being analysed, the base and recommended packages, and all other
-contributed packages imported by each package. Functions were attributed to
-packages by matching function names. Function names in R do not have to be
-unique, and ["namespace conflicts"](https://conflicted.r-lib.org/) may arise
-between packages implementing different functions with the same name. We
-presumed that namespace conflicts most commonly arise in re-definitions of
-functions initially defined in base or recommended packages, and in all such
-cases we attributed a function to the external or contributed package over
-definitions in the base or recommended packages.
-
-The "gtags" library, itself part of the [GNU Global
-library](https://www.gnu.org/software/global/), generates entries for every
-expression, with the "tag" itself defining the environment for that expression.
-This enables mappings to be made between every expression and its corresponding
-tag. We used "gtags" to construct object reference networks across all computer
-languages used in R packages (such as C, C++, or Python), to enable the
-construction of "function call networks" within and between all languages. This
-work generally uses the terms "functions" and "calls" to refer to more general
-objects and references, because these terms more directly reflect the general
-functionality of R code. The terms should be interpreted throughout as also
-potentially referring to the more general concepts of "objects" and
-"references", such as class inheritance mechanisms.
-
-Default installations of "gtags" are able to parse only a restricted sub-set of
-computer languages. It is possible to cross-compile "gtags" with "ctags", to
-enable "gtags" to use the more expansive language parsing abilities of "ctags",
-and to greatly extend the range of languages able to be parsed by "gtags". In
-particular, "gtags" does not not by default parse R code, yet does so when
-cross-compiled with Universal "ctags". Cross-compiled installations of "gtags"
-are, however, generally several times slower than simpler installations, and so
-these analyses did not use a cross-compiled version. While this meant
-restricting analyses to a smaller subset of potential languages, the output of
-"ctags" itself nevertheless describes tags in all possible languages, with
-"gtags" only used to map function call networks in languages other than R.
-Function-call networks within R were extracted from the "ctags" output as
-described above, and one additional function was written in the `{pkgstats}`
-package to link calls within R code as defined by the "ctags" output to
-external objects defined in other languages and specified by the "gtags"
-output. This enabled full function-call networks to be constructed within and
-between different languages used in R packages.
-
-Data generated by "ctags" and "gtags" which were analysed here included:
-
-- Numbers of internal and external functions in R.
-- Numbers and kinds of all objects in all other languages.
-- Numbers of Lines-of-Code for each function or object definition in each language.
-- References from each function (or object) made to all other functions (or
-  objects), including references made to all functions defined in other base,
-  recommended, or contributed R packages.
-
-
-
-### The `pkgstats` package
-
-This sub-section describes additional data generated by
-[`{pkgstats}`](https://docs.ropensci.org/pkgstats) beyond that extracted from
-"ctags" and "gtags". The full list of all data generated by the package is
-given in [the online documentation](https://docs.ropensci.org/pkgstats/), with
-this sub-section only describing those aspects which were analysed here.
-
-#### 'DESCRIPTION' files
-
-All R packages must include a [Debian Control
-File](https://www.debian.org/doc/debian-policy/ch-controlfields.html) ("DCF")
-called "DESCRIPTION" [@hornik_too_many_R_pkgs_2012] which contains a subset of
-standard DCF fields, including [a number of standardised and mandatory
-fields](https://cran.r-project.org/doc/manuals/R-exts.html#The-DESCRIPTION-file)
-able to be analysed here. We extracted:
+Package-level metadata largely come from the Debian Control File ("DCF") named
+"DESCRIPTION" [@hornik_too_many_R_pkgs_2012], in all packages, which contains a
+subset of standard DCF fields. We extracted:
 
 - Numbers of authors (as individuals with a specified role of "aut");
 - Numbers of contributors (as individuals with a specified role of "ctb");
-- Full entries of the "License" field specifying the type of license under
-  which the software was released; and
+- Full entries of the "License" field specifying the type of license under which
+the software was released; and
 - Entries in the "URL" field specifying one or more Uniform Resource Locators
-  (URLs) for the package.
-- Lists of all imported packages used to construct dependency networks between
-  packages. (Entries in other dependency fields of "Requires", "Suggests" or
-  "Enhances" were not considered here.)
+(URLs) for the package.
 
-#### Translation files
+We also extracted a list of (human) languages provided in each R package for
+localization. R packages may include files used to translate all messages issued
+by code into other (human) languages. These files are placed in a dedicated /po
+sub-directory, with file names prefixed with standard prefixes (generally, but
+not necessarily, ISO 639-1 codes).
 
-R packages may include [files used to translate all messages issued by code into
-other (human)
-languages](https://cran.r-project.org/doc/manuals/R-exts.html#Preparing-translations).
-These files are placed in a dedicated `/po` sub-directory, with file names
-prefixed with standard prefixes (generally, but not necessarily, [ISO 639-1
-codes](https://en.wikipedia.org/wiki/ISO_639-1)). This format enables
-translations to be readily identified and extracted. `{pkgstats}` extracts a
-list of all translations provided for each package.
+## Lines of Code (LoC)
 
-#### Lines of Code (LoC)
+We quantified different types of source code from from R packages, using a
+custom C++ tool included in {pkgstats} This tool produces output similar to many
+common "Lines of Code" (LoC) analysis tools tools, plus addition information on
+white space and structure:
 
-[`{pkgstats}`](https://docs.ropensci.org/pkgstats) includes its own internal
-tool (coded in C++) for counting Lines-of-Code (Loc). This tool produces output
-similar to many common LoC tools, with additional data on:
-
-1. Total numbers of code, comment, and blank lines;
-2. Total numbers of characters in code lines, along with total numbers of
-   white-space characters, to enable metrics of proportional white space; and
-3. Code indentation, including identification of tab-indentation.
+-   Lines of code per (computer) language used in the package
+-   Lines of code, comment, and blank lines;
+-   Characters in code lines, along with numbers of white-space characters, to
+enable metrics of proportional white space; and
+-   Code indentation, including identification of tab-indentation.
 
 These white-space and indentation metrics were developed to enable
 quantification of aspects of code outlay and design.
 
-#### Function-level analyses
+We measure these metrics across the following subsets of code. First, by
+function type:
 
-The "ctags" and "gtags" output described above provides data on the start and
-end points of each function definition, along with names of associated files.
-These data were used to provide estimates of average LoC per function, and
-numbers of function definitions per file. (Where, as explained above,
-"function" is used here as generic label for any object in any language, such
-as class definitions.)
+-   Exported functions intended to be called by users of a package; and
+-   Non-exported functions intended only to be called internally by other functions
+of a package.
 
-Each exported function in an R package must have a corresponding documentation
-file in the `/man` directory of the package with the suffix, `.Rd` for "R
-documentation". [`{pkgstats}`](https://docs.ropensci.org/pkgstats) also
-statically parses these files with [the `parse_Rd` function of the recommended
-`{tools}`
-package](https://stat.ethz.ch/R-manual/R-devel/library/tools/html/parse_Rd.html).
-For the present analyses, this enabled identification of the number of
-parameters for each function, and the number of documentation characters for
-each parameter. Total length of documentation for each function was also
-quantified as the numbers of both lines and characters in the output produced
-by converting the result of `parse_Rd` to text (via the `tools::Rd2txt`
-function).
+And also by the sub-directories of R packages, which accord to the structure the
+structure defined in the "Writing R Extensions" Manual :
+
+-   The `/R` directory which holds all source files in the R language;
+-   The `/src` directory which holds all code in other languages which needs to be
+compiled on package installation;
+-   The `/inst` directory which generally holds bundles of external code, but may also
+include code used for cross-linking in compilation, including of other packages.
+Cross-linked code must be in an `/inst/include` sub-directory (as explained in
+this section of the "Writing R Extensions" Manual). All of the following
+analyses only consider the `/inst/include` directory, and all references to the
+`/inst` directory imply this sub-directory only. Analyses excluded all other
+sub-directories within the `/inst` directory.
+-   The `/vignettes` directory which includes extended documentation. (Such
+documentation may also be placed in an `/inst/doc` folder, but this was ignored
+here.)
+-   The `/tests` directory containing test files.
+-   The `/data` directory containing data files used to implement or demonstrate
+package functionality.
+
+## Static code analysis
+
+We conducted static code analysis, identifying functions and objects in both R
+and compiled code in packages to characterize them at the function, package, and
+network level.
+
+Static code analysis tools generally work by constructing parse trees which
+relate a grammar describing one or more computer languages to each expression
+encountered by tracing the code. An important first step is to "tag" each
+expression, identifying the kind of expression and its scope, implying
+its membership either of some component of the underlying grammar.
+
+{pkgstats} incorporates two open-source libraries for code tagging and parse
+tree construction: "Universal ctags" (a fork of the unmaintained "ctags"
+library), and "gtags", itself part of the GNU Global library.
+<!-- citations for the software --> . Using these jointly enabled us to parse
+both R and other languages used in packages, and construct a "call network" of
+functions between languages: "ctags" parses R code and "gtags" does not, but
+"gtags" parses more languages. We linked the results of two to provide complete
+coverage.
+
+We used {pkgstats} to tag each expression in the R, src, and inst/include
+directories, providing the following data for each tagged item:
+
+-  The tag itself, such as the name of a function, variable, or other object;
+-   The name and path of the corresponding file;
+-   The full content of the expression in which that tag was used (as a text
+string);
+-   The kind of object (in R files, generally a function, functionVar or variable
+defined within a function, globalVar for global variables, or other objects
+defined by the R language; kinds of objects can be arbitrarily diverse in other
+languages);
+-   The computer language in which that object was referenced; and
+-   The start and end line numbers of the file in which that object is defined or
+referenced.
+
+At the package, level we aggregated these values to produce:
+
+-   Numbers of internal and external functions in R.
+-   Numbers and kinds of objects in other languages.
+-   Lines-of-Code for each function or object definition in each
+language.
+-   References from each function (or object) made to all other functions (or
+objects), including references made to all functions defined in other base,
+recommended, or contributed R packages (see network analyses, below) .
 
 
-### Network Analyses
+We also parsed the R documentation (.Rd) files in each package using the `parse_Rd`
+and `Rd2txt` functions of the {tools} package.  From these we extracted the 
+function in an R package must have a corresponding documentation file in the
+number of parameters for each function, and the number of
+documentation characters for each parameter and the total length of documentation
+for each function.
 
-Two distinct kinds of network analyses were performed here: *inter-package*
+## Network Analyses
+
+We analyzed two networks within our extracted data: inter-package
 analyses of dependency networks between packages [akin to
-@seven-pkg-networks-2019], and *intra-package* analyses of the function call
+@seven-pkg-networks-2019], and intra-package analyses of the function call
 networks extracted from the "ctags" and "gtags" data described above.
 
-#### Inter-Package Network Analyses
+### Inter-Package Network Analyses
 
-The 'DESCRIPTION' files of R packages must specify all external packages which
-a package depends upon for its functionality. These data can be used to
-construct a full dependency network between all packages. The results below
-present the following measures derived from package dependency networks, all of
-which were calculated with the `{igraph}` package [@igraph].
+The 'DESCRIPTION' files of R packages must specify all external packages which a
+package imports. These data can be used to construct a  dependency network
+between all packages, with packages (vertices) connected by their imports (edges).
+We derived the following value from the package network
+from package dependency networks, all of which were calculated with the {igraph}
+package [@igraph].
 
-1. Numbers of packages which are not imported by any others - the terminal
-   vertices in a dependency network; 
-2. Average "in-degree" of network vertices, or average numbers of times each
-   package is imported by others;
-3. The average *betweenness centrality* of each edge, which is the number of
-   times that edge is traversed in connecting every package to every other
-   package in the network;
-4. The network-level *degree centrality*, which is a measure of vertex degree
-   standardised to the overall size and structure of the network
-   [@network-centrality-79].
-5. A measure of the overall "size" of the network as the average distance
-   between all pairs of vertices.
+- Numbers of packages which are not imported by any others (terminal vertices)
+in a dependency network;
+- Average "in-degree" of network vertices, or average numbers of times each
+package is imported by others;
+- Average _betweenness centrality_ of each edge, which is the number of times
+that edge is traversed in connecting every package to every other package in the
+network;
+- Network-level degree centrality, which is a measure of vertex degree
+standardised to the overall size and structure of the network
+[@network-centrality-79].
+- A measure of the overall "size" of the network as the average distance between
+all pairs of vertices.
 
 Betweenness centrality provides insight into how centralised the network is,
 with higher values reflecting networks in which connections frequently traverse
 a common, central region. The network-level degree centrality reflects the
-extent to which vertices all have a relatively high in-degree; networks in
-which all networks have an equal in-degree have no effective centre, and so
-have a degree centrality of zero. In contrast, networks with a few
-highly-connected central vertices and many vertices with low in-degree will
-have a high degree centrality. These two centrality metrics provide slightly
-different insights: betweenness centrality will increase to the extent to which
-a network manifests a single, common centre; degree centrality will increase to
-the extent that networks become more centralised in general, regardless of
-whether or not any singly identifiable centre forms.
+extent to which vertices all have a relatively high in-degree; networks in which
+all networks have an equal in-degree have no effective centre, and so have a
+degree centrality of zero. In contrast, networks with a few highly-connected
+central vertices and many vertices with low in-degree will have a high degree
+centrality. These two centrality metrics provide slightly different insights:
+betweenness centrality will increase to the extent to which a network manifests
+a single, common centre; degree centrality will increase to the extent that
+networks become more centralised in general, regardless of whether or not any
+singly identifiable centre forms.
+
 
 Networks with low degree centrality are readily traversable, and so will
 generally have lower average distances between all pairs of vertices. The
-distance metric nevertheless may offer additional insight, and will for example
-be higher independent of degree centrality for networks with extended
-peripheral connections. Finally, we note that clusters or local network
-communities were not considered here, as the dependency networks of CRAN
-packages are almost always so highly connected that the largest connected
-cluster represents over 99% of the network.
+distance metric offer additional insight. It will, for example,
+be higher independent of degree centrality for networks with extended peripheral
+connections. Finally, we note that clusters or local network communities were
+not considered here, as the dependency networks of CRAN packages are almost
+always so highly connected that the largest connected cluster represents over
+99% of the network.
 
-#### Intra-Package Network Analyses
+## Intra-Package Network Analyses
 
-Intra-package networks were constructed from the function call networks
-described above, and included overall package networks connecting code in all
-sub-directories, as well as network analyses of only those components
-representing individual sub-directories, here constrained to network analyses
-of both `/R` and `/src` code. Function call networks within individual packages
-are commonly structured in several distinct clusters, and thus numbers of
-clusters provided an important first metric for intra-package analyses.
-Intra-package analyses considered the following metrics:
+We used the references generated by the static code tagging to construct an
+"function call network", of all references in R function to other
+functions within the packages and to their dependencies, including base and 
+recommended packages, and contributed packages imported. Functions were attributed
+to packages by
+matching function names. Function names in R do not have to be unique, and
+"namespace conflicts" may arise between packages implementing different
+functions with the same name. We presumed that namespace conflicts most commonly
+arise in re-definitions of functions initially defined in base or recommended
+packages, and in all such cases we attributed a function to the external or
+contributed package over definitions in the base or recommended packages.  Intra-package
+networks also included code in other languages included in  `/src` directories. 
 
-1. Ratio of numbers of edges to numbers of vertices.
-2. Numbers of distinct clusters between all functions or objects across all
-   languages.
-3. The betweenness centrality of the function call network.
-4. Numbers of terminal vertices (functions which do not call any other
-   functions).
-5. The average vertex degree.
+Function call networks within individual packages are
+commonly structured in several distinct clusters, and thus numbers of clusters
+provided an important first metric for intra-package analyses. Intra-package
+analyses considered the following metrics:
 
+- Ratio of numbers of edges to numbers of vertices.
+- Numbers of distinct clusters between all functions or objects across all
+languages.
+- The betweenness centrality of the function call network.
+- Numbers of terminal vertices (functions which do not call any other functions).
+- The average vertex degree.
 
 ### Coupling Instability
 
-[Coupling Instability](https://en.wikipedia.org/wiki/Software_package_metrics)
-is an important concept in the analysis of software dependency networks
-[@martin-agile-2002], and depends in turn on numbers of so-called *afferent*
-and *efferent* couplings. In the context of the present analyses, for any given
-package, these were defined as:
+Coupling Instability is an important concept in the analysis of software
+dependency networks [@martin-agile-2002], and depends in turn on numbers of
+so-called afferent and efferent couplings. For any given package, these are
+defined as:
 
-- *Afferent Couplings* as numbers of functions in other packages which depend
-  on functions within the package.
-- *Efferent Couplings* as numbers of functions from other packages which the
-  package depends on.
+- Afferent Couplings: numbers of functions in other packages which depend on
+functions within the package.
+- Efferent Couplings: numbers of functions from other packages which the package
+depends on.
 
-In other words,
-
-- *Afferent* couplings are numbers of *inbound* edges from all functions in
-  other packages to functions in a given package, while
-- *efferent* couplings are *outbound* edges coupling that functions in package
-  with functions in all other packages.
+In other words, afferent couplings are numbers of inbound edges from all other packages to a
+given package, while efferent couplings are outbound edges coupling that package with all other
+packages.
 
 Respectively denoting afferent and efferent couplings by $n_a$ and $n_e$, the
-coupling instability, $I$, is defined as $I = n_e / (n_e + n_a)$. Packages
-which depend on many external calls (high efferent couplings), yet upon which
-few other packages depend (low afferent couplings) thus have a high coupling
+coupling instability, $I$, is defined as $I = n_e / (n_e + n_a)$. Packages which
+depend on many external calls (high efferent couplings), yet upon which few
+other packages depend (low afferent couplings) thus have a high coupling
 instability, while packages upon which many other packages depend, yet which
 themselves depend on few other packages have a low coupling instability. The
 analyses below quantified coupling instability for each package from the
-dependency networks, using total numbers of function calls between all
-packages, in order to estimate the average coupling instability of the entire
-network.
+dependency networks, using total numbers of function calls between all packages,
+in order to estimate the average coupling instability of the entire network.
 
-We also adapted this measure of coupling instability *between packages* to a
-measure of *internal* coupling instability [@almugrin_coupling_2015] between
-the individual files of one package. Packages with high internal coupling
+We also adapted this measure of coupling instability between packages to a
+measure of internal coupling instability [@almugrin_coupling_2015] between the
+individual files of one package. Packages with high internal coupling
 instability make many calls between individual files, while packages with low
 internal instability make more calls within single files, and relatively fewer
 between them.
 
+## Temporal Trends
 
-### Statistical Analyses
+We report descriptive statistics of change in the above measures of CRAN software
+over time, focusing on two types of change: developments across all packages
+on CRAN simultaneously, and developments for individual packages over sequences
+of releases.
 
-This section describes statistical techniques used to summarise the large
-amounts of data generated by the methods described in the preceding sections.
-The large numbers of data (generally N > 105,000) ensured that all statistics
-reported on in the following results were entirely significant in a
-conventional frequentist-statistical terms. The results accordingly depict and
-interpret qualitative trends and patterns, without implementing or reporting
-values for any statistical tests. There are two further important aspects to
-note in regard to statistical analyses detailed below.
-
-#### Temporal Analyses
-
-Most of the following results depict the evolution of CRAN software over time,
-in two main ways:
-
-1. As annual developments averaged over all packages; or
-2. As developments for individual packages over sequences of releases.
-
-Several of the following results are accordingly divided into the corresponding
-sub-sections of "Annual Developments" and "Sequential Releases," respectively
-referring to these two modes of analysis. Annual developments aggregate values
-over all packages for each year, while sequential developments aggregate values
-over each sequential release, so that the first versions of all packages are
-aggregated for a release sequence of one, second versions for release sequence
-two, and so on. Annual developments thus capture the collective development of
-the system as a whole, while sequential developments collectively capture the
-internal development of individual packages.
-
-For continuously updated repositories like CRAN, annual developments can be
-captured in the following two primary ways:
-
-1. Through considering each year to represent the state of CRAN at that time,
-   and thus to include latests releases of all packages for that year,
-   regardless of how long ago a package may previously have been updated.
-   Annual estimates derived this way are referred to here as **CRAN
-   snapshots**.
-2. Through considering each year to represent only the state of CRAN in terms
-   of packages uploaded in that specific year, disregarding any packages
-   uploaded in prior years. Estimates derived this way are referred to simply
-   as **annual** values.
+We summarize all-CRAN developments using two measures: annual values
+and snapshots.  Annual values are comprised of values of packages
+uploaded or updated in a specific year, disregarding packages uploaded in
+previous years and not yet updated. Snapshots represent values of all packages
+on CRAN at the end of a given year, regardless of
+how long ago a package may previously have been updated. In general, trends
+in snapshots are smoother than annual values.  In figures below, solid lines
+represent annual values and dashed lines represent snapshots unless otherwise
+indicated.  As most values calculated were log-distributed, we report trends in geometric mean
+values ($\exp\left[\frac{1}{n} \sum_{i=1}^n \ln a_i\right]$). 
 
 Under the plausible assumption that rates of package updates follow some kind
 of Poisson-like process, the ages of packages at any given time will be
 exponentially distributed, analogous to distributions of waiting times for
 Poisson processes. This means that values derived using **CRAN snapshots** will
 generally reflect exponentially-smoothed versions of **annual** values. Many of
-the graphical results which follow depict results dervied using both of these
+the graphical results which follow depict results derived using both of these
 approaches, in which:
 
-- solid lines represent annual values, which are generally noiser versions of
+- solid lines represent annual values, which are generally noisier versions of
 - dashed lines, which represent effectively exponentially-smoothed versions of
   the same data using CRAN snapshots for each year.
 
@@ -598,25 +465,9 @@ example. Where also not otherwise mentioned, all reported values refer to
 (generally noisier) annual values, and not to values derived from (generally
 smoother) CRAN snapshots.
 
+# Results
 
-### Distributional properties and mean values
-
-Almost all statistics described above, and presented in the results below, were
-approximately log-normally distributed. References in any of the following
-results to mean values thus imply values calculated as `10^mean(log10(x))`. The
-use of direct mean values did not generally alter any of the qualitative
-conclusions which follow, yet resulted in many cases in less distinct or smooth
-trajectories or results.
-
-## Results
-
-Many of the following results reveal pronounced changes broadly centered around
-2010. It is important in interpreting such results to note that the largest
-public code hosting platform, GitHub, launched in 2008. This changes from that
-year onward are very likely influenced by the increased public accessibility of
-code through such platforms, as discussed further below.
-
-### Metadata
+## Metadata
 
 Numbers of both authors and contributors have increased over time (Fig. 1A),
 with contributors having been rarely acknowledged at all prior to 2010.
@@ -625,60 +476,27 @@ just under one acknowledged contributor per package in 2022. Encouragingly,
 recent increases in numbers of both authors and contributors have been broadly
 linear, and show no sign of slowing down.
 
-Proportions of packages with Uniform Resource Locator (URL) fields increased
-very rapidly in the first five years of the millennium, before decreasing again
-until after 2010 ("all" in legend of Fig. 1B). Most URLs declared during this
-time were institutionally-hosted websites describing packages, rather than
-sites hosting the actual code. One third alone were academic sites from the
-English-speaking world (such as ".edu", ".ac.uk", or various other
-country-specific versions of these). The increase after around 2012 in the
-proportion of all packages with URLs corresponded to an increase in the
-proportion of packages using git-based hosting platforms (primarily GitHub,
-GitLab, and Bitbucket; "git" in legend). The general trajectory for packages
-specifying URLs thus seems to have passed through an early phase during which
-authors developed individual sites for each package (or group of packages), a
-subsequent phase during which this individual-site approach started to decline
-in popularity, and the final and currently increasing phase of package code
-being directly hosted on code-sharing platforms.
 
-```{r pre-2010-urls, echo = FALSE, eval = FALSE}
-here <- here::here ()
-datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
-x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
-x2010 <- x [x$year < 2010, ]
-u <- regmatches (x2010$urls, regexpr ("http(s?)\\:\\/\\/[^\\/]*\\/", x2010$urls))
-utab <- sort (table (u), decreasing = TRUE)
-utab <- data.frame (
-    url = names (utab),
-    n = as.integer (utab),
-    proportion = as.double (utab) / length (u)
-)
-```
-
+Diversity of license declarations increased up to around 2007, followed by a pronounced drop and
+progression into a roughly stable range of somewhere over 50 distinct entries.
+Numbers of unique licenses primarily reflect numbers of ways of
+declaring licenses, rather than numbers of actual licenses (for example, "GPL
+\>= 2.0" is different to "Any GPL license version 2 or higher", although both
+clearly refer to the same license). 
+The different ways of specifying the three versions of GPL licenses have
+accounted for over 83% of all CRAN packages, with the second most common type
+license being MIT, at 9.6%, followed by BSD at 2.0%. One of these three classes
+of licenses are used in 95% of all CRAN packages.
 
 ```{r fig01, child = "figures/_fig01.Rmd", eval = TRUE, echo = FALSE}
 ```
-
-Figure 1C shows a roughly linear increase in license declarations up to around
-2007, followed by a pronounced drop and progression into a roughly stable range
-of somewhere over 50 distinct entries. This high values reflects the fact that
-numbers of unique licenses primarily reflect numbers of ways of declaring
-licenses, rather than numbers of actual licenses (for example, "GPL >= 2.0" is
-different to "Any GPL license version 2 or higher", although both clearly refer
-to the same license). The different ways of specifying the three versions of
-GPL licenses have accounted for over 83% of all CRAN packages, with the second
-most common type license being MIT, at 9.6%, followed by BSD at 2.0%. One of
-these three classes of licenses are used in 95% of all CRAN packages.
-
-
 
 ```{r licenses, echo = FALSE}
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
 index <- which (x$year > 2010)
 lic <- sort (table (x$license [index]), decreasing = TRUE)
-lic <- data.frame (license = names (lic),
-                   n = as.integer (lic))
+lic <- data.frame (license = names (lic), n = as.integer (lic))
 #knitr::kable (lic [1:10, ], caption = "**Table 1.**")
 
 index <- grep ("GPL|general\\spublic\\slic", lic$license)
@@ -694,12 +512,11 @@ The practice of translating messages within R packages into other languages has
 steadily declined in recent years (Fig. 2A), suggesting a pronounced increase
 in acceptance over the last 15 or so years of English as a globally standard
 language, and a concomitant decrease in active acknowledgement of other
-languages. (The `en@quot` translation entry in Fig. 2A is described in the [*R
-Installation and Administration*
-Manual](https://cran.r-project.org/doc/manuals/R-admin.html#Localization-of-messages)
-as a translation which, "can be used in a UTF-8 locale to have American error
-messages with pairs of single quotes translated to Unicode directional
-quotes.") Rates of decrease since 2008 equate to 1.5% fewer packages per year
+languages. (The [`en@quot` translation
+entry](https://cran.r-project.org/doc/manuals/R-admin.html#Localization-of-messages)
+only translates between
+different quotation styles and encodings.) 
+Rates of decrease since 2008 equate to 1.5% fewer packages per year
 including translations, from a total of just over 20% of all packages in 2008,
 to barely over 1% in 2021. While rates of decrease have slowed somewhat in
 recent years, extrapolation of the preceding five years nevertheless suggests
@@ -709,114 +526,104 @@ the end of the coming year (2023).
 ```{r fig02, child = "figures/_fig02.Rmd", eval = TRUE, echo = FALSE}
 ```
 
-Finally, Fig. 2B extends from the results of Fig. 1B to show temporal evolution
-of the top ten URLs specified in CRAN packages, clearly revealing a sharp
-increase after around 2010 following the advent of code hosting platforms.
-GitHub has always dominated, while r-forge has declined progressively since
-around 2015. The most notable increase has been the emergence of rOpenSci as
-provider of the only URL to come close to within 1/20th of the popularity of
-GitHub over the past few years.
+The top domains of URLs provided in package 'DESCRIPTION' files show the rise and fall of different
+online homes for development, secondary hosting and documentation of CRAN packages.
+r-forge reached a peak of popularity in 2013. A variety on online code repositories
+began to be linked to around 2010, with GitHub reaching dominance in 2016. For
+package documentation at self-hosted domains, two domains stand out: `dirk.eddelbuettel.com` and `ropensci.org`, 
+though the practice of hosting documentation on GitHub and other repositories
+obscures the importance of other individuals and groups. 
 
-
-### Package Structure and Content
+## Package Structure and Content
 
 The temporal development of numbers of files manifest several notable
 characteristics (Figure 3). Unsurprisingly, R packages have always been
-dominated by files in the `R/` directory, numbers of which increased
-considerably up to around 2010, after which they have generally stabilised at
-mean values of around 13-15 files per package (Fig. 3A). The `/vignettes`
-directory is the only place within R packages in which numbers of files have
-remained relatively constant over the preceding 20+ years. Packages generally
-had very few files in the `inst` directory prior to 2010, after which they
-increased until around 2015, before decreasing again more recently. The two
-sub-directories in which numbers of files have increased most significantly are
-`/src` and `/tests`, with the latter increase particularly distinct, clearly
-indicating that packages have become progressively better tested. This recent,
-generally linear increase started a couple of years after the initial release
-of what has become the most widely-used package for structuring tests,
-`{testthat}` [@testthat].
-
+dominated by files in the `R/` directory, numbers of which increased considerably
+up to around 2010, after which they have stabilised at mean values of
+around 13-15 files per package (Fig. 3A). The `/vignettes` directory is the only
+place within R packages in which numbers of files have remained relatively
+constant over the preceding 20+ years. Packages generally had very few files in
+the `/inst` directory prior to 2010, after which they increased until around 2015,
+before decreasing again more recently. The two sub-directories in which numbers
+of files have increased most significantly are `/src` and `/tests`, with the latter
+increase particularly distinct, clearly indicating that packages have become
+progressively more tested.
 
 ```{r fig03, child = "figures/_fig03.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
-Figure 3B shows equivalent changes within individual packages across successive
-releases. Numbers of files have generally progressively increased as packages
-have matured, with especially pronounced increases in the `/R` and `/inst`
-directories, the latter somewhat offset after around 15 releases by decreases
-in the `src` directory. These changes in `/src` and `/inst` directories in the
-later phases of package maturation may reflect restructuring code from the
-`/src` to the `/inst` directories in order to allow cross-compilation by other
-packages. Numbers of test files generally increase out to around 15 releases,
-after which they generally stabilise. The only directory in which numbers of
-files do not notably increase as packages mature is `/vignettes`.
+Figure 3B shows equivalent changes _within_ individual packages across successive
+releases. Numbers of files generally progressively increase as packages mature,
+with especially pronounced increases in the `/R` and `/inst` directories, the latter
+somewhat offset after around 15 releases by decreases in the src directory.
+These changes in `/src` and `/inst` directories in the later phases of package
+maturation may reflect restructuring code from the `/src` to the `/inst` directories
+in order to allow cross-compilation by other packages. Numbers of test files
+generally increase out to around 15 releases, after which they
+stabilise. The only directory in which numbers of files do not notably increase
+as packages mature is `/vignettes`.
 
+## Code Metrics
 
-### Code Metrics
+### Annual Developments
 
-#### Annual Developments
-
-Figure 4 shows the temporal evolution of a number of code metrics. Lines of
-Code ("LoC") in the primary `/R` and `/src` sub-directories broadly increased
-up to around 2005-2010, after which time LoC in these directories have slightly
-decreased, converging on just over 600 lines in both `/R` and `/src`
-directories. These trends are broadly reflected in LoC per function (Fig. 4B),
-excepting the early years of CRAN, during which functions often had well over
-100 lines each, especially `/src` functions defined in other languages (in those
-years, primarily Fortran and C). That panel, as well as Fig. 4C, distinguishes
-between the two primary kinds of R functions, exported and non-exported. LoC
-per function have remained broadly stable for almost 20 years, at around 30
-lines for all function types and languages. The slight decrease discernible
-since around 2015 amounts to one LoC less for exported, non-exported, and
+Figure 4 shows the temporal evolution of a number of code metrics. Lines of Code
+("LoC") in the primary `/R` and `/src` sub-directories increased between 2000
+and 2005, after which time LoC in these directories have slightly
+decreased, converging to just a geometric mean of approximately 600 lines in both `/R` and `/src` directories.
+LoC per function (Fig. 4B) decreased from very high values in the early CRAN
+years to stabilize from 2005-2020. 
+The slight decreases discernible
+since around 2015 amount to one LoC less for exported, non-exported, and
 `/src` functions every 3.4, 8.5, and 1.5 years, respectively.
 
-Total numbers of R functions initially increased until around 2007, peaking at
-just under 30 exported and over 50 non-exported functions per package (Fig.
-4C). Numbers of exported R functions have decreased since then to around 17
-exported and 40-45 non-exported functions per package in 2021. Numbers of
-functions defined in `/src` directories have followed broadly similar
-trajectories to exported `/R` functions, slightly decreasing since the early
-2000's to between 30-40 functions. Numbers of functions per source file in both
-`/R` and `/src` directories have nevertheless progressively decreased since the
-early 2000's to now amount to less than four `/R` functions and just over five
-`/src` functions per file (Fig. 4D).
+Total numbers of R functions per package initially increased until around 2007, peaking at
+just under 30 exported and over 50 non-exported functions (Fig. 4C).
+Numbers of exported R functions have decreased since then to around 17 exported
+and 40-45 non-exported functions per package in 2021. Numbers of functions
+defined in `/src` directories have followed broadly similar trajectories to
+exported /R functions, slightly decreasing since the early 2000's to between
+30-40 functions. Numbers of functions per source file in both /R and /src
+directories have nevertheless progressively decreased since the early 2000's to
+now amount to less than four /R functions and just over five /src functions per
+file (Fig. 4D).
 
 
 ```{r fig04, child = "figures/_fig04.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
-#### Sequential Releases
+### Sequential Releases
 
 Figure 5 shows results equivalent to Fig. 4, but for the development of the
-respective metrics with each sequential release of a package, rather than
-annual developments. Lines of code generally increase as packages mature, with
-mean numbers of lines in the `/R` directory increasing tenfold from under 400
-for first releases to over 5,000 in packages with 100 or more releases. LoC in
-`/inst` directories also tend to increase as packages develop, although to a
-lesser extent, and only becoming notable after around 50 releases. Beyond the
-first few releases, there are always fewer LoC in `/src` directories than in
-`/R` directories. This contrasts with the annual aggregate results of Fig. 4A,
-which suggest more LoC in `/src` than `/R` directories until around 2007, and
-roughly equal numbers since then. This difference reflects the fact that most
-packages have only one or two releases (the distribution of numbers of releases
-is not shown here, but manifests a very smooth exponential decrease), so Fig.
-4A is dominated by packages in a very early state of development, for which LoC
-in `/src` often exceed numbers in `/R`. Similar to patterns for `/src` and
-`inst` directories in Fig. 3B, decreases in LoC in `/src` directories in the
-later phases of package maturation may reflect restructuring code to `/inst`
-directories. This clear peak in LoC in `/src` directories may in turn suggest
-this is an approximate number of releases before other developers become aware
-of the functionality of package `/src` directories. The clearest result of Fig.
-4A is manifest in total LoC, which increases in a strikingly linear manner even
-out to the 100th release of a package.
+respective metrics with each sequential release of a package, rather than annual
+developments. Lines of code generally increase as packages mature, with mean
+numbers of lines in the /R directory increasing tenfold from under 400 for first
+releases to over 5,000 in packages with 100 or more releases. LoC in `/inst`
+directories also tend to increase as packages develop, although to a lesser
+extent, and only becoming notable after around 50 releases. Beyond the first few
+releases, there are always fewer LoC in `/src` directories than in `/R` directories.
+This contrasts with the annual aggregate results of Fig. 4A, which suggest more
+LoC in `/src` than `/R` directories until around 2007, and roughly equal numbers
+since then. This difference reflects the fact that most packages have only one
+or two releases (the distribution of numbers of releases is not shown here, but
+manifests a very smooth exponential decrease), so Fig. 4A is dominated by
+packages in a very early state of development, for which LoC in `/src` often
+exceed numbers in `/R`. Similar to patterns for `/src` and `/inst` directories in Fig.
+3B, decreases in LoC in `/src` directories in the later phases of package
+maturation may reflect restructuring code to `/inst` directories. This clear peak
+in LoC in `/src` directories may in turn suggest this is an approximate number of
+releases before other developers become aware of the functionality of package
+`/src` directories. The clearest result of Fig. 4A is manifest in total LoC, which
+increases in a linear manner even out to the 100th release of a
+package.
 
 ```{r fig05, child = "figures/_fig05.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
-These increases in LoC nevertheless corresponded to general decreases in LoC
-per function with increasing numbers of releases (Fig. 5B). In all directories,
-LoC per function either slightly increased or remained generally stable over
-the first 50 or so releases, beyond which functions in all directories clearly
+These increases in LoC nevertheless corresponded to general decreases in LoC per
+function with increasing numbers of releases (Fig. 5B). In all directories, LoC
+per function either slightly increased or remained generally stable over the
+first 50 or so releases, beyond which functions in all directories clearly
 become considerably more streamlined, with LoC decreasing markedly out to the
 100th release. Similar to the aggregate LoC measures of panel A, LoC in `/src`
 directories manifest a distinct peak as packages matured, with LoC per `/src`
@@ -826,26 +633,25 @@ nevertheless relatively minor, and amount to removing one LoC per function for
 every 5, 7, or 18 releases for exported R, non-exported R, and source function,
 respectively.
 
-The increasing total measures of LoC of panel A combined with decreasing LoC
-per function of panel B must mean that more functions are added as packages
-mature, which is precisely what Fig. 5C reveals. Packages initially contain
-less than ten exported functions on average, yet this increases over 10-fold
-to over 130 by the 100th release. Numbers of `/src` functions are initially
-higher, at around 20, and increase relatively less than equivalent `/R`
-functions, to around 100 after 100 releases. Numbers of non-exported `/R`
-functions manifest the most pronounced
-increase, of over 15 times from 20 functions for initial releases, to well over
-300 for the 100th release. Finally, numbers of functions per file show no clear trend
-for `src` code, remaining broadly stable at around six functions per file (Fig.
-4D). In contrast, `/R` code files begin with 3-4 functions per file, and
-increase progressively to around eight functions per file after 100 releases,
-in the context of Figs. 4B-C clearly mostly due to breaking large non-exported
-functions down into multiple, smaller functions.
+The increasing total measures of LoC of panel A combined with decreasing LoC per
+function of panel B suggests that more functions are added as packages mature,
+which is precisely what Fig. 5C reveals. Packages initially contain less than
+ten exported functions on average, yet this increases over 10-fold to over 130
+by the 100th release. Numbers of `/src` functions are initially higher, at around
+20, and increase relatively less than equivalent `/R` functions, to around 100
+after 100 releases. Numbers of non-exported `/R` functions manifest the most
+pronounced increase, of over 15 times from 20 functions for initial releases, to
+well over 300 for the 100th release. Finally, numbers of functions per file show
+no clear trend for src code, remaining broadly stable at around six functions
+per file (Fig. 4D). In contrast, `/R` code files begin with 3-4 functions per
+file, and increase progressively to around eight functions per file after 100
+releases, in the context of Figs. 4B-C clearly mostly due to breaking large
+non-exported functions down into multiple, smaller functions.
 
 Numbers of functions depicted in Fig. 4C actually count any arbitrary code
 objects in all languages contained in `/src` directories, and so corresponds
 directly to the "modules" posited to increase according to the inverse-square
-"law" of software evolution [@Turski96;@software-evolution-97;@Turski02]. The
+"law" of software evolution [@Turski96; @software-evolution-97; @Turski02]. The
 defining qualitative feature of such inverse--square growth is an initially
 highly concave form, with rates decreasing notably as packages mature. The
 trajectories of Fig. 4C appear in contrast strikingly linear, all manifesting
@@ -855,8 +661,8 @@ form.
 ```{r turski, echo = FALSE, eval = FALSE}
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
-        group_by (package) |>
-        mutate (seq = seq_along (package))
+    group_by (package) |>
+    mutate (seq = seq_along (package))
 x$loc_R [which (is.na (x$loc_R))] <- 0L
 x$loc_src [which (is.na (x$loc_src))] <- 0L
 x$loc_inst [which (is.na (x$loc_inst))] <- 0L
@@ -864,33 +670,30 @@ x$loc_total <- x$loc_R + x$loc_src + x$loc_inst
 
 x_rel <- x |>
     group_by (seq) |>
-    filter (seq <= 100) |>
-    summarise (
-        n = logmean (n_fns_r_exported + n_fns_r_not_exported + n_fns_src, na.rm = TRUE))
+    filter (seq \<= 100) |>
+    summarise ( n = logmean (n_fns_r_exported + n_fns_r_not_exported +
+                             n_fns_src, na.rm = TRUE))
 
 s_inv <- cumsum (1 / x_rel$n ^ 2)
 E <- mean ((x_rel$n - x_rel$n [1]) / s_inv)
 fit <- rep (x_rel$n [1], nrow (x_rel))
 for (i in seq (nrow (x_rel)) [-1]) {
-    fit [i] <- fit [i - 1] + E / (fit [i - 1] ^ 2)
+    fit [i] <- fit [i - 1] + E / (fit [i - 1] \^ 2)
 }
-x_rel$fit <- fit
-x_rel <- pivot_longer (x_rel, c (n, fit))
+x_rel$fit <- fit x_rel <- pivot_longer (x_rel, c (n, fit))
 
-ggplot (x_rel, aes (x = seq, y = value, colour = name)) +
-    geom_line ()
-    #geom_smooth (method = "loess", formula = "y ~ x")
+ggplot (x_rel, aes (x = seq, y = value, colour = name)) + geom_line ()
+#geom_smooth (method = "loess", formula = "y \~ x")
 ```
 
-
-### Package Imports and Exports
+## Package Imports and Exports
 
 Like the "standard" libraries for the python language, R has a core set of
 "base" and "recommended" packages. The function call networks extracted by
-`pkgstats` enable counting numbers of calls to each of these groups of
-packages, as well as to "contributed" packages hosted on CRAN.
+pkgstats enable counting numbers of calls to each of these groups of packages,
+as well as to "contributed" packages hosted on CRAN.
 
-#### Annual Developments
+### Annual Developments
 
 Figure 6A shows the change over time in proportions of calls to these three
 groups of packages, revealing a recent tendency (since around 2015) of fewer
@@ -909,14 +712,14 @@ Figure 6B shows the "coupling instability" of packages over time. As explained
 above, this is a measure of the extent to which packages depend on external
 functionality (efferent couplings) without other packages in turn depending on
 them (afferent couplings). Packages on CRAN were largely stable until around
-2010, at a coupling instability of around 0.5, meaning numbers of functions
-from each package which were imported by other packages were roughly equal to
-numbers of external functions each package imported. Instability has increased
-markedly since that time, indicating that packages have become increasingly
-dependent on external functionality, while the average package is less likely
-to provide functionality used by other packages. The coupling instability over
-the preceding two years of around 80% implies that packages make on average
-eight calls to other packages for every two calls made to that package.
+2010, at a coupling instability of around 0.5, meaning numbers of functions from
+each package which were imported by other packages were roughly equal to numbers
+of external functions each package imported. Instability has increased markedly
+since that time, indicating that packages have become increasingly dependent on
+external functionality, while the average package is less likely to provide
+functionality used by other packages. The coupling instability over the
+preceding two years of around 80% implies that packages make on average eight
+calls to other packages for every two calls made to that package.
 
 As another aggregate measure of changes in package imports,
 @seven-pkg-networks-2019 analysed Gini coefficients, which are standardised
@@ -926,220 +729,205 @@ zero, while systems with maximally heterogeneous numbers of imports have a Gini
 coefficient of one. While they concluded that Gini coefficients have increased
 over time for all seven of the package distribution systems they studied
 (including CRAN), at least over their time period of 2012-2017, our equivalent
-results are depicted in Fig. 6C, revealing a profound dependence on how annual
+results are depicted in Fig. 6C, revealing a difference on how annual
 values are defined and calculated. Using "annual values" through aggregating
 statistics only from packages uploaded in each year (solid lines) yields Gini
 coefficients which decrease over time, while calculating annual values as "CRAN
 snapshots" as the entire system would have existed for each year (dashed lines)
-yields Gini coefficients which increase over time. Their results appear to
+yields Gini coefficients which increase over time. @seven-pkg-networks-2019's results appear to
 qualitative accord with our "CRAN snapshot" values for package dependency
-networks, although our values are only around half of theirs, suggesting that
-they perhaps neglected a final divisor of 2 in their calculations.
+networks.
 
 Moreover, that panel depicts Gini coefficients calculated both from numbers of
-imported packages, and total numbers of external function calls. Numbers of
-function calls will only equal numbers of imported packages when only one
-function is used from each package, otherwise numbers of function calls must be
-greater, leading to larger Gini coefficients of inequality in numbers of
-external function calls between packages. Other than this expected difference
-in scale, results from both single-package imports and numbers of functions
-were qualitatively similar.
+imported packages, and total numbers of external function calls are
+qualitatively similar, though differing in scale.
 
-Finally, figure 6D depicts changes in numbers of unique function calls from
-each package to the top ten contributed packages, defined as the ten packages
-with the largest total number of unique function calls from all packages
-throughout the history of CRAN. The top two packages of {ggplot2} and {dplyr}
-account for `r prop_top2`% of all function calls from all contributed packages
-over the time shown. Numbers of function calls are shown on a logarithmic
-scale, with numbers of calls to each of these packages increasing exponentially
-between 2013 and 2018, before levelling off or even slightly decreasing.
+Finally, figure 6D depicts changes in numbers of unique function calls from each
+package to the top ten contributed packages, defined as the ten packages with
+the largest total number of unique function calls from all packages throughout
+the history of CRAN. The top two packages of {ggplot2} and {dplyr} account for `r
+top_prop` of all function calls from all contributed packages over the time
+shown. Numbers of function calls are shown on a logarithmic scale, with numbers
+of calls to each of these packages increasing exponentially between 2013 and
+2018, before levelling off or even slightly decreasing.
 
-#### Sequential Releases
+### Sequential Releases
 
 The first two panels of Figure 7 show results equivalent to Figs 6A-B, but for
 changes with progressive releases of each package. Packages tend to make
 progressively fewer calls to base R functions as they mature, although this
 decrease is relatively less pronounced than the overall decrease over time of
-Fig. 6A. However, in stark contrast to Fig 6A, in which decreases over time
-were offset by relative increases in calls to contributed packages, decreases
-in calls to base R functions as packages mature are offset by relative
-increases to calls to recommended packages, while calls to contributed packages
-actually decrease. Such changes become relatively less pronounced as packages
-mature, stabilising after around 50 releases at around 75% of all function
-calls to base R, and just under 25% to contributed packages.
+Fig. 6A. In contrast changes to all packages over time,  decreases in
+calls to base R functions as packages mature are offset by relative increases to
+calls to recommended packages. Calls to contributed packages actually
+decrease as packages mature. Such changes become relatively less pronounced over successive releases,
+stabilising after around 50 releases at around 75% of all function calls to base
+R, and just under 25% to contributed packages.
 
 ```{r fig07, child = "figures/_fig07.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
 Figure 7B shows the average trajectory of coupling instability for individual
 packages across the depicted numbers of sequential releases, which decreases
-very progressively as packages mature, as should be expected if packages are
-increasingly likely to be imported by other packages (that is, as incoming or
-afferent couplings increase). That figure also shows average numbers of
-efferent couplings, or numbers of outward calls from each package to other
-packages, which stay largely stable as packages develop. Increases in package
-stability thus arise as packages develop purely through being imported as
-dependencies by increasing numbers of other packages. This in turn suggests
-that the best way to counteract the increasing coupling instability of CRAN as
-a whole depicted in Fig. 6B would be to ensure that packages remain
-progressively developed, rather than abandoned (or archived) after only a few
-releases.
+as packages mature.  This would be expected if packages are
+increasingly likely to be imported by other packages. 
+Average numbers of efferent
+couplings (numbers of outward calls from each package to other packages)
+stay largely stable as packages develop. Increases in package stability
+arise as packages develop purely through being imported as dependencies by
+increasing numbers of other packages. This suggests that the best way to
+counteract the increasing coupling instability of CRAN as a whole depicted in
+Fig. 6B would be to ensure that packages remain progressively developed, rather
+than abandoned (or archived) after only a few releases.
 
 Finally, Fig. 7C shows progressions of both packages and individual functions
-being imported into other packages as a function of release sequence. The
-number of packages importing a package increases progressively with numbers of
-releases, as was already clear from Fig. 7B. Packages with less than ten
+being imported into other packages as a function of release sequence. The number
+of packages importing a package increases progressively with numbers of
+releases. Packages with less than ten
 releases are, on average, imported by very few other packages, while packages
-with 40 or more releases are imported by ten other packages on average. The
-second line on that figure nevertheless reveals that packages import on average
-only 1-2 functions from any given package, and that numbers of functions
+with 40 or more releases are imported by ten other packages on average. Packages 
+import on average only 1-2 functions from any given package, and numbers of functions
 imported by other packages increase only marginally as packages mature.
 
-Coupled with the observed increases in numbers of exported functions as
-packages mature depicted in Fig. 5C, the slight increase in numbers of
-functions imported by other packages nevertheless suggests a relationship
-between total numbers of functions exported by a package, and numbers imported
-by other packages. Indeed, taking only the latest versions of all packages and
-relating these two values reveals that other packages are likely to import one
-additional function on average for every 2.8 additional functions exported by
-a package.
+The slight increase in numbers of functions imported
+by other packages nevertheless suggests a relationship between total numbers of
+functions exported by a package (Fig. 5C), and numbers imported by other packages. 
+Taking only the latest versions of all packages and relating these two values
+reveals that other packages are likely to import one additional function on
+average for every 2.8 additional functions exported by a package.
 
-### Network Analyses
+## Network Analyses
 
-#### Annual Developments
+### Annual Developments
 
-The first two panels of Fig. 8 show the temporal development of the CRAN
-package dependency network, in both cases revealing that most network metrics
-have broadly stabilised over the preceding five or so years, following
-generally abrupt changes between around 2010 to 2015. The proportion of
-terminal vertices, or packages not imported by any other packages, has recently
-remained broadly stable at around 55-60% of all packages. The mean vertex
-degree of the dependency network has nevertheless progressively increased,
-especially since 2015, indicating that those packages which are imported by
-others have been imported by increasing numbers of other packages (Fig. 8A).
+The first two panels of Fig. 8 show the temporal development of the CRAN package
+dependency network. Most network metrics have
+broadly stabilised over the preceding five or so years, and that variations were
+much more pronounced prior to 2015. The proportion of terminal vertices,
+or packages not imported by any other packages, has remained broadly stable at
+around 55-60% of all packages. The mean vertex degree of the dependency network
+has nevertheless progressively increased, especially since 2015, indicating that
+those packages which are imported by others have been imported by increasing
+numbers of other packages (Fig. 8A).
 
 ```{r fig08, child = "figures/_fig08.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
-Such an increase in average numbers of imports has nevertheless had little
-apparent effect on measures of network centrality (Fig. 8B), with both measures
-remaining broadly stable since 2015. The increasing vertex degree of Fig. 8A
-nevertheless seems reflected in decreasing mean distance between each pair of
-packages in Fig. 8B. More broadly, since numbers of terminal vertices have
+Such an increase in average numbers of imports increases the overall
+connectivity of the dependency network. Fig. 8B showing concomitant
+decreases in both centrality metrics over time. Average distances between each
+pair of packages in the network increased notably up to around 2013, after which
+time they have decreased. Since numbers of terminal vertices have
 remained generally stable, while centrality has decreased, the initial increase
-in mean distance likely reflects terminal vertices becoming further away, for
-example through the network evolving a number of distinct centres. The more
-recent decrease in mean distance may then reflect an equivalent centralisation
-of the dependency network.
+in mean distance likely reflects terminal vertices becoming further
+away. This may reflect the network evolving a number of distinct centres. The
+more recent decrease in mean distance may then reflect an equivalent
+centralisation of the dependency network.
 
 The lower two panels of Fig. 8 depict the evolution of function call networks
 within individual packages. Fig. 8C shows the ratio of numbers of edges to
 numbers of vertices, with higher values indicating more densely connected
 networks. Since around 2005, network connections within R functions, whether
-exported or not, have remained largely constant, with each function being
-called by around 5-6 other functions. Connections between functions in `/src`
-directories have in contrast decreased considerably, with each `/src` function
-(or object) now being "called" (or referenced, inherited, or any other method)
-by just over one other function. Ratios of edges to vertices in the full
-function call network extending between all directories (including `/inst`) has
-progressively declined from over 4 calls per function to less than 3 in recent
-years. Function call networks form on average around three distinct clusters
-for each package, peaking at over 3.5 in 2007 before more recently decreasing
-to just over 2.5 clusters.
+exported or not, have remained largely constant, with each function being called
+by around 5-6 other functions. Connections between functions in `/src` directories
+have in contrast decreased considerably, with each `/src` function (or object) now
+being "called" (or referenced, inherited, or any other method) by just over one
+other function. Ratios of edges to vertices in the full function call network
+extending between all directories (including `/inst`) has progressively declined
+from over 4 calls per function to less than 3 in recent years. Function call
+networks form on average around three distinct clusters for each package,
+peaking at over 3.5 in 2007 before more recently decreasing to just over 2.5
+clusters.  <!-- This could use a bit of interpretation -->
 
 The final panel (Fig. 8D) shows average centrality metrics from function call
-networks, revealing a marked stability, except for numbers of terminal edges (in
-that context, meaning numbers of functions which call no other functions),
-which have decreased since around 2005 from around 12 per package to around 7.
+networks, which is stable except for numbers of terminal edges (in
+that context, meaning numbers of functions which call no other functions), which
+have decreased since around 2005 from around 12 per package to around 7.
 
+### Sequential Releases
 
-#### Sequential Releases
-
-Analyses of sequential releases can only meaningfully be applied to the
-function call networks of Figs. 8C-D, and so Fig. 9 depicts equivalent values
-only for those two panels. Fig. 9A reveals that function call networks tend to
-become more densely connected as packages mature, and more so in `/src` than in
-`/R` directories. The aggregate increase contrasts strikingly with the
-equivalent and generally decreasing average tendency over time of Fig. 8C. This
-contrast can again be explained by the fact that most packages only have one or
-two releases, and so packages on CRAN have on average become less internally
-connected over time as recently-released packages have increasingly dominated.
-The decrease in package connectivity over one year of Fig. 8C corresponds to an
-equivalent increase in Fig. 9A after 224 releases, indicating that decreases in
-internal connectivity through increasing dominance of recently-released
-packages far outweighs compensatory decreases through packages maturing.
+Analyses of sequential releases can only meaningfully be applied to the function
+call networks of Figs. 8C-D, and so Fig. 9 depicts equivalent values only for
+those two panels. Fig. 9A reveals that function call networks tend to become
+more densely connected as packages mature, and more so in `/src` than in `/R`
+directories. The aggregate increase contrasts with the equivalent and
+generally decreasing average tendency over time of Fig. 8C. This contrast can
+again be explained by the fact that most packages only have one or two releases,
+and so packages on CRAN have on average become less internally connected over
+time as recently-released packages have increasingly dominated. The decrease in
+package connectivity over one year of Fig. 8C corresponds to an equivalent
+increase in Fig. 9A after 224 releases, indicating that decreases in internal
+connectivity through increasing dominance of recently-released packages far
+outweighs compensatory decreases through packages maturing.
 
 ```{r fig09, child = "figures/_fig09.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
-Finally, centrality metrics change dramatically as packages mature (Fig. 9B),
-in stark contrast to the annual changes of Fig. 8D. Packages develop greater
+Finally, centrality metrics change dramatically as packages mature (Fig. 9B), in
+contrast to the annual changes of Fig. 8D. Packages develop greater
 numbers of terminal edges, yet retain almost identical vertex degrees through
 becoming more centralised as they develop. One way such an effect could be
 achieved would be through transforming a package from having several distinct
-clusters, each internally highly connected yet only loosely coupled to other
-clusters, progressing towards having fewer numbers of more highly centralised
-clusters, with increasing numbers of single connections out to terminal
-vertices.
+clusters of functions, each internally highly connected yet only loosely coupled to other
+clusters, towards having fewer numbers of more highly centralised
+clusters.
 
-### Code formatting and Documentation
+## Code formatting and Documentation
 
 We conclude these results with analyses generated by the internal Lines-of-Code
-routines of `pkgstats`, along with static analyses of the function
-documentation (`.Rd`) files. Proportions of blank and comment lines have
-remained markedly similar in both `/R` and `/src` directories over time, except
-for comment lines in `/R` code, which have increased dramatically since around
-2010. This roughly corresponds to the first release of the `{roxygen2}` package
-[@roxygen2] which has indubitably done more than any other package to
-standardise documentation of R functions. This increase in `/R` documentation
-is likely a direct reflection of the widespread adoption of `{roxygen2}` as the
-documentation standard for R packages.
+routines of {pkgstats}, along with static analyses of the function documentation
+(.Rd) files. Proportions of blank and comment lines have remained
+similar in both `/R` and `/src` directories over time, except for comment lines in
+`/R` code, which have increased since around 2010. This roughly
+corresponds to the first release of the {roxygen2}m package which has 
+done more than any other package to standardise documentation of R functions.
+This increase in `/R` documentation is likely a direct reflection of the
+widespread adoption of {roxygen2} as the documentation standard for R packages.
 
 ```{r fig10, child = "figures/_fig10.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
 The relative proportion of white space in code lines has increased consistently
-yet very slightly over time, amounting to an increase from slightly under 13%
-to slightly over 14.5%. This value nevertheless describes average changes for
-every line of code, and so amounts to one additional space for every 67 code
-characters. The most dramatic development of Fig. 10B is clearly the decrease
-in the proportion of files with tab-indentation, from well over 60% before the
-year 2000 to barely over 10% today. Ignoring tabs, code indentation increased
-until around 2005-2010, remaining constant at 3-3.5 spaces for many years
-before more recently declining to well under 3 spaces.
+but slightly over time, amounting to an increase from slightly under 13% to
+slightly over 14.5%. This value amounts to one additional space for every 67 code
+characters. The most dramatic development of Fig. 10B is clearly the decrease in
+the proportion of files with tab-indentation, from well over 60% before the year
+2000 to barely over 10% today. Ignoring tabs, code indentation increased until
+around 2005-2010, remaining constant at 3-3.5 spaces for many years before more
+recently declining to well under 3 spaces.
 
-Each R function in 1998 had an average of six parameters, yet this declined
-very rapidly to under four within two years (Fig. 10C). Numbers of parameters
-have progressively increased since then, yet still barely exceed an average of
-four parameters per function. Parameter documentation has followed an almost
+Each R function in 1998 had an average of six parameters. This declined
+rapidly to under four within two years (Fig. 10C). Numbers of parameters have
+increased since then, and now exceed an average of four
+parameters per function. Parameter documentation has followed an almost
 identical trend, increasing from under 70 characters per parameter to just over
 80. In contrast, total numbers of documentation lines per function initially
-increased until around 2010, at almost 60 lines, before decreasing more
-recently to 50 lines per function or less.
+increased until around 2010, at almost 60 lines, before decreasing more recently
+to 50 lines per function or less.
 
 The equivalent results analysed as a function of release sequence rather than
-year reveal that functions become markedly better documented as packages mature
+year reveal that functions become better documented as packages mature
 (Fig. 10D), although not through additional documentation of parameters.
-Analogous to preceding results, the recent decrease in documentation lines per
+As with preceding results, the recent decrease in documentation lines per
 function likely reflects an increasing prevalence of recently released packages
 which outweighs increases in function documentation as individual packages
 mature.
 
-Finally, contrasting panels C and D of Fig. 10 also reveals a likely influence
-of increasing dominance of recent packages on numbers of parameters per
-function. While this number has increased consistently over recent years (Fig.
-10C), numbers of parameters also decrease markedly as packages mature, equating
+Finally, contrasting Figs. 10C and 10D show likely show an increasing
+dominance of recent packages on numbers of parameters per
+function. While this number has increased over recent years (Fig.
+10C), numbers of parameters also decrease as packages mature, equating
 to an average of one parameter fewer in all functions after 58 releases. The
-equivalent annual effect from Fig. 10C would translate to one additional
-parameter every 46 years. The average interval between package releases over
-the duration of CRAN has been 207 days, according to which 58 releases would
-take 33 years. That comparison suggests that the effects of packages maturing
-in decreasing average numbers of parameters per function (still) slightly
-out-competes the counteracting effect of increasing average numbers of
+equivalent annual effect (Fig. 10C) would translate to one additional
+parameter every 46 years. The average interval between package releases over the
+duration of CRAN has been 207 days, according to which 58 releases would take 33
+years. That comparison suggests that the effects of packages maturing in
+decreasing average numbers of parameters per function (still) slightly
+out-paces the effect of increasing average numbers of
 parameters per function through the increasing dominance of recently released
 packages.
 
-## Discussion
+# Discussion
 
 These results reveal a number of metrics which appear to have evolved in one
 direction when collectively measured across all CRAN packages, yet which tend
@@ -1159,6 +947,7 @@ Simpler examples also arise in variables like numbers of R functions per file,
 which have decreased consistently over CRAN as a whole (Fig. 4D), yet which
 increase progressively as individual packages mature (Fig. 5D).
 
+
 These general patterns indicate the ubiquity of a dual dynamic between
 individual packages tending to develop or evolve in one particular direction,
 yet CRAN as a whole collectively developing in opposing directions due to
@@ -1173,7 +962,7 @@ development of CRAN is defined by a dynamic balance between the stabilising
 influence of mature packages, and the converse and potentially destabilising
 influences of increasing numbers of recently contributed packages.
 
-However, even balances between variables like these which are relatively easy
+Even balances between variables like these which are relatively easy
 to interpret must be considered carefully. For example, the preceding results
 made several comparisons through quantifying relative rates of change of such
 opposing tendencies. Direct comparisons presume more recent packages to have
@@ -1231,58 +1020,51 @@ Against this trajectory, the advent of code hosting platforms has clearly had a
 stabilising effect in once again "re-centralising" the CRAN dependency network,
 and decreasing inter-nodal distances.
 
-### Quantifying temporal development of software systems
+## Quantifying the temporal development of software systems
 
-The results presented here contrasted and compared two distinct ways of
-quantifying "annual" statistics. The "snapshot" values considered the
-collective properties of the system as it existed in each year, including
-latest versions of all packages regardless of when those packages were last
-updated. In contrast, "annual" values only considered software actively
-uploaded in each year. As stated at the outset, snapshot values may be
-generally presumed to reflect exponentially-smoothed versions of annual values,
-and so these two approaches to aggregating annual values ought to qualitatively
-agree, with snapshots merely being an effectively smoothed version of annual
-values. Such an assertion can nevertheless never be more than a generalisation,
-and the particular statistical properties of a system may manifest different
-patterns.
+We calculated two measures of temporal development of software on CRAN. "Snapshot" values considered the
+collective properties of the system as it existed in each year, including latest
+versions of all packages regardless of when those packages were last updated.
+"Annual" values only considered software uploaded in each
+year. Snapshot values may be generally presumed to
+reflect exponentially-smoothed versions of annual values, so these two
+approaches to aggregating annual values ought to qualitatively agree. Nonetheless,
+some distinct differences appear when comparing these two approaches.
 
-Such contrasting patterns arose in the annual developments of Gini coefficients
+Such differences appear in the annual change of Gini coefficients
 of Fig. 6C, which presented coefficients both for inequality between numbers of
 package dependencies, and numbers of individual functions from those
-dependencies. Calculating annual values only from software uploaded in each
-year ("annual" values; solid lines in that figure) yielded Gini coefficients
-which have progressively decreased over the last two decades, while using
-"snapshot" values produced opposing trajectories of increasing Gini
-coefficients (dashed lines). 
+dependencies. Calculating annual values only from software uploaded in each year
+("annual" values; solid lines in that figure) yielded Gini coefficients which
+have decreased over the last two decades, while using "snapshot"
+values produced opposing trajectories of increasing Gini coefficients (dashed
+lines).
 
-@seven-pkg-networks-2019 previously claimed that Gini coefficients for all
-seven package distribution systems they studied had increased over time. These
+@seven-pkg-networks-2019 claimed that Gini coefficients for all seven
+package distribution systems they studied had increased over time. These
 coefficients measure relative inequality in the distributions of numbers of
 package imports, with larger values reflecting systems with greater disparities
 between packages in numbers of imports. While @seven-pkg-networks-2019 did not
-explicitly describe how they defined their annual figures, all data were
-derived from the "meta-platform" `libraries.io`, which collates software from
-several distribution systems and computer languages. Use of data from this
-platform would only enable "annual" rather than "snapshot" values to be
-calculated. The present results then appear to contradict theirs, through
-revealing annual Gini coefficients to have decreased over the preceding two
-decades, rather than increasing as they concluded (albeit in their case over a
-more narrow temporal range of 2012-2017). Quantifying annual values as
-snapshots of the entire system, including latest versions from all prior years,
-led to opposing trajectories of increasing Gini coefficients.
+explicitly describe how they defined their annual figures, all data were derived
+from the "meta-platform" `libraries.io`, which collates software from several
+distribution systems and computer languages. Use of data from this platform
+would only enable "annual" rather than "snapshot" values to be calculated.
 
-While detailed consideration of these differences lies beyond the scope of the
-present work, it is nevertheless important to note that for discrete,
-non-negative variables such as counts, Gini coefficients must generally
-increase with the scale or maximal values of those variables. Thus if average
-numbers of imported packages (or functions) increases over time, so should Gini
-coefficients. This consideration alone suggests that observations of
-*increasing* Gini coefficients should be interpreted cautiously, as they may
-merely reflect uniformly increasing dependence on external packages, while
-observations of *decreasing* Gini coefficients, as with our "snapshot" values,
-may reflect genuine changes. Whatever the underlying cause of these observed
+For discrete,
+non-negative variables such as counts, Gini coefficients must generally increase
+with the scale or maximal values of those variables. Thus if average numbers of
+imported packages (or functions) increases over time, so should Gini
+coefficients. This suggests that observations of increasing
+Gini coefficients should be interpreted cautiously, as they may merely reflect
+uniformly increasing dependence on external packages, while observations of
+decreasing Gini coefficients, as with our "snapshot" values, may reflect genuine
+changes. Whatever the underlying cause of these observed differences, they
+clearly reveal the critical importance of precisely specifying the methods used
+to aggregate annual values.
+Whatever the underlying cause of these observed
 differences, they clearly reveal the critical importance of precisely
 specifying the methods used to aggregate annual values.
+
 
 ### Collective versus individual software evolution
 

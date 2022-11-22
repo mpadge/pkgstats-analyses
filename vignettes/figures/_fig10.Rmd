@@ -15,6 +15,8 @@ calc_fig10 <- !file.exists (f_fig10) & !file.exists (fig10_png)
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
 do1 <- function (x, year = 2018, cran_by_year = TRUE) {
 
+    # message (year)
+
     if (cran_by_year) {
         xy <- x |>
             filter (year <= !!year) |>
@@ -72,7 +74,8 @@ p1 <- readRDS (f_fig10) |>
         ylab ("Proportion") +
         theme (legend.title = element_blank(),
                legend.position = c (0.2, 0.8),
-               legend.background = element_rect(fill='transparent', colour='transparent'))
+               legend.background =
+                   element_rect (fill = "transparent", colour = "transparent"))
 
 x2 <- readRDS (f_fig10)
 coeff_fig10_p2 <- max (x2$indentation) / max (x2$tabs)

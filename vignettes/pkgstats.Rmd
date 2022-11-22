@@ -518,10 +518,11 @@ only translates between
 different quotation styles and encodings.) 
 Rates of decrease since 2008 equate to 1.5% fewer packages per year
 including translations, from a total of just over 20% of all packages in 2008,
-to barely over 1% in 2021. While rates of decrease have slowed somewhat in
-recent years, extrapolation of the preceding five years nevertheless suggests
-that the practice of offering translations will effectively disappear before
-the end of the coming year (2023).
+to barely over 1% in 2021. Rates of decrease have nevertheless slowed somewhat
+in recent years, and the use of translations appears to be on the rise again
+since 2021, perhaps reflecting the publication of the [{potools}
+package](https://michaelchirico.github.io/potools/index.html) to facilitate
+transitions in R packages.
 
 ```{r fig02, child = "figures/_fig02.Rmd", eval = TRUE, echo = FALSE}
 ```

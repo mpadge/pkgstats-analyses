@@ -154,6 +154,7 @@ dat <- data.frame (do.call (rbind, dat))
 dat$what <- "cran_by_year"
 
 xs <- xraw |>
+    filter (!is.na (year)) |>
     group_by (year) |>
     summarise (
         n_edges = logmean (n_edges, na.rm = TRUE),

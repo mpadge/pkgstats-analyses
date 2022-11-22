@@ -33,7 +33,7 @@ v_data_dir <- file.path (here, "vignettes", "data")
 if (!dir.exists (v_data_dir))
     dir.create (v_data_dir, recursive = TRUE)
 logmean <- function (x, ...) {
-    10 ^ mean (log10 (x [which (x > 0)]), na.rm = TRUE)
+    10 ^ mean (log10 (x [which (x > 0 & !is.nan (x) & is.finite (x))]), na.rm = TRUE)
 }
 ```
 

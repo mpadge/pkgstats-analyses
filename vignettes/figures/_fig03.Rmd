@@ -94,12 +94,12 @@ saveRDS (x_per_pkg, f_fig3_pkg_level)
 
 ```{r fig3a, eval = !file.exists (fig03_png)}
 dat <- readRDS (n_files_file) |>
-    mutate (inst = inst * max (src) / max (inst, na.rm = TRUE)) |>
+    mutate (inst = inst * max (src, na.rm = TRUE) / max (inst, na.rm = TRUE)) |>
     filter (what == "cran_by_year") |>
     pivot_longer (cols = c (R, src, inst, vignettes, tests, data)) |>
     rename (n_files = value, dir = name)
 dat_ann <- readRDS (n_files_file) |>
-    mutate (inst = inst * max (src) / max (inst, na.rm = TRUE)) |>
+    mutate (inst = inst * max (src, na.rm = TRUE) / max (inst, na.rm = TRUE)) |>
     filter (what == "annual") |>
     pivot_longer (cols = c (R, src, inst, vignettes, tests, data)) |>
     rename (n_files = value, dir = name)

@@ -9,7 +9,8 @@ here <- here::here ()
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
 v_data_dir <- file.path (here, "vignettes", "data")
 logmean <- function (x, ...) {
-    10 ^ mean (log10 (x [which (x > 0)]), na.rm = TRUE)
+    index <- which (x > 0 & !is.nan (x) & is.finite (x))
+    10 ^ mean (log10 (x [index], na.rm = TRUE))
 }
 
 fig09_png <- file.path (here, "vignettes", "figures", "_fig09.png")

@@ -541,7 +541,7 @@ obscures the importance of other individuals and groups.
 The temporal development of numbers of files manifest several notable
 characteristics (Figure 3). Unsurprisingly, R packages have always been
 dominated by files in the `R/` directory, numbers of which increased considerably
-up to around 2010, after which they have stabilised at mean values of
+up to around 2010, after which they have broadly stabilised at mean values of
 around 13-15 files per package (Fig. 3A). The `/vignettes` directory is the only
 place within R packages in which numbers of files have remained relatively
 constant over the preceding 20+ years. Packages generally had very few files in
@@ -554,41 +554,42 @@ progressively more tested.
 ```{r fig03, child = "figures/_fig03.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
 
-Figure 3B shows equivalent changes _within_ individual packages across successive
-releases. Numbers of files generally progressively increase as packages mature,
-with especially pronounced increases in the `/R` and `/inst` directories, the latter
-somewhat offset after around 15 releases by decreases in the src directory.
-These changes in `/src` and `/inst` directories in the later phases of package
-maturation may reflect restructuring code from the `/src` to the `/inst` directories
-in order to allow cross-compilation by other packages. Numbers of test files
-generally increase out to around 15 releases, after which they
-stabilise. The only directory in which numbers of files do not notably increase
-as packages mature is `/vignettes`.
+Figure 3B shows equivalent changes _within_ individual packages across
+successive releases. Numbers of files generally progressively increase as
+packages mature, with especially pronounced increases in the `/R`, `/inst`, and
+`/src` directories. These changes in `/src` and `/inst` directories in the
+later phases of package maturation may reflect restructuring code from the
+`/src` to the `/inst` directories in order to allow cross-compilation by other
+packages. Numbers of test files generally increase progressively through
+package maturation. The only directory in which numbers of files do not notably
+increase as packages mature is `/vignettes`.
 
 ## Code Metrics
 
 ### Annual Developments
 
-Figure 4 shows the temporal evolution of a number of code metrics. Lines of Code
-("LoC") in the primary `/R` and `/src` sub-directories increased between 2000
-and 2005, after which time LoC in these directories have slightly
-decreased, converging to just a geometric mean of approximately 600 lines in both `/R` and `/src` directories.
-LoC per function (Fig. 4B) decreased from very high values in the early CRAN
-years to stabilize from 2005-2020. 
-The slight decreases discernible
-since around 2015 amount to one LoC less for exported, non-exported, and
-`/src` functions every 3.4, 8.5, and 1.5 years, respectively.
+Figure 4 shows the temporal evolution of a number of code metrics. Lines of
+Code ("LoC") in the primary `/R` and `/src` sub-directories increased between
+2000 and 2005, after which time LoC in these directories have slightly
+decreased, converging to just a geometric mean of just under 1,000 lines in
+both `/R` and `/src` directories (Fig. 4A). LoC per function (Fig. 4B)
+decreased from very high values in the early CRAN years to stabilize from
+2005-2020. The slight decreases discernible since around 2015 amount to one LoC
+less for exported, non-exported, and `/src` functions every 3.4, 8.5, and 1.5
+years, respectively, a trend that has nevertheless reversed in the most recent
+two years.
 
-Total numbers of R functions per package initially increased until around 2007, peaking at
-just under 30 exported and over 50 non-exported functions (Fig. 4C).
-Numbers of exported R functions have decreased since then to around 17 exported
-and 40-45 non-exported functions per package in 2021. Numbers of functions
+Total numbers of R functions per package initially increased until around 2007,
+peaking at just under 30 exported and over 60 non-exported functions (Fig. 4C).
+Numbers of exported R functions decreased since then to around 15 exported and
+25 non-exported functions shortly after 2015, before having since increased
+again to current respective values of around 20 and 35. Numbers of functions
 defined in `/src` directories have followed broadly similar trajectories to
-exported /R functions, slightly decreasing since the early 2000's to between
-30-40 functions. Numbers of functions per source file in both /R and /src
-directories have nevertheless progressively decreased since the early 2000's to
-now amount to less than four /R functions and just over five /src functions per
-file (Fig. 4D).
+exported /R functions. Numbers of functions per source file in both /R and /src
+directories have nevertheless generally progressively decreased since the early
+2000's to now amount to less than four /R functions and just over five /src
+functions per file (Fig. 4D), with slight increases once again discernible
+since around 2017.
 
 
 ```{r fig04, child = "figures/_fig04.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
@@ -600,12 +601,10 @@ Figure 5 shows results equivalent to Fig. 4, but for the development of the
 respective metrics with each sequential release of a package, rather than annual
 developments. Lines of code generally increase as packages mature, with mean
 numbers of lines in the /R directory increasing tenfold from under 400 for first
-releases to over 5,000 in packages with 100 or more releases. LoC in `/inst`
-directories also tend to increase as packages develop, although to a lesser
-extent, and only becoming notable after around 50 releases. Beyond the first few
+releases to over 5,000 once packages mature beyond a 50th release. Beyond the first few
 releases, there are always fewer LoC in `/src` directories than in `/R` directories.
 This contrasts with the annual aggregate results of Fig. 4A, which suggest more
-LoC in `/src` than `/R` directories until around 2007, and roughly equal numbers
+LoC in `/src` than `/R` directories until sometime after 2010, and roughly equal numbers
 since then. This difference reflects the fact that most packages have only one
 or two releases (the distribution of numbers of releases is not shown here, but
 manifests a very smooth exponential decrease), so Fig. 4A is dominated by
@@ -627,28 +626,27 @@ function with increasing numbers of releases (Fig. 5B). In all directories, LoC
 per function either slightly increased or remained generally stable over the
 first 50 or so releases, beyond which functions in all directories clearly
 become considerably more streamlined, with LoC decreasing markedly out to the
-100th release. Similar to the aggregate LoC measures of panel A, LoC in `/src`
-directories manifest a distinct peak as packages matured, with LoC per `/src`
-function peaking slightly earlier (after around 40 releases) than total LoC
-(slightly over 50). The decreases in the latter portions of Fig. 5B are
-nevertheless relatively minor, and amount to removing one LoC per function for
-every 5, 7, or 18 releases for exported R, non-exported R, and source function,
-respectively.
+100th release. Measures of LoC per function manifest broad peaks in all
+directories after around 70 or so releases, after which they all decreased, and
+more so for `/R` than for `/src` functions. The decreases in the latter
+portions of Fig. 5B are equivalent to removing one LoC per function for around
+every 9 releases.
 
-The increasing total measures of LoC of panel A combined with decreasing LoC per
-function of panel B suggests that more functions are added as packages mature,
-which is precisely what Fig. 5C reveals. Packages initially contain less than
-ten exported functions on average, yet this increases over 10-fold to over 130
-by the 100th release. Numbers of `/src` functions are initially higher, at around
-20, and increase relatively less than equivalent `/R` functions, to around 100
-after 100 releases. Numbers of non-exported `/R` functions manifest the most
-pronounced increase, of over 15 times from 20 functions for initial releases, to
-well over 300 for the 100th release. Finally, numbers of functions per file show
-no clear trend for src code, remaining broadly stable at around six functions
-per file (Fig. 4D). In contrast, `/R` code files begin with 3-4 functions per
-file, and increase progressively to around eight functions per file after 100
-releases, in the context of Figs. 4B-C clearly mostly due to breaking large
-non-exported functions down into multiple, smaller functions.
+The increasing total measures of LoC of panel A combined with decreasing LoC
+per function of the latter part of panel B suggests that more functions are
+added as packages mature, which is precisely what Fig. 5C reveals. Packages
+initially contain less than ten exported functions on average, yet this
+increases over 10-fold to around 150 by the 100th release. Numbers of `/src`
+and exported `/R` functions follow broadly similar trajectories, increasing
+from under 20 functions, to well over 100 by the time of the 100th release.
+Numbers of non-exported `/R` functions manifest the most pronounced increase,
+of over 15 times from 20 functions for initial releases, to well over 300 for
+the 100th release. Finally, numbers of functions per file show no clear trend
+for src code, remaining broadly stable at around 5-6 functions per file (Fig.
+4D). In contrast, `/R` code files begin with 3-4 functions per file, and
+increase progressively to around eight functions per file after 100 releases,
+in the context of Figs. 4B-C clearly mostly due to breaking large non-exported
+functions down into multiple, smaller functions.
 
 Numbers of functions depicted in Fig. 4C actually count any arbitrary code
 objects in all languages contained in `/src` directories, and so corresponds
@@ -750,8 +748,8 @@ the largest total number of unique function calls from all packages throughout
 the history of CRAN. The top two packages of {ggplot2} and {dplyr} account for `r
 top_prop` of all function calls from all contributed packages over the time
 shown. Numbers of function calls are shown on a logarithmic scale, with numbers
-of calls to each of these packages increasing exponentially between 2013 and
-2018, before levelling off or even slightly decreasing.
+of calls to each of these packages increasing exponentially, before more
+recently levelling off or even slightly decreasing.
 
 ### Sequential Releases
 
@@ -802,15 +800,15 @@ average for every 2.8 additional functions exported by a package.
 
 ### Annual Developments
 
-The first two panels of Fig. 8 show the temporal development of the CRAN package
-dependency network. Most network metrics have
-broadly stabilised over the preceding five or so years, and that variations were
-much more pronounced prior to 2015. The proportion of terminal vertices,
-or packages not imported by any other packages, has remained broadly stable at
-around 55-60% of all packages. The mean vertex degree of the dependency network
-has nevertheless progressively increased, especially since 2015, indicating that
-those packages which are imported by others have been imported by increasing
-numbers of other packages (Fig. 8A).
+The first two panels of Fig. 8 show the temporal development of the CRAN
+package dependency network. Most network metrics have broadly stabilised over
+the preceding five or so years, with variations much more pronounced prior to
+2015. The proportion of terminal vertices, or packages not imported by any
+other packages, has remained broadly stable at around 55-60% of all packages.
+The mean vertex degree of the dependency network has nevertheless progressively
+increased, especially since around 2012, indicating that those packages which
+are imported by others have been imported by increasing numbers of other
+packages (Fig. 8A).
 
 ```{r fig08, child = "figures/_fig08.Rmd", eval = TRUE, echo = FALSE, warning = FALSE}
 ```
@@ -844,7 +842,8 @@ clusters.  <!-- This could use a bit of interpretation -->
 The final panel (Fig. 8D) shows average centrality metrics from function call
 networks, which is stable except for numbers of terminal edges (in
 that context, meaning numbers of functions which call no other functions), which
-have decreased since around 2005 from around 12 per package to around 7.
+decreased since around 2005 from over 13 per package to under 10 in 2015,
+before more recently increasing once again.
 
 ### Sequential Releases
 
@@ -898,14 +897,14 @@ the proportion of files with tab-indentation, from well over 60% before the year
 around 2005-2010, remaining constant at 3-3.5 spaces for many years before more
 recently declining to well under 3 spaces.
 
-Each R function in 1998 had an average of six parameters. This declined
-rapidly to under four within two years (Fig. 10C). Numbers of parameters have
-increased since then, and now exceed an average of four
-parameters per function. Parameter documentation has followed an almost
-identical trend, increasing from under 70 characters per parameter to just over
-80. In contrast, total numbers of documentation lines per function initially
-increased until around 2010, at almost 60 lines, before decreasing more recently
-to 50 lines per function or less.
+Each R function in 1998 had an average of six parameters. This declined rapidly
+to under four within two years (Fig. 10C). Numbers of parameters have increased
+since then, and now exceed an average of four parameters per function.
+Parameter documentation has followed an almost identical trend, increasing from
+under 70 characters per parameter to 90-100. In contrast, total numbers of
+documentation lines per function initially increased until around 2010, at
+almost 60 lines, before decreasing more recently to 50 lines per function or
+less.
 
 The equivalent results analysed as a function of release sequence rather than
 year reveal that functions become better documented as packages mature

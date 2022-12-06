@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">pkgstatsAnalyses</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.015</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.016</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,7 +69,7 @@
                         <h4 data-toc-skip class="author">Mark Padgham
 &amp; Noam Ross</h4>
             
-            <h4 data-toc-skip class="date">2022-12-01</h4>
+            <h4 data-toc-skip class="date">2022-12-06</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/mpadge/pkgstats-analyses/blob/HEAD/vignettes/pkgstats.Rmd" class="external-link"><code>vignettes/pkgstats.Rmd</code></a></small>
       <div class="d-none name"><code>pkgstats.Rmd</code></div>
@@ -148,33 +148,44 @@ represents an exemplary study of the evolution of a package distribution
 system, the size of this system precluded any analyses of how individual
 pieces of software evolve both internally, and in relation to the
 aggregate evolution of the system as a whole.</p>
-<p>The scale of package repositories presents an analytical challenge.
-The size of systems studied by <span class="citation">Decan, Mens, and
-Claes (2016)</span> <span class="citation">Decan, Mens, and Grosjean
-(2019)</span>, and <span class="citation">Bommarito and Bommarito
-(2019)</span> left relatively little scope for detailed examinations of
-the properties of the packages themselves, leaving analyses more focused
-on aggregate properties such as those of dependency networks. Moreover,
-the size of pypi meant that analyses of dependency networks were also
-restricted to aggregate statistics only, with no analyses of the
-internal properties of dependency networks themselves.
-<!-- TODO: summarise results/trends from these and the preceding pypi analysis --></p>
-<p>CRAN, the dominant repository of R packages, is more modest in size
-and more tractable for analysis in trends in development at both the
-individual and network level. At ~100,000 releases of approximately
-19,000 packages, it is about tenth the size of pypi. Studies of CRAN so
-far have largely considered package metadata…</p>
-<!-- I think the following paragraph wastes the opportunity to discuss the
-studies' results and instead focuses on their shortcomings. I would merge with the 
-paragraph above but describe the findings rather than just say what they didn't study. -->
-<p>such as personal networks of package authors <span class="citation">(Plakidas, Schall, and Zdun 2017)</span>, or
-relationships between CRAN and software development platforms such as
-GitHub <span class="citation">(Decan et al. 2015, 2016)</span>. Analyses
-which have considered individual packages have also mostly examined
-simplified aggregate data such as sizes of packages <span class="citation">(German, Adams, and Hassan 2013)</span>, or dependency
-networks between packages <span class="citation">(Mora-Cantallops,
-Sánchez-Alonso, and García-Barriocanal 2020)</span>.</p>
-<p>We begin by describing the <a href="https://docs.ropensci.org/pkgstats" class="external-link">the <code>{pkgstats}</code> R
+<p>Compared with pypi, CRAN, the dominant repository of R packages, is
+more modest in size and more tractable for analysis in trends in
+development at both the individual and network level. Currently at
+~140,000 releases of approximately 24,000 packages, it is about tenth
+the size of pypi. Studies of CRAN have to date largely considered
+package metadata such as DESCRIPTION files or personal networks of
+package authors. <span class="citation">Plakidas, Schall, and Zdun
+(2017)</span> examined metadata from DESCRIPTION files, and found that
+the average R package has become more dependent on other packages over
+time, yet less likely to be depended on by other packages. They also
+revealed a high likelihood of authors of CRAN (and BioConductor)
+packages contributing code to other packages, although more recent
+developments have increased the dominance of single authors who do not
+contribute to other packages.</p>
+<p>Other authors have examined relationships between CRAN and software
+development platforms such as GitHub <span class="citation">(Decan et
+al. 2015, 2016)</span>, revealing GitHub to represent an “incubator” for
+early-stage code, and progression to CRAN happening once packages reach
+sufficient maturity. As a result, CRAN is relatively internally-stable,
+whereas GitHub packages depend on CRAN packages, yet not the other way
+around.</p>
+<p>Analyses which have considered individual packages have also mostly
+examined aggregate data such as sizes of packages or dependency networks
+between packages. <span class="citation">German, Adams, and Hassan
+(2013)</span> compared aggregate statistics of base, recommended, and
+contributed packages, and found contributed packages to grow in size at
+a faster rate that base or recommended packages, but for recommended
+packages to have far greater numbers of releases. <span class="citation">Mora-Cantallops, Sánchez-Alonso, and García-Barriocanal
+(2020)</span> examined metadata from DESCRIPTION files, and found the
+dependency network between packages to be generally
+“<em>scale-free</em>”, or dominated by a relatively small number of
+highly-connected packages. They also observed individual packages
+becoming increasingly dependent on other packages, yet less likely to be
+depended on.</p>
+<p>The present work builds on this prior work, through drawing on
+analyses of the entire contents of R packages, naturally including the
+DESCRIPTION files, but all the contents of all code, documentation, and
+testing directories. We begin by describing the <a href="https://docs.ropensci.org/pkgstats" class="external-link">the <code>{pkgstats}</code> R
 package</a>, which can be used to generate and analyse properties of R
 package code, and the accompanying publicly-available database of code
 statistics of all historical CRAN packages. We then describe trends in
@@ -214,10 +225,9 @@ We include and distinguish between this “base” package, the suite of
 default <a href="https://github.com/wch/r-source/tree/trunk/src/library" class="external-link">“recommended”
 packages</a>, and the overwhelming majority of “contributed” packages
 <span class="citation">(German, Adams, and Hassan 2013)</span>. Our
-analysis ran on a local mirror of CRAN as of July 2022, comprising
-<xxxxexact> contributed packages, <xxxexact> total package versions (for
-an average of slightly over 5 releases per package).
-<!-- TODO: Add Data --></xxxexact></xxxxexact></p>
+analysis ran on a local mirror of CRAN as of December 2022, comprising
+21,089 contributed packages, and 112,212 total package versions (for an
+average of slightly under 5 releases per package).</p>
 <p>In this paper we describe trends in the variables described in the
 four following subsections. {pkgstats} generates these as well as a
 larger superset of package-level statistics, the full list of which is
@@ -995,7 +1005,7 @@ on by other packages) to near zero after around 100 releases. Additional
 examples arose in proportions of calls to base R functions, which have
 collectively decreased over time (Fig. 6A), from over 80 to under 70%,
 while calls to contributed packages have collectively increased from
-under 1% to almost 15% in 2021. While individual packages tend to use
+under 1% to almost 15% in 2022 While individual packages tend to use
 proportionally fewer calls to base R functions as they mature, they also
 use proportionally fewer calls to contributed packages, and substitute
 both of these with increasing proportions of calls to recommended

@@ -24,16 +24,16 @@ author:
     address:
     - rOpenSci - global
     url: https://www.github.com/mpadge
-    orcid: 0000-0000-0000-0000
+    orcid: 0000-0003-2172-5265
     email:  mark.padgham@email.com
   - name: Noam Ross
-    url: https://www.britannica.com/animal/bilby
+    url: https://www.noamross.net/
     email: ross@ecohealthalliance.org
-    orcid: 0000-0002-0912-0225
+    orcid: 0000-0002-2136-0000
     affiliation: EcoHealth Alliance
     address:
-    - Department of Letter B
-    - Somewhere, Australia
+    - 460 W 34th Street, Ste 1701
+    - New York, NY, U.S.A. 10001
 type: review
 output: 
   rjtools::rjournal_web_article:

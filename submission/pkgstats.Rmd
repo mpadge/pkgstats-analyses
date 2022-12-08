@@ -1,6 +1,6 @@
 ---
 title: "Historical Trends in R Package Structure and Interdependency on CRAN"
-date: "2022-12-06"
+date: "2022-12-08"
 abstract: >
     A 2012 article highlighted a need for tools 'to compute on R packages'.
     Since that time, numerous authors have examined developmental trajectories
@@ -34,7 +34,7 @@ author:
     address:
     - 460 W 34th Street, Ste 1701
     - New York, NY, U.S.A. 10001
-type: review
+type: package
 output: 
   rjtools::rjournal_web_article:
     self_contained: yes

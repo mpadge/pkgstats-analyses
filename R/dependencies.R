@@ -133,13 +133,13 @@ dependencies_one_year <- function (x, recommended, year = 2018, cran_by_year = T
                        n_unique = n_unique_base + n_unique_rmcd + n_unique_ctb)
 
     gini_lin <- function (n) {
-        sum (abs (dist (n, method = "manhattan"))) /
+        sum (abs (stats::dist (n, method = "manhattan"))) /
             (2 * length (n) ^ 2 * mean (n, na.rm = TRUE))
     }
     gini_log <- function (n) {
         n <- log10 (n)
         n <- n [which (is.finite (n))]
-        sum (abs (dist (n, method = "manhattan"))) /
+        sum (abs (stats::dist (n, method = "manhattan"))) /
             (2 * length (n) ^ 2 * mean (n, na.rm = TRUE))
     }
 

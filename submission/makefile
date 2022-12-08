@@ -8,7 +8,7 @@ doc:
 	Rscript -e 'rmarkdown::render("$(FILE).Rmd", output_format="rjtools::rjournal_web_article")'
 
 clean:
-	rm $(FILE).R $(FILE).log $(FILE).tex
+	rm $(FILE).R $(FILE).log
 
 open:
 	xdg-open pkgstats.html

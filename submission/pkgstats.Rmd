@@ -173,9 +173,9 @@ includes a function, `pkgstats_from_archive()`, which can be applied to a local
 mirror of the CRAN archive to collate statistics from all packages.
 \CRANpkg{pkgstats} generates 95 variables quantifying and qualifying package
 code. As the full process is computationally intensive, we have published the
-data on all packages (current and previous versions) on CRAN as of <DATE>, and
-expect to update this resource regularly. These data are available as the
-"pkgstats-CRAN-all" data set at
+data on all packages (current and previous versions) on CRAN as of 22nd
+November 2022, and expect to update this resource regularly. These data are
+available as the "pkgstats-CRAN-all" data set at
 [https://doi.org/10.5281/zenodo.7414296](https://doi.org/10.5281/zenodo.7414296).
 
 ```{r results-stats, echo = FALSE}
@@ -194,7 +194,9 @@ overwhelming majority of "contributed" packages [@german_evolution_2013]. Our
 analysis ran on a local mirror of CRAN as of December 2022, comprising
 `r num_pkgs` contributed packages, and `r num_all_versions` total package
 versions (for an average of slightly under `r versions_per_pkg` releases per
-package).
+package). These analyses exist as a reproducible repository at
+[https://github.com/mpadge/pkgstats-analyses](https://github.com/mpadge/pkgstats-analyses).
+All results may be recreated by cloning the repository and typing `make`.
 
 In this paper we describe trends in the variables described in the four
 following subsections. {pkgstats} generates these as well as a larger superset

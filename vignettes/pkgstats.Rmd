@@ -2,6 +2,21 @@
 title: "Historical Trends in R Package Structure and Interdependency on CRAN"
 author: "Mark Padgham & Noam Ross"
 date: "`r Sys.Date()`"
+abtract: >
+    A 2012 article highlighted a need for tools 'to compute on R packages'.
+    Since that time, numerous authors have examined developmental trajectories
+    of CRAN, considering aspects such as dependency networks, package
+    authorship networks, and aggregate metrics such as package sizes. Others
+    have compared developments on CRAN with equivalent trajectories from other
+    software packaging systems, highlighting the uniqueness of CRAN due to the
+    comparably stringent submission requirements. This work directly addresses
+    the need to 'compute on R packages', by reporting on the development and
+    application of a tool to analyse the internal structure of every current
+    and archived package on CRAN. Results reveal contrasting tendencies of 
+    decreasing stabilty through increasing dominance of new packages, countered
+    by increasing stability through individual packages becoming more mature.
+    Balancing these confounding effects emerges as a key aspect of maintaining
+    the stability of a complex software ecosystem.
 output: 
     html_document:
         toc: true

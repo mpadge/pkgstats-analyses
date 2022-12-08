@@ -1,6 +1,7 @@
 .PHONY: doc
 
 FILE=pkgstats
+LFILE=motivation-letter
 
 all: doc clean
 
@@ -9,6 +10,9 @@ doc:
 
 clean:
 	rm $(FILE).log
+
+letter:
+	pandoc -s $(LFILE).md -o $(LFILE).pdf
 
 open:
 	xdg-open pkgstats.html

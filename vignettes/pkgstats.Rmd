@@ -306,13 +306,12 @@ expression, identifying the kind of expression and its scope, implying
 its membership either of some component of the underlying grammar.
 
 {pkgstats} incorporates two open-source libraries for code tagging and parse
-tree construction: "Universal ctags" (a fork of the unmaintained "ctags"
-library), and "gtags", itself part of the GNU Global library.
-<!-- citations for the software --> . Using these jointly enabled us to parse
-both R and other languages used in packages, and construct a "call network" of
-functions between languages: "ctags" parses R code and "gtags" does not, but
-"gtags" parses more languages. We linked the results of two to provide complete
-coverage.
+tree construction: "Universal ctags" [a fork of the unmaintained "ctags"
+library, @ctags], and "gtags", itself part of the GNU Global library [@gtags].
+Using these jointly enabled us to parse both R and other languages used in
+packages, and construct a "call network" of functions between languages:
+"ctags" parses R code and "gtags" does not, but "gtags" parses more languages.
+We linked the results of two to provide complete coverage.
 
 We used {pkgstats} to tag each expression in the R, src, and inst/include
 directories, providing the following data for each tagged item:

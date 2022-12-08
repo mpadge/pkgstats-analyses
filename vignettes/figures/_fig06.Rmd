@@ -184,7 +184,7 @@ deps10 |>
     guides (color = guide_legend (ncol = 3)) -> p3
 ```
 ```{r fig6-prop_top2, eval = file.exists (fig06_png)}
-prop_top2 <- 16.6
+prop_top2 <- 15.2
 ```
 
 

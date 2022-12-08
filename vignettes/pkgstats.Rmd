@@ -339,13 +339,12 @@ language.
 objects), including references made to all functions defined in other base,
 recommended, or contributed R packages (see network analyses, below) .
 
-
-We also parsed the R documentation (.Rd) files in each package using the `parse_Rd`
-and `Rd2txt` functions of the {tools} package.  From these we extracted the 
-function in an R package must have a corresponding documentation file in the
-number of parameters for each function, and the number of
-documentation characters for each parameter and the total length of documentation
-for each function.
+We also parsed the R documentation (.Rd) files in each package using the
+`parse_Rd` and `Rd2txt` functions of the "recommended" {tools} package.  From
+these we extracted the function in an R package must have a corresponding
+documentation file in the number of parameters for each function, and the
+number of documentation characters for each parameter and the total length of
+documentation for each function.
 
 ## Network Analyses
 
@@ -776,8 +775,8 @@ qualitatively similar, though differing in scale.
 Finally, figure 6D depicts changes in numbers of unique function calls from each
 package to the top ten contributed packages, defined as the ten packages with
 the largest total number of unique function calls from all packages throughout
-the history of CRAN. The top two packages of {ggplot2} and {dplyr} account for `r
-top_prop` of all function calls from all contributed packages over the time
+the history of CRAN. The top two packages of {ggplot2} and {dplyr} account for 
+`r prop_top2`% of all function calls from all contributed packages over the time
 shown. Numbers of function calls are shown on a logarithmic scale, with numbers
 of calls to each of these packages increasing exponentially, before more
 recently levelling off or even slightly decreasing.

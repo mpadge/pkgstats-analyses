@@ -148,17 +148,16 @@ be depended on.
 The present work builds on this prior work, through drawing on analyses of the
 entire contents of R packages, naturally including the DESCRIPTION files, but
 all the contents of all code, documentation, and testing directories. We begin
-by describing the [the `{pkgstats}` R
-package](https://docs.ropensci.org/pkgstats), which can be used to generate and
-analyse properties of R package code, and the accompanying publicly-available
-database of code statistics of all historical CRAN packages.  We then describe
-trends in CRAN package properties over the history of the archive, focussing on
-trends in four areas: Package metadata (licenses, authorship, translation),
-internal content and structure (file and function types and sizes),
-intra-package code structure (function call networks), and finally, dependency
-networks amongst packages. Finally, we discuss implications and likely drivers
-of these trends, and potential further applications and extensions of [the
-`{pkgstats}` package](https://docs.ropensci.org/pkgstats) and database.
+by describing the \CRANpkg{pkgstats} R package, which can be used to generate
+and analyse properties of R package code, and the accompanying
+publicly-available database of code statistics of all historical CRAN packages.
+We then describe trends in CRAN package properties over the history of the
+archive, focussing on trends in four areas: Package metadata (licenses,
+authorship, translation), internal content and structure (file and function
+types and sizes), intra-package code structure (function call networks), and
+finally, dependency networks amongst packages. Finally, we discuss implications
+and likely drivers of these trends, and potential further applications and
+extensions of the \CRANpkg{pkgstats} package and database.
 
 # Methods
 
@@ -168,15 +167,15 @@ ten years prior to that, Kurt Hornik called for
 > a considerable and concerted community effort ... providing R packages to 
 > compute on R packages.
 
-We developed the {pkgstats} package to quantify the structure and content of R
+We developed the \CRANpkg{pkgstats} package to quantify the structure and content of R
 packages using static code analysis [@static-analysis-2016]. The package
 includes a function, `pkgstats_from_archive()`, which can be applied to a local
-mirror of the CRAN archive to collate statistics from all packages. {pkgstats}
-generates 95 variables quantifying and qualifying package code. As the full
-process is computationally intensive, we have published the data on all packages
-(current and previous versions) on CRAN as of <DATE>, and expect to update this
-resource regularly. These data are available as the pkgstats-CRAN-all data set
-at <ZENODO DOI LINK>.
+mirror of the CRAN archive to collate statistics from all packages.
+\CRANpkg{pkgstats} generates 95 variables quantifying and qualifying package
+code. As the full process is computationally intensive, we have published the
+data on all packages (current and previous versions) on CRAN as of <DATE>, and
+expect to update this resource regularly. These data are available as the
+pkgstats-CRAN-all data set at <ZENODO DOI LINK>.
 <!-- TODO: Add Zenodo DOI -->
 
 ```{r results-stats, echo = FALSE}
@@ -276,17 +275,16 @@ encountered by tracing the code. An important first step is to "tag" each
 expression, identifying the kind of expression and its scope, implying
 its membership either of some component of the underlying grammar.
 
-{pkgstats} incorporates two open-source libraries for code tagging and parse
-tree construction: "Universal ctags" (a fork of the unmaintained "ctags"
-library), and "gtags", itself part of the GNU Global library.
-<!-- citations for the software --> . Using these jointly enabled us to parse
-both R and other languages used in packages, and construct a "call network" of
-functions between languages: "ctags" parses R code and "gtags" does not, but
-"gtags" parses more languages. We linked the results of two to provide complete
-coverage.
+\CRANpkg{pkgstats} incorporates two open-source libraries for code tagging and
+parse tree construction: "Universal ctags" (a fork of the unmaintained "ctags"
+library), and "gtags", itself part of the GNU Global library. <!-- citations
+for the software --> . Using these jointly enabled us to parse both R and other
+languages used in packages, and construct a "call network" of functions between
+languages: "ctags" parses R code and "gtags" does not, but "gtags" parses more
+languages. We linked the results of two to provide complete coverage.
 
-We used {pkgstats} to tag each expression in the R, src, and inst/include
-directories, providing the following data for each tagged item:
+We used \CRANpkg{pkgstats} to tag each expression in the R, src, and
+inst/include directories, providing the following data for each tagged item:
 
 -  The tag itself, such as the name of a function, variable, or other object;
 -   The name and path of the corresponding file;
@@ -310,13 +308,12 @@ language.
 objects), including references made to all functions defined in other base,
 recommended, or contributed R packages (see network analyses, below) .
 
-
-We also parsed the R documentation (.Rd) files in each package using the `parse_Rd`
-and `Rd2txt` functions of the {tools} package.  From these we extracted the 
-function in an R package must have a corresponding documentation file in the
-number of parameters for each function, and the number of
-documentation characters for each parameter and the total length of documentation
-for each function.
+We also parsed the R documentation (.Rd) files in each package using the
+`parse_Rd` and `Rd2txt` functions of the "recommended" {tools} package.  From
+these we extracted the function in an R package must have a corresponding
+documentation file in the number of parameters for each function, and the
+number of documentation characters for each parameter and the total length of
+documentation for each function.
 
 ## Network Analyses
 
@@ -330,9 +327,9 @@ networks extracted from the "ctags" and "gtags" data described above.
 The 'DESCRIPTION' files of R packages must specify all external packages which a
 package imports. These data can be used to construct a  dependency network
 between all packages, with packages (vertices) connected by their imports (edges).
-We derived the following value from the package network
-from package dependency networks, all of which were calculated with the {igraph}
-package [@igraph].
+We derived the following value from the package network from package dependency
+networks, all of which were calculated with the \CRANpkg{igraph} package
+[@igraph].
 
 - Numbers of packages which are not imported by any others (terminal vertices)
 in a dependency network;
@@ -507,9 +504,8 @@ Rates of decrease since 2008 equate to 1.5% fewer packages per year
 including translations, from a total of just over 20% of all packages in 2008,
 to barely over 1% in 2021. Rates of decrease have nevertheless slowed somewhat
 in recent years, and the use of translations appears to be on the rise again
-since 2021, perhaps reflecting the publication of the [{potools}
-package](https://michaelchirico.github.io/potools/index.html) to facilitate
-transitions in R packages.
+since 2021, perhaps reflecting the publication of the \CRANpkg{potools} package
+to facilitate transitions in R packages.
 
 ```{r fig02, out.width = "100%", out.height = "30%", fig.cap = "(A) Annual frequencies of the top 10 translations. (B) Annual frequencies of the top 10 primary URL domains, with frequencies for GitHub divided by 20."}
 knitr::include_graphics("fig02.png")
@@ -699,22 +695,28 @@ values are defined and calculated. Using "annual values" through aggregating
 statistics only from packages uploaded in each year (solid lines) yields Gini
 coefficients which decrease over time, while calculating annual values as "CRAN
 snapshots" as the entire system would have existed for each year (dashed lines)
-yields Gini coefficients which increase over time. @seven-pkg-networks-2019's results appear to
-qualitative accord with our "CRAN snapshot" values for package dependency
-networks.
+yields Gini coefficients which increase over time. @seven-pkg-networks-2019's
+results appear to qualitative accord with our "CRAN snapshot" values for
+package dependency networks.
 
 Moreover, that panel depicts Gini coefficients calculated both from numbers of
 imported packages, and total numbers of external function calls are
 qualitatively similar, though differing in scale.
 
-Finally, figure 6D depicts changes in numbers of unique function calls from each
-package to the top ten contributed packages, defined as the ten packages with
-the largest total number of unique function calls from all packages throughout
-the history of CRAN. The top two packages of {ggplot2} and {dplyr} account for `r
-top_prop` of all function calls from all contributed packages over the time
-shown. Numbers of function calls are shown on a logarithmic scale, with numbers
-of calls to each of these packages increasing exponentially, before more
-recently levelling off or even slightly decreasing.
+```{r prop_top2, echo = FALSE}
+prop_top2 <- 15.2 # code in vignettes/figures/_fig06.Rmd
+```
+
+
+Finally, figure 6D depicts changes in numbers of unique function calls from
+each package to the top ten contributed packages, defined as the ten packages
+with the largest total number of unique function calls from all packages
+throughout the history of CRAN. The top two packages of \CRANpkg{ggplot2} and
+\CRANpkg{dplyr} account for `r prop_top2`% of all function calls from all
+contributed packages over the time shown. Numbers of function calls are shown
+on a logarithmic scale, with numbers of calls to each of these packages
+increasing exponentially, before more recently levelling off or even slightly
+decreasing.
 
 ### Sequential Releases
 
@@ -832,26 +834,26 @@ outweighs compensatory decreases through packages maturing.
 knitr::include_graphics("fig09.png")
 ```
 
-Finally, centrality metrics change dramatically as packages mature (Fig. 9B), in
-contrast to the annual changes of Fig. 8D. Packages develop greater
-numbers of terminal edges, yet retain almost identical vertex degrees through
-becoming more centralised as they develop. One way such an effect could be
-achieved would be through transforming a package from having several distinct
-clusters of functions, each internally highly connected yet only loosely coupled to other
-clusters, towards having fewer numbers of more highly centralised
+Finally, centrality metrics change dramatically as packages mature (Fig. 9B),
+in contrast to the annual changes of Fig. 8D. Packages develop greater numbers
+of terminal edges, yet retain almost identical vertex degrees through becoming
+more centralised as they develop. One way such an effect could be achieved
+would be through transforming a package from having several distinct clusters
+of functions, each internally highly connected yet only loosely coupled to
+other clusters, towards having fewer numbers of more highly centralised
 clusters.
 
 ## Code formatting and Documentation
 
 We conclude these results with analyses generated by the internal Lines-of-Code
-routines of {pkgstats}, along with static analyses of the function documentation
-(.Rd) files. Proportions of blank and comment lines have remained
-similar in both `/R` and `/src` directories over time, except for comment lines in
-`/R` code, which have increased since around 2010. This roughly
-corresponds to the first release of the {roxygen2}m package which has 
-done more than any other package to standardise documentation of R functions.
-This increase in `/R` documentation is likely a direct reflection of the
-widespread adoption of {roxygen2} as the documentation standard for R packages.
+routines of \CRANpkg{pkgstats}, along with static analyses of the function
+documentation (.Rd) files. Proportions of blank and comment lines have remained
+similar in both `/R` and `/src` directories over time, except for comment lines
+in `/R` code, which have increased since around 2010. This roughly corresponds
+to the first release of the \CRANpkg{roxygen2} package which has done more than
+any other package to standardise documentation of R functions. This increase in
+`/R` documentation is likely a direct reflection of the widespread adoption of
+\CRANpkg{roxygen2} as the documentation standard for R packages.
 
 ```{r fig10, out.width = "100%", out.height = "30%", fig.cap = "Code formatting and documentation."}
 knitr::include_graphics("fig10.png")

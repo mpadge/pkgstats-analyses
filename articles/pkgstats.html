@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">pkgstatsAnalyses</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.028</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.029</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -215,8 +215,9 @@ mirror of the CRAN archive to collate statistics from all packages.
 {pkgstats} generates 95 variables quantifying and qualifying package
 code. As the full process is computationally intensive, we have
 published the data on all packages (current and previous versions) on
-CRAN as of <date>, and expect to update this resource regularly. These
-data are available as the “pkgstats-CRAN-all” data set at <a href="https://doi.org/10.5281/zenodo.7414296" class="external-link">https://doi.org/10.5281/zenodo.7414296</a>.</date></p>
+CRAN as of 22nd November 2022, and expect to update this resource
+regularly. These data are available as the “pkgstats-CRAN-all” data set
+at <a href="https://doi.org/10.5281/zenodo.7414296" class="external-link">https://doi.org/10.5281/zenodo.7414296</a>.</p>
 <p>We studied R packages hosted on the CRAN including historical package
 versions and archived (deprecated) packages. This includes the R
 language itself, defined by a single “package” referred to as “base R”.
@@ -224,9 +225,12 @@ We include and distinguish between this “base” package, the suite of
 default <a href="https://github.com/wch/r-source/tree/trunk/src/library" class="external-link">“recommended”
 packages</a>, and the overwhelming majority of “contributed” packages
 <span class="citation">(German, Adams, and Hassan 2013)</span>. Our
-analysis ran on a local mirror of CRAN as of December 2022, comprising
-21,089 contributed packages, and 112,212 total package versions (for an
-average of slightly under 5 releases per package).</p>
+analysis ran on a local mirror of CRAN as of 22nd November 2022,
+comprising 21,089 contributed packages, and 112,212 total package
+versions (for an average of slightly under 5 releases per package).
+These analyses exist as a reproducible repository at <a href="https://github.com/mpadge/pkgstats-analyses" class="external-link">https://github.com/mpadge/pkgstats-analyses</a>.
+All results may be recreated by cloning the repository and typing
+<code>make</code>.</p>
 <p>In this paper we describe trends in the variables described in the
 four following subsections. {pkgstats} generates these as well as a
 larger superset of package-level statistics, the full list of which is

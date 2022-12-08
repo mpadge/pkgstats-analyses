@@ -801,12 +801,14 @@ exported or not, have remained largely constant, with each function being called
 by around 5-6 other functions. Connections between functions in `/src` directories
 have in contrast decreased considerably, with each `/src` function (or object) now
 being "called" (or referenced, inherited, or any other method) by just over one
-other function. Ratios of edges to vertices in the full function call network
-extending between all directories (including `/inst`) has progressively declined
-from over 4 calls per function to less than 3 in recent years. Function call
-networks form on average around three distinct clusters for each package,
-peaking at over 3.5 in 2007 before more recently decreasing to just over 2.5
-clusters.  <!-- This could use a bit of interpretation -->
+other function. The "total" line in Fig. 8C reveals that ratios of edges to
+vertices in the full function call network extending between all directories
+(including `/inst`) have progressively declined throughout the history of CRAN.
+Prior to 2005, most functions (or objects) were called or otherwise referenced
+at least 4 times within a package, decreasing to just over 3 calls or
+references in recent years. The final line in Fig. 8C, "n_clusters", reveals
+that functions (or objects) within packages cluster within on average around
+three main groups.
 
 The final panel (Fig. 8D) shows average centrality metrics from function call
 networks, which is stable except for numbers of terminal edges (in

@@ -172,7 +172,7 @@ We developed the {pkgstats} package to quantify the structure and content of R
 packages using static code analysis [@static-analysis-2016]. The package
 includes a function, `pkgstats_from_archive()`, which can be applied to a local
 mirror of the CRAN archive to collate statistics from all packages. {pkgstats}
-generates 91 variables quantifying and qualifying package code. As the full
+generates 95 variables quantifying and qualifying package code. As the full
 process is computationally intensive, we have published the data on all packages
 (current and previous versions) on CRAN as of <DATE>, and expect to update this
 resource regularly. These data are available as the pkgstats-CRAN-all data set

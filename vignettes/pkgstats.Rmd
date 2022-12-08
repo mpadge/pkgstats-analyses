@@ -203,9 +203,10 @@ mirror of the CRAN archive to collate statistics from all packages. {pkgstats}
 generates 95 variables quantifying and qualifying package code. As the full
 process is computationally intensive, we have published the data on all packages
 (current and previous versions) on CRAN as of <DATE>, and expect to update this
-resource regularly. These data are available as the pkgstats-CRAN-all data set
-at <ZENODO DOI LINK>.
-<!-- TODO: Add Zenodo DOI -->
+resource regularly. These data are available as the "pkgstats-CRAN-all" data
+set at
+[https://doi.org/10.5281/zenodo.7414296](https://doi.org/10.5281/zenodo.7414296).
+
 
 ```{r results-stats, echo = FALSE}
 x <- readRDS (f_r)

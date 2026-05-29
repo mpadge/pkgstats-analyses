@@ -73,6 +73,17 @@ load_pkgstats_data_internal <- function (datafile) {
     w <- as.numeric (unname (dw [match (as.character (x$month), names (dw))]))
     x$date_wt <- w / max (w)
 
+    x$desc_n_aut <- as.integer (x$desc_n_aut)
+    x$desc_n_ctb <- as.integer (x$desc_n_ctb)
+    x$files_R <- as.integer (x$files_R)
+    x$files_src <- as.integer (x$files_src)
+    x$files_inst <- as.integer (x$files_inst)
+    x$files_tests <- as.integer (x$files_tests)
+    x$files_vignettes <- as.integer (x$files_vignettes)
+    x$num_data_files <- as.integer (x$num_data_files)
+
+    x <- x [which (nzchar (x$package)), ]
+
     return (x)
 }
 

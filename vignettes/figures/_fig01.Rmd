@@ -86,15 +86,11 @@ saveRDS (rbind (xy, xy_git), f_fig1_urls)
 ```{r fig1-aut-ctb, eval = calc_fig1_aut_ctb}
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
 do1 <- function (x, year = 2018) {
-    # message (year)
+    message (year)
     xy <- x |>
         filter (year <= !!year) |>
         group_by (package) |>
-        slice_max (date) |>
-        mutate (
-            desc_n_aut = as.integer (desc_n_aut),
-            desc_n_ctb = as.integer (desc_n_ctb)
-        )
+        slice_max (date)
     c (year = year,
        n_aut = mean (xy$desc_n_aut),
        n_ctb = mean (xy$desc_n_ctb),
@@ -108,10 +104,6 @@ n <- data.frame (t (n))
 # Then values for actual years
 xy <- x |>
     group_by (year) |>
-    mutate (
-        desc_n_aut = as.integer (desc_n_aut),
-        desc_n_ctb = as.integer (desc_n_ctb)
-    ) |>
     summarise (
                n_aut = mean (desc_n_aut),
                n_ctb = mean (desc_n_ctb),

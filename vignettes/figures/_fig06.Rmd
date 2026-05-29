@@ -1,6 +1,12 @@
+```{r load}
+library (pkgstatsAnalyses)
+library (dplyr)
+library (tidyr)
+library (ggplot2)
+library (patchwork)
+```
 
 ```{r fig6-datafile}
-library ("pkgstatsAnalyses")
 here <- here::here ()
 v_data_dir <- file.path (here, "vignettes", "data")
 
@@ -19,6 +25,7 @@ calc_fig6_deps <- !file.exists(f_fig6_deps) & !file.exists (fig06_png)
 f_top10 <- file.path (v_data_dir, "fig06-top10-pkgs.Rds")
 calc_top10 <- !file.exists (f_top10) & !file.exists (fig06_png)
 ```
+
 ```{r fig6-prepro, eval = !file.exists (fig06_png)}
 recommended <- recommended_pkgs ()
 ```
@@ -59,7 +66,7 @@ saveRDS (cp_dat, cp_dat_file)
 
 
 ```{r fig6-plot-base-rcmd-ctb, eval = !file.exists (fig06_png)}
-deps <- readRDS (f_fig6_deps)
+deps <- readRDS (f_fig6_deps) |> filter (!is.na (year))
 deps <- deps [deps$category == "unique", ]
 deps_cran <- deps [deps$what == "cran_by_year", ]
 deps <- deps [deps$what == "annual", ]

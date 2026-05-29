@@ -1,6 +1,12 @@
+```{r load}
+library (pkgstatsAnalyses)
+library (dplyr)
+library (tidyr)
+library (ggplot2)
+library (patchwork)
+```
 
 ```{r fig5-setup}
-library ("pkgstatsAnalyses")
 here <- here::here ()
 v_data_dir <- file.path (here, "vignettes", "data")
 fig05_png <- file.path (here, "vignettes", "figures", "_fig05.png")
@@ -16,6 +22,9 @@ x$loc_src [which (is.na (x$loc_src))] <- 0L
 x$loc_inst [which (is.na (x$loc_inst))] <- 0L
 x$loc_total <- x$loc_R + x$loc_src + x$loc_inst
 x$doclines_per_fn_exp_mn [which (!is.finite (x$doclines_per_fn_exp_mn))] <- NA
+logmean <- function (x, ...) {
+    10 ^ mean (log10 (x [which (x > 0)]), na.rm = TRUE)
+}
 ```
 
 ```{r fig5-nfns-per-release, eval = !file.exists (fig05_png)}
@@ -123,7 +132,7 @@ x_rel |>
         geom_line () +
         #geom_smooth (method = "loess", formula = "y ~ x", se = FALSE) +
         theme (legend.title = element_blank(),
-               legend.position = c (0.5, 0.85),
+               legend.position = c (0.1, 0.85),
                legend.background = element_rect(fill='transparent', colour='transparent')) +
         ylab ("Numbers of functions") +
         guides (color = guide_legend (ncol = 2)) +

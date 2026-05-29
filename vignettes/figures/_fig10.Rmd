@@ -1,6 +1,13 @@
+```{r load}
+library (pkgstatsAnalyses)
+library (dplyr)
+library (tidyr)
+library (igraph)
+library (ggplot2)
+library (patchwork)
+```
 
 ```{r fig10-precalc}
-library ("pkgstatsAnalyses")
 here <- here::here ()
 v_data_dir <- file.path (here, "vignettes", "data")
 
@@ -9,13 +16,16 @@ f_fig10 <- file.path (v_data_dir, "fig10.Rds")
 
 fig10_png <- file.path (here, "vignettes", "figures", "_fig10.png")
 calc_fig10 <- !file.exists (f_fig10) & !file.exists (fig10_png)
+logmean <- function (x, ...) {
+    10 ^ mean (log10 (x [which (x > 0)]), na.rm = TRUE)
+}
 ```
 
 ```{r fig10-calc, eval = calc_fig10}
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
 do1 <- function (x, year = 2018, cran_by_year = TRUE) {
 
-    # message (year)
+    message (year)
 
     if (cran_by_year) {
         xy <- x |>

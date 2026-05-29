@@ -1,10 +1,16 @@
+```{r load}
+library (pkgstatsAnalyses)
+library (dplyr)
+library (tidyr)
+library (ggplot2)
+library (patchwork)
+```
 
 <!--
 Fig 8 but over package release instead of year
 -->
 
 ```{r fig09-calc-graph-data}
-library ("pkgstatsAnalyses")
 here <- here::here ()
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
 v_data_dir <- file.path (here, "vignettes", "data")

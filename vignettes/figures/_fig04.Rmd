@@ -1,6 +1,12 @@
+```{r load}
+library (pkgstatsAnalyses)
+library (dplyr)
+library (tidyr)
+library (ggplot2)
+library (patchwork)
+```
 
 ```{r fig4-pre}
-library ("pkgstatsAnalyses")
 here <- here::here ()
 v_data_dir <- file.path (here, "vignettes", "data")
 logmean <- function (x, ...) {
@@ -10,6 +16,7 @@ logmean <- function (x, ...) {
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
 fig04_png <- file.path (here, "vignettes", "figures", "_fig04.png")
 ```
+
 ```{r fig4-data, eval = !file.exists (fig04_png)}
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
 x$num_languages <- vapply (strsplit (x$languages, ","), length,
@@ -25,6 +32,7 @@ langs_exists <- TRUE # disable next 2 chunks
 
 ```{r fig4-languages, eval = !langs_exists}
 lang_one_year <- function (x, year = 2015) {
+    # message (year)
     x1 <- x |>
         filter (year <= !!year) |>
         group_by (package) |>
@@ -39,6 +47,7 @@ n <- vapply (years, function (i) lang_one_year (x, i),
 dat <- data.frame (year = years, n = n)
 saveRDS (dat, f)
 ```
+
 ```{r fig4A, eval = FALSE}
 # Not used!
 readRDS (f) |>
@@ -52,9 +61,10 @@ f <- file.path (v_data_dir, "fig04-fns-per-year.Rds")
 fns_per_year_exists <- file.exists (f)
 calcfns_per_year <- !fns_per_year_exists & !file.exists (fig04_png)
 ```
+
 ```{r fig4-nfns-per-year, eval = calcfns_per_year}
 fns_per_year <- function (x, year = 2015) {
-
+    message (year)
     x1 <- x |>
         filter (year <= !!year) |>
         group_by (package) |>
@@ -66,7 +76,7 @@ fns_per_year <- function (x, year = 2015) {
     loc <- x1$loc_R + x1$loc_src + x1$loc_inst
 
     c (year = year,
-       loc = logmean (loc),
+       loc = NA,
        loc_R = logmean (x1$loc_R, na.rm = TRUE),
        loc_src = logmean (x1$loc_src, na.rm = TRUE),
        loc_inst = logmean (x1$loc_inst, na.rm = TRUE),
@@ -98,6 +108,12 @@ years <- sort (unique (x$year))
 dat <- lapply (years, function (i) fns_per_year (x, i))
 dat <- data.frame (do.call (rbind, dat))
 dat$what <- "cran_by_year"
+
+index <- grep ("^loc\\_", names (dat))
+index_per <- grep ("^loc\\_per", names (dat))
+index <- index [which (!index %in% index_per)]
+loc_mat <- as.matrix (dat [, index])
+dat$loc <- rowSums (loc_mat, na.rm = TRUE)
 
 dat$loc_inst [which (!is.finite (dat$loc_inst))] <- NA
 

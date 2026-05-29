@@ -1,3 +1,11 @@
+```{r load}
+library (pkgstatsAnalyses)
+library (dplyr)
+library (tidyr)
+library (igraph)
+library (ggplot2)
+library (patchwork)
+```
 
 
 <!--
@@ -7,11 +15,14 @@
 -->
 
 ```{r fig8-precalc}
-library ("pkgstatsAnalyses")
 here <- here::here ()
 v_data_dir <- file.path (here, "vignettes", "data")
 logmean <- function (x, ...) {
-    10 ^ mean (log10 (x [which (x > 0)]), na.rm = TRUE)
+    index <- which (x > 0)
+    if (length (index) == 0L) {
+        return (NA_real_)
+    }
+    10 ^ mean (log10 (x [index]), na.rm = TRUE)
 }
 
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
@@ -96,7 +107,7 @@ graph_metrics <- function (g) {
 years <- sort (unique (xraw$year))
 dat <- lapply (years, function (y) {
 
-    # message (y)
+    message (y)
     g1 <- graph_one_year (xraw, y, cran_by_year = TRUE)
     if (!is.null (g1)) {
         g1 <- c (year = y, graph_metrics (g1), what = 0)
@@ -106,7 +117,7 @@ dat <- lapply (years, function (y) {
         g2 <- c (year = y, graph_metrics (g2), what = 1)
     }
     return (rbind (g1, g2))
-       })
+})
 dat <- data.frame (do.call (rbind, dat))
 dat$what [dat$what == 0] <- "cran_by_year"
 dat$what [dat$what == 1] <- "annual"
@@ -118,21 +129,29 @@ saveRDS (dat, graph_data_file)
 xraw <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
 dat_one_year <- function (xraw, year = 2015) {
 
-    # message (year)
+    message (year)
 
     x <- xraw |>
         filter (year <= !!year) |>
         group_by (package) |>
         slice_max (date)
 
+    x$n_fns_r [is.na (x$n_fns_r)] <- 0L
+    x$n_fns_src [is.na (x$n_fns_src)] <- 0L
+    edges_rel <- x$n_edges / (x$n_fns_r + x$n_fns_src)
+    edges_rel_r <- x$n_edges / x$n_fns_r
+    edges_rel_src <- x$n_edges / x$n_fns_src
+    edges_rel <- edges_rel [which (is.finite (edges_rel) & edges_rel > 0)]
+    edges_rel_r <- edges_rel_r [which (is.finite (edges_rel_r) & edges_rel_r > 0)]
+    edges_rel_src <- edges_rel_src [which (is.finite (edges_rel_src) & edges_rel_src > 0)]
+
     c (year = year,
        n_edges = logmean (x$n_edges, na.rm = TRUE),
        n_edges_r = logmean (x$n_edges_r, na.rm = TRUE),
        n_edges_src = logmean (x$n_edges_src, na.rm = TRUE),
-       n_edges_rel =
-           logmean (x$n_edges / (x$n_fns_r + x$n_fns_src), na.rm = TRUE),
-       n_edges_rel_r = logmean (x$n_edges_r / x$n_fns_r, na.rm = TRUE),
-       n_edges_rel_src = logmean (x$n_edges_src / x$n_fns_src, na.rm = TRUE),
+       n_edges_rel = logmean (edges_rel),
+       n_edges_rel_r = logmean (edges_rel_r),
+       n_edges_rel_src = logmean (edges_rel_src),
        n_clusters = logmean (x$n_clusters, na.rm = TRUE),
        centr_dir_mn = logmean (x$centrality_dir_mn, na.rm = TRUE),
        centr_dir_md = logmean (x$centrality_dir_md, na.rm = TRUE),
@@ -148,35 +167,51 @@ dat_one_year <- function (xraw, year = 2015) {
        node_degree_md = logmean (x$node_degree_md, na.rm = TRUE),
        node_degree_max = logmean (x$node_degree_max, na.rm = TRUE))
 }
+
 years <- sort (unique (xraw$year))
 dat <- lapply (years, function (y) dat_one_year (xraw, y))
 dat <- data.frame (do.call (rbind, dat))
 dat$what <- "cran_by_year"
 
-xs <- xraw |>
-    filter (!is.na (year)) |>
-    group_by (year) |>
-    summarise (
-        n_edges = logmean (n_edges, na.rm = TRUE),
-        n_edges_r = logmean (n_edges_r, na.rm = TRUE),
-        n_edges_src = logmean (n_edges_src, na.rm = TRUE),
-        n_edges_rel = logmean (n_edges / (n_fns_r + n_fns_src), na.rm = TRUE),
-        n_edges_rel_r = logmean (n_edges_r / n_fns_r, na.rm = TRUE),
-        n_edges_rel_src = logmean (n_edges_src / n_fns_src, na.rm = TRUE),
-        n_clusters = logmean (n_clusters, na.rm = TRUE),
-        centr_dir_mn = logmean (centrality_dir_mn, na.rm = TRUE),
-        centr_dir_md = logmean (centrality_dir_md, na.rm = TRUE),
-        centr_dir_mn_no0 = logmean (centrality_dir_mn_no0, na.rm = TRUE),
-        centr_dir_md_no0 = logmean (centrality_dir_md_no0, na.rm = TRUE),
-        centr_undir_mn = logmean (centrality_undir_mn, na.rm = TRUE),
-        centr_undir_md = logmean (centrality_undir_md, na.rm = TRUE),
-        centr_undir_mn_no0 = logmean (centrality_undir_mn_no0, na.rm = TRUE),
-        centr_undir_md_no0 = logmean (centrality_undir_md_no0, na.rm = TRUE),
-        central_edges_dir = logmean (num_terminal_edges_dir, na.rm = TRUE),
-        term_edges = logmean (num_terminal_edges_undir, na.rm = TRUE),
-        node_degree_mn = logmean (node_degree_mn, na.rm = TRUE),
-        node_degree_md = logmean (node_degree_md, na.rm = TRUE),
-        node_degree_max = logmean (node_degree_max, na.rm = TRUE))
+dat_one_year_annual <- function (xraw, year = 2015) {
+
+    x <- xraw [which (xraw$year == year), ]
+
+    x$n_fns_r [is.na (x$n_fns_r)] <- 0L
+    x$n_fns_src [is.na (x$n_fns_src)] <- 0L
+    edges_rel <- x$n_edges / (x$n_fns_r + x$n_fns_src)
+    edges_rel_r <- x$n_edges / x$n_fns_r
+    edges_rel_src <- x$n_edges / x$n_fns_src
+    edges_rel <- edges_rel [which (is.finite (edges_rel) & edges_rel > 0)]
+    edges_rel_r <- edges_rel_r [which (is.finite (edges_rel_r) & edges_rel_r > 0)]
+    edges_rel_src <- edges_rel_src [which (is.finite (edges_rel_src) & edges_rel_src > 0)]
+
+    c (
+        year = year,
+        n_edges = logmean (x$n_edges, na.rm = TRUE),
+        n_edges_r = logmean (x$n_edges_r, na.rm = TRUE),
+        n_edges_src = logmean (x$n_edges_src, na.rm = TRUE),
+        n_edges_rel = logmean (edges_rel),
+        n_edges_rel_r = logmean (edges_rel_r),
+        n_edges_rel_src = logmean (edges_rel_src),
+        n_clusters = logmean (x$n_clusters, na.rm = TRUE),
+        centr_dir_mn = logmean (x$centrality_dir_mn, na.rm = TRUE),
+        centr_dir_md = logmean (x$centrality_dir_md, na.rm = TRUE),
+        centr_dir_mn_no0 = logmean (x$centrality_dir_mn_no0, na.rm = TRUE),
+        centr_dir_md_no0 = logmean (x$centrality_dir_md_no0, na.rm = TRUE),
+        centr_undir_mn = logmean (x$centrality_undir_mn, na.rm = TRUE),
+        centr_undir_md = logmean (x$centrality_undir_md, na.rm = TRUE),
+        centr_undir_mn_no0 = logmean (x$centrality_undir_mn_no0, na.rm = TRUE),
+        centr_undir_md_no0 = logmean (x$centrality_undir_md_no0, na.rm = TRUE),
+        central_edges_dir = logmean (x$num_terminal_edges_dir, na.rm = TRUE),
+        term_edges = logmean (x$num_terminal_edges_undir, na.rm = TRUE),
+        node_degree_mn = logmean (x$node_degree_mn, na.rm = TRUE),
+        node_degree_md = logmean (x$node_degree_md, na.rm = TRUE),
+        node_degree_max = logmean (x$node_degree_max, na.rm = TRUE)
+    )
+}
+xs <- lapply (years, function (y) dat_one_year_annual (xraw, year = y))
+xs <- data.frame (do.call (rbind, xs))
 xs$what <- "annual"
 
 saveRDS (rbind (dat, xs), graph_intern_data_file)
@@ -266,7 +301,7 @@ fig8_p3 <- dat |>
         ggtitle ("C: Pkg edges and clusters") +
         guides (color = guide_legend (ncol = 2)) +
         theme (legend.title = element_blank (),
-               legend.position = c (0.5, 0.15),
+               legend.position = c (0.5, 0.85),
                legend.background = element_rect(fill='transparent', colour='transparent'))
 s <- dat |>
     filter (what == "annual") |>
@@ -311,7 +346,7 @@ fig8_p4 <- dat |>
         ggtitle ("D: Pkg centrality metrics") +
         guides (color = guide_legend (ncol = 2)) +
         theme (legend.title = element_blank (),
-               legend.position = c (0.5, 0.37),
+               legend.position = c (0.8, 0.37),
                legend.background = element_rect(fill='transparent', colour='transparent'))
 ```
 

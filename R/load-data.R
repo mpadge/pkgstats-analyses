@@ -109,6 +109,27 @@ load_pkgstats_data_internal <- function (datafile) {
     x$docchars_per_par_exp_mn <- as.integer (x$docchars_per_par_exp_mn)
     x$docchars_per_par_exp_md <- as.integer (x$docchars_per_par_exp_md)
 
+    x$n_fns_r <- as.integer (x$n_fns_r)
+    x$n_fns_src <- as.integer (x$n_fns_src)
+    x$n_edges <- as.integer (x$n_edges)
+    x$n_edges_r <- as.integer (x$n_edges_r)
+    x$n_edges_src <- as.integer (x$n_edges_src)
+    x$n_clusters <- as.integer (x$n_clusters)
+    x$centrality_dir_mn <- as.integer (x$centrality_dir_mn)
+    x$centrality_dir_md <- as.integer (x$centrality_dir_md)
+    x$centrality_dir_mn_no0 <- as.integer (x$centrality_dir_mn_no0)
+    x$centrality_dir_md_no0 <- as.integer (x$centrality_dir_md_no0)
+    x$centrality_undir_mn <- as.integer (x$centrality_undir_mn)
+    x$centrality_undir_md <- as.integer (x$centrality_undir_md)
+    x$centrality_undir_mn_no0 <- as.integer (x$centrality_undir_mn_no0)
+    x$centrality_undir_md_no0 <- as.integer (x$centrality_undir_md_no0)
+    x$central_edges_dir <- as.integer (x$num_terminal_edges_dir)
+    x$num_terminal_edges_dir <- as.integer (x$num_terminal_edges_dir)
+    x$num_terminal_edges_undir <- as.integer (x$num_terminal_edges_undir)
+    x$node_degree_mn <- as.integer (x$node_degree_mn)
+    x$node_degree_md <- as.integer (x$node_degree_md)
+    x$node_degree_max <- as.integer (x$node_degree_max)
+
     x <- x [which (nzchar (x$package)), ]
 
     return (x)

@@ -1,6 +1,12 @@
+```{r load}
+library (pkgstatsAnalyses)
+library (dplyr)
+library (tidyr)
+library (ggplot2)
+library (patchwork)
+```
 
 ```{r fig3-n-files-data-load}
-library ("pkgstatsAnalyses")
 here <- here::here ()
 v_data_dir <- file.path (here, "vignettes", "data")
 logmean <- function (x, ...) {
@@ -20,7 +26,7 @@ do_fig3_pkg_n_files <- !file.exists (f_fig3_pkg_level) & !file.exists (fig03_png
 # takes a few tens of seconds
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
 nfiles_one_year <- function (x, year = 2015) {
-
+    # message (year)
     x1 <- x |>
         filter (year <= !!year) |>
         group_by (package) |>
@@ -66,24 +72,17 @@ saveRDS (dat, n_files_file)
 ```{r fig3-pkg-level-n-files, eval = do_fig3_pkg_n_files}
 x_per_pkg <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
     group_by (package) |>
-    summarise (R = files_R,
-               src = files_src,
-               inst = files_inst,
-               vignettes = files_vignettes,
-               tests = files_tests,
-               data = num_data_files,
-               seq = seq_along (R),
-               .groups = "keep") |>
-    mutate_at(vars (R, src, inst, vignettes, tests, data),
-              ~replace (., !is.finite (.), NA)) |>
+    mutate (seq = seq_len (n ())) |>
+    ungroup () |>
     group_by (seq) |>
-    summarise (R = mean (R, na.rm = TRUE),
-               src = mean (src, na.rm = TRUE),
-               inst = mean (inst, na.rm = TRUE),
-               vignettes = mean (vignettes, na.rm = TRUE),
-               tests = mean (tests, na.rm = TRUE),
-               data = mean (data, na.rm = TRUE),
-               .groups = "keep") |>
+    summarise (
+        R = mean (files_R, na.rm = TRUE),
+        src = mean (files_src, na.rm = TRUE),
+        inst = mean (files_inst, na.rm = TRUE),
+        vignettes = mean (files_vignettes, na.rm = TRUE),
+        tests = mean (files_tests, na.rm = TRUE),
+        data = mean (num_data_files, na.rm = TRUE)
+    ) |>
     filter (seq > 1) |>
     pivot_longer (cols = c (R, src, inst, vignettes, tests, data)) |>
     rename (dir = name)

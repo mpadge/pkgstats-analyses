@@ -1,6 +1,13 @@
+```{r load}
+library (pkgstatsAnalyses)
+library (dplyr)
+library (tidyr)
+library (ggplot2)
+library (patchwork)
+```
+
 
 ```{r fig1-precalc}
-library ("pkgstatsAnalyses")
 here <- here::here ()
 v_data_dir <- file.path (here, "vignettes", "data")
 
@@ -22,7 +29,7 @@ calc_fig1_lic <- !file.exists (f_fig1_lic) & !file.exists (fig01_png)
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
 # CRAN snapshot values:
 do1 <- function (x, year = 2018) {
-    # message (year)
+    message (year)
     xy <- x |>
         filter (year <= !!year) |>
         group_by (package) |>
@@ -83,7 +90,11 @@ do1 <- function (x, year = 2018) {
     xy <- x |>
         filter (year <= !!year) |>
         group_by (package) |>
-        slice_max (date)
+        slice_max (date) |>
+        mutate (
+            desc_n_aut = as.integer (desc_n_aut),
+            desc_n_ctb = as.integer (desc_n_ctb)
+        )
     c (year = year,
        n_aut = mean (xy$desc_n_aut),
        n_ctb = mean (xy$desc_n_ctb),
@@ -97,11 +108,16 @@ n <- data.frame (t (n))
 # Then values for actual years
 xy <- x |>
     group_by (year) |>
+    mutate (
+        desc_n_aut = as.integer (desc_n_aut),
+        desc_n_ctb = as.integer (desc_n_ctb)
+    ) |>
     summarise (
                n_aut = mean (desc_n_aut),
                n_ctb = mean (desc_n_ctb),
                se_aut = sd (desc_n_aut) / sqrt (length (desc_n_aut)),
-               se_ctb = sd (desc_n_ctb) / sqrt (length (desc_n_aut)))
+               se_ctb = sd (desc_n_ctb) / sqrt (length (desc_n_aut))) |>
+    filter (!is.na (year))
 n$what <- "cran_by_year"
 xy$what <- "annual"
 n <- rbind (n, xy)

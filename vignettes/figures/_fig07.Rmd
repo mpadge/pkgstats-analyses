@@ -1,7 +1,12 @@
-
+```{r load}
+library (pkgstatsAnalyses)
+library (dplyr)
+library (tidyr)
+library (ggplot2)
+library (patchwork)
+```
 
 ```{r fig7-pre-load}
-library ("pkgstatsAnalyses")
 here <- here::here ()
 v_data_dir <- file.path (here, "vignettes", "data")
 logmean <- function (x, ...) {
@@ -33,7 +38,7 @@ deps <- readRDS (f_cpl)
 ```{r fig7-p1-deps-calc, eval = calc_fig7_p1_deps}
 deps_p1 <- deps |>
     group_by (from, version) |>
-    summarise (n_base = n_unique [to == "base"],
+    summarise (n_base = sum (n_unique [to == "base"]),
                n_recommended = sum (n_unique [to %in% recommended]),
                n_contrib = sum (n_unique [!to %in% c ("base", recommended)]),
                .groups = "keep") |>

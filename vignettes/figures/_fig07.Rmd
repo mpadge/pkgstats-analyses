@@ -1,4 +1,4 @@
-```{r load}
+```{r fig7-load}
 library (pkgstatsAnalyses)
 library (dplyr)
 library (tidyr)

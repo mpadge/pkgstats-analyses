@@ -128,8 +128,8 @@ these trends, and potential further applications and extensions of [the
 
 ## Methods
 
-Ten years ago, in an article commemorating his “early history of the R
-project” ten years prior to that, Kurt Hornik called for
+Fourteen years ago, in an article commemorating his “early history of
+the R project” ten years prior to that, Kurt Hornik called for
 
 > a considerable and concerted community effort … providing R packages
 > to compute on R packages.
@@ -448,8 +448,8 @@ Numbers of both authors and contributors have increased over time (Fig.
 1A), with contributors having been rarely acknowledged at all prior to
 2010. Acknowledgement of contributions increased soon after then to an
 average of just under one acknowledged contributor per package in 2022.
-Encouragingly, recent increases in numbers of both authors and
-contributors have been broadly linear, and show no sign of slowing down.
+Although recent increases in numbers of both authors and contributors
+have been broadly linear, both show more recent signs of slowing down.
 
 Diversity of license declarations increased up to around 2007, followed
 by a pronounced drop and progression into a roughly stable range of
@@ -544,11 +544,9 @@ The top domains of URLs provided in package ‘DESCRIPTION’ files show the
 rise and fall of different online homes for development, secondary
 hosting and documentation of CRAN packages. r-forge reached a peak of
 popularity in 2013. A variety on online code repositories began to be
-linked to around 2010, with GitHub reaching dominance in 2016. For
-package documentation at self-hosted domains, two domains stand out:
-`dirk.eddelbuettel.com` and `ropensci.org`, though the practice of
-hosting documentation on GitHub and other repositories obscures the
-importance of other individuals and groups.
+linked to around 2010, with GitHub clearly dominating since around 2016.
+The other domain that clearly stands out is `ropensci.org`, followed by
+two other notable domains of `gitlab.com` and `dirk.eddelbuettel.com`.
 
 ### Package Structure and Content
 
@@ -559,12 +557,12 @@ considerably up to around 2010, after which they have broadly stabilised
 at mean values of around 13-15 files per package (Fig. 3A). The
 `/vignettes` directory is the only place within R packages in which
 numbers of files have remained relatively constant over the preceding
-20+ years. Packages generally had very few files in the `/inst`
-directory prior to 2010, after which they increased until around 2015,
-before decreasing again more recently. The two sub-directories in which
-numbers of files have increased most significantly are `/src` and
-`/tests`, with the latter increase particularly distinct, clearly
-indicating that packages have become progressively more tested.
+25+ years. Numbers of files in both `/inst` and `/data` directories
+decresed dramatically over CRAN’s first decade, and are still slightly
+decreasing even now. Numbers of files in `/src` directories have varied
+only slightly around typical values of 6-8, while numbers of files in
+`/tests` have consistently increased to the recent status of having the
+second greatest number of files other than the `/R` directory itself.
 
 ![Figure 3 (A) Number of files in different diretories per year (with
 legend in panel B). Solid lines represent loess-smoothed interpolations,
@@ -578,14 +576,15 @@ Numbers of files as a function of release sequence.
 
 Figure 3B shows equivalent changes *within* individual packages across
 successive releases. Numbers of files generally progressively increase
-as packages mature, with especially pronounced increases in the `/R`,
-`/inst`, and `/src` directories. These changes in `/src` and `/inst`
-directories in the later phases of package maturation may reflect
-restructuring code from the `/src` to the `/inst` directories in order
-to allow cross-compilation by other packages. Numbers of test files
-generally increase progressively through package maturation. The only
-directory in which numbers of files do not notably increase as packages
-mature is `/vignettes`.
+as packages mature, with especially pronounced increases in the `/R` and
+`/tests/` directories, and to a lesser extent `/inst`, and `/src`
+directories. These changes in `/src` and `/inst` directories in the
+later phases of package maturation may reflect restructuring code from
+the `/src` to the `/inst` directories in order to allow
+cross-compilation by other packages. Numbers of test files generally
+increase progressively through package maturation. The only directory in
+which numbers of files do not notably increase as packages mature is
+`/vignettes`.
 
 ### Code Metrics
 

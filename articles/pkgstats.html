@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">pkgstatsAnalyses</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1.006</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1.007</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -184,8 +184,8 @@ package</a> and database.</p>
 <div class="section level2">
 <h2 id="methods">Methods<a class="anchor" aria-label="anchor" href="#methods"></a>
 </h2>
-<p>Ten years ago, in an article commemorating his “early history of the
-R project” ten years prior to that, Kurt Hornik called for</p>
+<p>Fourteen years ago, in an article commemorating his “early history of
+the R project” ten years prior to that, Kurt Hornik called for</p>
 <blockquote>
 <p>a considerable and concerted community effort … providing R packages
 to compute on R packages.</p>
@@ -519,9 +519,9 @@ derived from (generally smoother) CRAN snapshots.</p>
 (Fig. 1A), with contributors having been rarely acknowledged at all
 prior to 2010. Acknowledgement of contributions increased soon after
 then to an average of just under one acknowledged contributor per
-package in 2022. Encouragingly, recent increases in numbers of both
-authors and contributors have been broadly linear, and show no sign of
-slowing down.</p>
+package in 2022. Although recent increases in numbers of both authors
+and contributors have been broadly linear, both show more recent signs
+of slowing down.</p>
 <p>Diversity of license declarations increased up to around 2007,
 followed by a pronounced drop and progression into a roughly stable
 range of somewhere over 50 distinct entries. Numbers of unique licenses
@@ -586,11 +586,10 @@ top 10 primary URL domains, with frequencies for GitHub divided by
 the rise and fall of different online homes for development, secondary
 hosting and documentation of CRAN packages. r-forge reached a peak of
 popularity in 2013. A variety on online code repositories began to be
-linked to around 2010, with GitHub reaching dominance in 2016. For
-package documentation at self-hosted domains, two domains stand out:
-<code>dirk.eddelbuettel.com</code> and <code>ropensci.org</code>, though
-the practice of hosting documentation on GitHub and other repositories
-obscures the importance of other individuals and groups.</p>
+linked to around 2010, with GitHub clearly dominating since around 2016.
+The other domain that clearly stands out is <code>ropensci.org</code>,
+followed by two other notable domains of <code>gitlab.com</code> and
+<code>dirk.eddelbuettel.com</code>.</p>
 </div>
 <div class="section level3">
 <h3 id="package-structure-and-content">Package Structure and Content<a class="anchor" aria-label="anchor" href="#package-structure-and-content"></a>
@@ -602,13 +601,14 @@ increased considerably up to around 2010, after which they have broadly
 stabilised at mean values of around 13-15 files per package (Fig. 3A).
 The <code>/vignettes</code> directory is the only place within R
 packages in which numbers of files have remained relatively constant
-over the preceding 20+ years. Packages generally had very few files in
-the <code>/inst</code> directory prior to 2010, after which they
-increased until around 2015, before decreasing again more recently. The
-two sub-directories in which numbers of files have increased most
-significantly are <code>/src</code> and <code>/tests</code>, with the
-latter increase particularly distinct, clearly indicating that packages
-have become progressively more tested.</p>
+over the preceding 25+ years. Numbers of files in both
+<code>/inst</code> and <code>/data</code> directories decresed
+dramatically over CRAN’s first decade, and are still slightly decreasing
+even now. Numbers of files in <code>/src</code> directories have varied
+only slightly around typical values of 6-8, while numbers of files in
+<code>/tests</code> have consistently increased to the recent status of
+having the second greatest number of files other than the
+<code>/R</code> directory itself.</p>
 <div class="float">
 <img src="figures/_fig03.png" alt="Figure 3 (A) Number of files in different diretories per year (with legend in panel B). Solid lines represent loess-smoothed interpolations, while dashed lines are raw annual values (not CRAN snapshots). (B) Numbers of files as a function of release sequence."><div class="figcaption">
 <strong>Figure 3</strong> (A) Number of files in
@@ -620,15 +620,15 @@ of release sequence.</div>
 <p>Figure 3B shows equivalent changes <em>within</em> individual
 packages across successive releases. Numbers of files generally
 progressively increase as packages mature, with especially pronounced
-increases in the <code>/R</code>, <code>/inst</code>, and
-<code>/src</code> directories. These changes in <code>/src</code> and
-<code>/inst</code> directories in the later phases of package maturation
-may reflect restructuring code from the <code>/src</code> to the
-<code>/inst</code> directories in order to allow cross-compilation by
-other packages. Numbers of test files generally increase progressively
-through package maturation. The only directory in which numbers of files
-do not notably increase as packages mature is
-<code>/vignettes</code>.</p>
+increases in the <code>/R</code> and <code>/tests/</code> directories,
+and to a lesser extent <code>/inst</code>, and <code>/src</code>
+directories. These changes in <code>/src</code> and <code>/inst</code>
+directories in the later phases of package maturation may reflect
+restructuring code from the <code>/src</code> to the <code>/inst</code>
+directories in order to allow cross-compilation by other packages.
+Numbers of test files generally increase progressively through package
+maturation. The only directory in which numbers of files do not notably
+increase as packages mature is <code>/vignettes</code>.</p>
 </div>
 <div class="section level3">
 <h3 id="code-metrics">Code Metrics<a class="anchor" aria-label="anchor" href="#code-metrics"></a>

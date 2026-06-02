@@ -6,12 +6,12 @@ doc: ## Update package documentation with `roxygen2`
 	Rscript -e 'roxygen2::roxygenise()'
 
 render: ## Render pkgdown site
-	init knith
+	init vignette
 
 init: ## Initialise pkgdown site
 	echo "pkgdown::init_site()" | R --no-save -q
 
-knith: ## Build the main vignette
+vignette: ## Build the main vignette
 	echo "pkgdown::build_article('$(LFILE)',quiet=FALSE)" | R --no-save -q
 
 open: ## Open main vignette in browser

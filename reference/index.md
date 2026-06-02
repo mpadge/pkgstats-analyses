@@ -1,0 +1,55 @@
+# Package index
+
+## All functions
+
+- [`all_pypi()`](https://mpadge.github.io/pkgstats-analyses/reference/all_pypi.md)
+  : Extract all releases and dates for all pypi packages ever
+
+- [`collate_temp_pypi_files()`](https://mpadge.github.io/pkgstats-analyses/reference/collate_temp_pypi_files.md)
+  :
+
+  Collate all temporary files produced by the chunked parallel run of
+  `all_pypi`.
+
+- [`coupling_dependencies()`](https://mpadge.github.io/pkgstats-analyses/reference/coupling_dependencies.md)
+  :
+
+  Convert raw data (`x`) into `data.frame` of coupling dependencies as
+  `from` and `to` columns for each package.
+
+- [`couplings()`](https://mpadge.github.io/pkgstats-analyses/reference/couplings.md)
+  : Calculate afferent and efferent couplings between packages
+
+- [`couplings_releases()`](https://mpadge.github.io/pkgstats-analyses/reference/couplings_releases.md)
+  : Get couplings for each release of each package
+
+- [`cran_archiving()`](https://mpadge.github.io/pkgstats-analyses/reference/cran_archiving.md)
+  : Plot rates of CRAN archiving
+
+- [`dependencies()`](https://mpadge.github.io/pkgstats-analyses/reference/dependencies.md)
+  : Extract all dependencies from the "external_calls" component of the
+  main data.
+
+- [`load_pkgstats_data()`](https://mpadge.github.io/pkgstats-analyses/reference/load_pkgstats_data.md)
+  : Load one lot of either R or python data
+
+- [`pkgstats_analyse_packages()`](https://mpadge.github.io/pkgstats-analyses/reference/pkgstats_analyse_packages.md)
+  : Analyse individual package trajectories
+
+- [`pkgstats_analyse_submission_rates()`](https://mpadge.github.io/pkgstats-analyses/reference/pkgstats_analyse_submission_rates.md)
+  : Analyse submission rates of packages
+
+- [`plot_new_vs_update()`](https://mpadge.github.io/pkgstats-analyses/reference/plot_new_vs_update.md)
+  : Plot time series of rates of new submissions versus updated packages
+
+- [`plot_r_py()`](https://mpadge.github.io/pkgstats-analyses/reference/plot_r_py.md)
+  : Time series plot for R versus python
+
+- [`recommended_pkgs()`](https://mpadge.github.io/pkgstats-analyses/reference/recommended_pkgs.md)
+  : Get list of current recommended R packages
+
+- [`summarise_coupling_data()`](https://mpadge.github.io/pkgstats-analyses/reference/summarise_coupling_data.md)
+  : Return post-processed summary of coupling data
+
+- [`transform_pkgstats_data()`](https://mpadge.github.io/pkgstats-analyses/reference/transform_pkgstats_data.md)
+  : Transform data to form new variables

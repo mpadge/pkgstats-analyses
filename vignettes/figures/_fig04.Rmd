@@ -64,7 +64,7 @@ calcfns_per_year <- !fns_per_year_exists & !file.exists (fig04_png)
 
 ```{r fig4-nfns-per-year, eval = calcfns_per_year}
 fns_per_year <- function (x, year = 2015) {
-    message (year)
+    # message (year)
     x1 <- x |>
         filter (year <= !!year) |>
         group_by (package) |>

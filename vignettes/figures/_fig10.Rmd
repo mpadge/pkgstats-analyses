@@ -25,7 +25,7 @@ logmean <- function (x, ...) {
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
 do1 <- function (x, year = 2018, cran_by_year = TRUE) {
 
-    message (year)
+    # message (year)
 
     if (cran_by_year) {
         xy <- x |>

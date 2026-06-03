@@ -107,7 +107,7 @@ graph_metrics <- function (g) {
 years <- sort (unique (xraw$year))
 dat <- lapply (years, function (y) {
 
-    message (y)
+    # message (y)
     g1 <- graph_one_year (xraw, y, cran_by_year = TRUE)
     if (!is.null (g1)) {
         g1 <- c (year = y, graph_metrics (g1), what = 0)
@@ -129,7 +129,7 @@ saveRDS (dat, graph_data_file)
 xraw <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
 dat_one_year <- function (xraw, year = 2015) {
 
-    message (year)
+    # message (year)
 
     x <- xraw |>
         filter (year <= !!year) |>

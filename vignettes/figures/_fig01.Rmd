@@ -29,7 +29,7 @@ calc_fig1_lic <- !file.exists (f_fig1_lic) & !file.exists (fig01_png)
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
 # CRAN snapshot values:
 do1 <- function (x, year = 2018) {
-    message (year)
+    # message (year)
     xy <- x |>
         filter (year <= !!year) |>
         group_by (package) |>
@@ -86,7 +86,7 @@ saveRDS (rbind (xy, xy_git), f_fig1_urls)
 ```{r fig1-aut-ctb, eval = calc_fig1_aut_ctb}
 x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE)
 do1 <- function (x, year = 2018) {
-    message (year)
+    # message (year)
     xy <- x |>
         filter (year <= !!year) |>
         group_by (package) |>

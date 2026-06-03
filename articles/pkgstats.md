@@ -463,54 +463,6 @@ second most common type license being MIT, at 9.6%, followed by BSD at
 2.0%. One of these three classes of licenses are used in 95% of all CRAN
 packages.
 
-    ## 1998
-
-    ## 1999
-
-    ## 2000
-
-    ## 2001
-
-    ## 2002
-
-    ## 2003
-
-    ## 2004
-
-    ## 2005
-
-    ## 2006
-
-    ## 2007
-
-    ## 2008
-
-    ## 2009
-
-    ## 2010
-
-    ## 2011
-
-    ## 2012
-
-    ## 2013
-
-    ## 2014
-
-    ## 2015
-
-    ## 2016
-
-    ## 2017
-
-    ## 2018
-
-    ## 2019
-
-    ## 2020
-
-    ## 2021
-
 ![Figure 1. Annual developments of metadata from package ‘DESCRIPTION’
 files.](figures/_fig01.png)
 

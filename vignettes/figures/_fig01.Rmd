@@ -194,12 +194,13 @@ saveRDS (nlic, f_fig1_lic)
 
 
 ```{r fig1-make, eval = !file.exists (fig01_png), fig.width = 7, fig.height = 3.5}
-dat <- readRDS (f_fig1_pkg_subs)
+dat <- readRDS (f_fig1_pkg_subs) |>
+    mutate (n = n / 1000)
 p1 <- dat |>
     ggplot (aes (x = year, y = n, colour = what)) +
     geom_line () +
-    ylab ("Num. submissions") +
-    ggtitle ("A: Numbers of (re-)submissions") +
+    ylab ("Num. submissions (/ 1,000)") +
+    ggtitle ("A: Annual submissions") +
     theme (legend.title = element_blank (),
            legend.position = c (0.2, 0.8),
            legend.background = element_rect(fill='transparent', colour='transparent'))
@@ -263,11 +264,11 @@ p4 <- readRDS (f_fig1_lic) |>
     ylab ("Number of distinct licenses") +
     ggtitle ("D: Num licenses")
 
-png (fig01_png, width = 7, height = 3.5, units = "in", res = 300)
-p1 + p2 + p3
+png (fig01_png, width = 7, height = 7, units = "in", res = 300)
+(p1 + p2) / (p3 + p4)
 graphics.off ()
 ```
 
-```{r fig1-num_aut_ctb2, echo = FALSE, out.width = 700, fig.cap = "**Figure 1.** Annual developments of metadata from package 'DESCRIPTION' files."}
+```{r fig1-num_aut_ctb2, echo = FALSE, out.width = 700, fig.cap = "**Figure 1.** Annual developments of CRAN package submissions (A), and of metadata from package 'DESCRIPTION' files (B-D)."}
 knitr::include_graphics (fig01_png)
 ```

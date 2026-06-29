@@ -499,25 +499,39 @@ smoother) CRAN snapshots.
 
 # Results
 
+## Annual submissions
+
+Numbers of annual submissions increased progressively until the 2020 pandemic
+(Fig. 1A), during and after which they remained relatively flat. Total
+submissions to CRAN have always been strongly dominated by resubmissions.
+New submissions have generally represented well under 20% of all submissions,
+with an increase above this ratio between 2015--2017, peaking at 22% during
+2016.
+
+Increases for the current year of 2026 reflect new submissions comprising just
+under 20% of total submissions, still below the proportion reached in 2016. The
+trajectories for the most recent years of Figure 1A suggest at most a marginal
+increase in trajectories prior to 2020.
+
 ## Metadata
 
-Numbers of both authors and contributors have increased over time (Fig. 1A),
+Numbers of both authors and contributors have increased over time (Fig. 1B),
 with contributors having been rarely acknowledged at all prior to 2010.
 Acknowledgement of contributions increased soon after then to an average of
 just under one acknowledged contributor per package in 2022. Although
 recent increases in numbers of both authors and contributors have been broadly
 linear, both show more recent signs of slowing down.
 
-Diversity of license declarations increased up to around 2007, followed by a
-pronounced drop and progression into a roughly stable range of somewhere over
-50 distinct entries. Numbers of unique licenses primarily reflect numbers of
-ways of declaring licenses, rather than numbers of actual licenses (for
-example, "GPL \>= 2.0" is different to "Any GPL license version 2 or higher",
-although both clearly refer to the same license). The different ways of
-specifying the three versions of GPL licenses have accounted for over 83% of
-all CRAN packages, with the second most common type license being MIT, at 9.6%,
-followed by BSD at 2.0%. One of these three classes of licenses are used in 95%
-of all CRAN packages.
+Diversity of license declarations increased up to around 2007 (Fig. 1D),
+followed by a pronounced drop and progression into a roughly stable range of
+somewhere over 50 distinct entries. Numbers of unique licenses primarily
+reflect numbers of ways of declaring licenses, rather than numbers of actual
+licenses (for example, "GPL \>= 2.0" is different to "Any GPL license version 2
+or higher", although both clearly refer to the same license). The different
+ways of specifying the three versions of GPL licenses have accounted for over
+83% of all CRAN packages, with the second most common type license being MIT,
+at 9.6%, followed by BSD at 2.0%. One of these three classes of licenses are
+used in 95% of all CRAN packages.
 
 ```{r fig01, child = "figures/_fig01.Rmd", eval = TRUE, echo = FALSE}
 ```

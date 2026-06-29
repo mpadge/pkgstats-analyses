@@ -1,6 +1,6 @@
 ```{r fig1-load}
 library (pkgstatsAnalyses)
-library (dplyr)
+library (dplyr, quietly = TRUE, warn.conflicts = FALSE)
 library (tidyr)
 library (ggplot2)
 library (patchwork)
@@ -12,6 +12,9 @@ here <- here::here ()
 v_data_dir <- file.path (here, "vignettes", "data")
 
 datafile <- file.path (here, "data-raw", "pkgstats-results.Rds")
+f_fig1_pkg_subs <- file.path (v_data_dir, "fig01-pkg-subs.Rds")
+calc_fig1_pkg_subs <- !file.exists (f_fig1_pkg_subs)
+
 f_fig1_urls <- file.path (v_data_dir, "fig01-urls.Rds")
 calc_fig1_urls <- !file.exists (f_fig1_urls)
 
@@ -23,6 +26,52 @@ calc_fig1_lic <- !file.exists (f_fig1_lic)
 fig01_png <- file.path (here, "vignettes", "figures", "_fig01.png")
 calc_fig1_aut_ctb <- calc_fig1_aut_ctb & !file.exists (fig01_png)
 calc_fig1_lic <- !file.exists (f_fig1_lic) & !file.exists (fig01_png)
+```
+
+```{r fig1-pkg-subs, eval = calc_fig1_pkg_subs}
+x <- load_pkgstats_data (datafile, raw = TRUE, latest = FALSE) |>
+    filter (!is.na (date))
+
+date_latest <- max (x$date, na.rm = TRUE)
+adj_latest_year <- function (dat, date_latest) {
+    this_year <- as.integer (format (date_latest, format = "%Y"))
+    this_year_start <- as.Date (paste0 (this_year, "-01-01"))
+    days_this_year <- as.integer (date_latest - this_year_start)
+    i <- which (dat$year == this_year)
+    dat$n [i] <- round (dat$n [i] * 365.25 / days_this_year)
+    return (dat)
+}
+
+total_subs <- x |>
+    group_by (year) |>
+    summarise (n = n ()) |>
+    ungroup () |>
+    adj_latest_year (date_latest) |>
+    mutate (what = "total", .before = year)
+
+first_subs <- x |>
+    filter (!is.na (date)) |>
+    group_by (package) |>
+    slice_min (date) |>
+    slice (1L) # some have multiple subs on same date
+new_subs <- group_by (first_subs, year) |>
+    summarise (n = n ()) |>
+    adj_latest_year (date_latest) |>
+    mutate (what = "new", .before = year)
+
+x_resubs <- x |>
+    group_by (package) |>
+    filter (date != min (date)) |>
+    ungroup ()
+re_subs <- x_resubs |>
+    group_by (year) |>
+    summarise (n = n ()) |>
+    ungroup () |>
+    adj_latest_year (date_latest) |>
+    mutate (what = "resubmission", .before = year)
+
+dat <- rbind (total_subs, new_subs, re_subs)
+saveRDS (dat, f_fig1_pkg_subs)
 ```
 
 ```{r fig1-urls, eval = calc_fig1_urls}
@@ -145,6 +194,16 @@ saveRDS (nlic, f_fig1_lic)
 
 
 ```{r fig1-make, eval = !file.exists (fig01_png), fig.width = 7, fig.height = 3.5}
+dat <- readRDS (f_fig1_pkg_subs)
+p1 <- dat |>
+    ggplot (aes (x = year, y = n, colour = what)) +
+    geom_line () +
+    ylab ("Num. submissions") +
+    ggtitle ("A: Numbers of (re-)submissions") +
+    theme (legend.title = element_blank (),
+           legend.position = c (0.2, 0.8),
+           legend.background = element_rect(fill='transparent', colour='transparent'))
+
 dat <- readRDS (f_fig1_aut_ctb)
 lo <- dat |>
     mutate (aut_lo = n_aut - se_aut,
@@ -166,7 +225,7 @@ fig1_dat$hi <- hi$value
 dat_annual <- fig1_dat [fig1_dat$what == "annual", ]
 fig1_dat <- fig1_dat [fig1_dat$what == "cran_by_year", ]
 
-p1 <- fig1_dat |>
+p2 <- fig1_dat |>
     ggplot (aes (x = year, y = value, colour = name)) +
     #geom_ribbon (aes (ymin = lo, ymax = hi, fill = name, colour = NULL),
     #             alpha = 0.15, show.legend = FALSE) +
@@ -176,7 +235,7 @@ p1 <- fig1_dat |>
     #             alpha = 0.15, show.legend = FALSE) +
     geom_line (data = dat_annual, lty = 2) +
     ylab ("Number authors / contributors") +
-    ggtitle ("A: Num aut / ctb") +
+    ggtitle ("B: Num aut / ctb") +
     theme (legend.title = element_blank(),
            legend.position = c (0.2, 0.4),
            legend.background = element_rect(fill='transparent', colour='transparent'))
@@ -186,23 +245,23 @@ dat_urls$what <- ifelse (grepl ("git", dat_urls$type), "git", "all")
 dat_urls_annual <- dat_urls [grep ("annual", dat_urls$type), ]
 dat_urls <- dat_urls [which (!grepl ("annual", dat_urls$type)), ]
 
-p2 <- dat_urls |>
+p3 <- dat_urls |>
     ggplot (aes (x = year, y = prop_urls, colour = what)) +
     geom_line () +
     geom_line (data = dat_urls_annual, lty = 2) +
     ylab ("Proportion pkgs with URLs") +
-    ggtitle ("B: Prop URLs") +
+    ggtitle ("C: Prop URLs") +
     theme (legend.title = element_blank(),
            legend.position = c (0.2, 0.9),
            legend.background = element_rect(fill='transparent', colour='transparent'))
 
-p3 <- readRDS (f_fig1_lic) |>
+p4 <- readRDS (f_fig1_lic) |>
     mutate (lty = (what == "cran_by_year")) |>
     ggplot (aes (x = year, y = n, lty = lty)) +
     geom_line () +
     theme (legend.position = "none") +
     ylab ("Number of distinct licenses") +
-    ggtitle ("C: Num licenses")
+    ggtitle ("D: Num licenses")
 
 png (fig01_png, width = 7, height = 3.5, units = "in", res = 300)
 p1 + p2 + p3

@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">pkgstatsAnalyses</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1.008</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1.010</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +54,7 @@
                         <h4 data-toc-skip class="author">Mark Padgham
 &amp; Noam Ross</h4>
             
-            <h4 data-toc-skip class="date">2026-06-03</h4>
+            <h4 data-toc-skip class="date">2026-06-29</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/mpadge/pkgstats-analyses/blob/main/vignettes/pkgstats.Rmd" class="external-link"><code>vignettes/pkgstats.Rmd</code></a></small>
       <div class="d-none name"><code>pkgstats.Rmd</code></div>
@@ -513,17 +513,32 @@ derived from (generally smoother) CRAN snapshots.</p>
 <h2 id="results">Results<a class="anchor" aria-label="anchor" href="#results"></a>
 </h2>
 <div class="section level3">
+<h3 id="annual-submissions">Annual submissions<a class="anchor" aria-label="anchor" href="#annual-submissions"></a>
+</h3>
+<p>Numbers of annual submissions increased progressively until the 2020
+pandemic (Fig. 1A), during and after which they remained relatively
+flat. Total submissions to CRAN have always been strongly dominated by
+resubmissions. New submissions have generally represented well under 20%
+of all submissions, with an increase above this ratio between 2015–2017,
+peaking at 22% during 2016.</p>
+<p>Increases for the current year of 2026 reflect new submissions
+comprising just under 20% of total submissions, still below the
+proportion reached in 2016. The trajectories for the most recent years
+of Figure 1A suggest at most a marginal increase in trajectories prior
+to 2020.</p>
+</div>
+<div class="section level3">
 <h3 id="metadata">Metadata<a class="anchor" aria-label="anchor" href="#metadata"></a>
 </h3>
 <p>Numbers of both authors and contributors have increased over time
-(Fig. 1A), with contributors having been rarely acknowledged at all
+(Fig. 1B), with contributors having been rarely acknowledged at all
 prior to 2010. Acknowledgement of contributions increased soon after
 then to an average of just under one acknowledged contributor per
 package in 2022. Although recent increases in numbers of both authors
 and contributors have been broadly linear, both show more recent signs
 of slowing down.</p>
-<p>Diversity of license declarations increased up to around 2007,
-followed by a pronounced drop and progression into a roughly stable
+<p>Diversity of license declarations increased up to around 2007 (Fig.
+1D), followed by a pronounced drop and progression into a roughly stable
 range of somewhere over 50 distinct entries. Numbers of unique licenses
 primarily reflect numbers of ways of declaring licenses, rather than
 numbers of actual licenses (for example, “GPL &gt;= 2.0” is different to
@@ -534,9 +549,10 @@ the second most common type license being MIT, at 9.6%, followed by BSD
 at 2.0%. One of these three classes of licenses are used in 95% of all
 CRAN packages.</p>
 <div class="float">
-<img src="figures/_fig01.png" alt="Figure 1. Annual developments of metadata from package ‘DESCRIPTION’ files."><div class="figcaption">
+<img src="figures/_fig01.png" alt="Figure 1. Annual developments of CRAN package submissions (A), and of metadata from package ‘DESCRIPTION’ files (B-D)."><div class="figcaption">
 <strong>Figure 1.</strong> Annual developments
-of metadata from package ‘DESCRIPTION’ files.</div>
+of CRAN package submissions (A), and of metadata from package
+‘DESCRIPTION’ files (B-D).</div>
 </div>
 <p>The practice of translating messages within R packages into other
 languages has steadily declined in recent years (Fig. 2A), suggesting a
